@@ -312,4 +312,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contact
 
 In case of questions, please contact Tim Mach or Ivan Ezhov
+
 Technical University of Munich (TUM)
