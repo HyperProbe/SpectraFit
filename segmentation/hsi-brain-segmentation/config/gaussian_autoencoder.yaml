@@ -1,0 +1,32 @@
+name: Gaussian-Autoencoder-LearningRate-and-Sigma-Sweep
+method: bayes
+metric:
+  goal: maximize
+  name: dice_score
+parameters:
+  epochs:
+    value: 15
+  output_channels:
+    value: 3
+  mu:
+    value: [335, 267, 131]
+  sigma:
+    values: 
+      - [1,1,1]
+      - [2,2,2]
+      - [3,3,3]
+      - [4,4,4]
+      - [5,5,5]
+      - [6,6,6]
+      - [7,7,7]
+      - [8,8,8]
+      - [9,9,9]
+      - [10,10,10]
+  batch_size:
+    value: 4
+  lr_encoder:
+    min: 0.001
+    max: 0.01
+  lr_decoder:
+    min: 0.0001
+    max: 0.001

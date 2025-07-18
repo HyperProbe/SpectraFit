@@ -1,0 +1,4193 @@
+1.0    # file version
+381    # number of runs
+
+### RUN for 520 nm
+test_output/520.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  2.957946600978263  57.24153129064727  0.9  100000000
+1    # n for medium below
+
+### RUN for 521 nm
+test_output/521.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  3.0563598092757163  57.10971431067622  0.9  100000000
+1    # n for medium below
+
+### RUN for 522 nm
+test_output/522.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  3.1543959403745827  56.978452774679646  0.9  100000000
+1    # n for medium below
+
+### RUN for 523 nm
+test_output/523.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  3.2699642056105658  56.847743284798135  0.9  100000000
+1    # n for medium below
+
+### RUN for 524 nm
+test_output/524.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  3.3854033917514608  56.717582470401815  0.9  100000000
+1    # n for medium below
+
+### RUN for 525 nm
+test_output/525.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  3.5242597570233047  56.58796698782071  0.9  100000000
+1    # n for medium below
+
+### RUN for 526 nm
+test_output/526.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  3.663359082290903  56.45889352007825  0.9  100000000
+1    # n for medium below
+
+### RUN for 527 nm
+test_output/527.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  3.817389220536686  56.330358776627975  0.9  100000000
+1    # n for medium below
+
+### RUN for 528 nm
+test_output/528.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  3.9715333546996114  56.202359493093255  0.9  100000000
+1    # n for medium below
+
+### RUN for 529 nm
+test_output/529.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  4.139277519769035  56.074892431010085  0.9  100000000
+1    # n for medium below
+
+### RUN for 530 nm
+test_output/530.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  4.307121605372988  55.94795437757292  0.9  100000000
+1    # n for medium below
+
+### RUN for 531 nm
+test_output/531.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  4.475346917544492  55.82154214538345  0.9  100000000
+1    # n for medium below
+
+### RUN for 532 nm
+test_output/532.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  4.643492236014455  55.695652572202285  0.9  100000000
+1    # n for medium below
+
+### RUN for 533 nm
+test_output/533.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  4.8075334162293  55.57028252070357  0.9  100000000
+1    # n for medium below
+
+### RUN for 534 nm
+test_output/534.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  4.971678500833921  55.44542887823243  0.9  100000000
+1    # n for medium below
+
+### RUN for 535 nm
+test_output/535.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.121520869636909  55.32108855656519  0.9  100000000
+1    # n for medium below
+
+### RUN for 536 nm
+test_output/536.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.271524480767548  55.19725849167244  0.9  100000000
+1    # n for medium below
+
+### RUN for 537 nm
+test_output/537.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.412253211094997  55.07393564348476  0.9  100000000
+1    # n for medium below
+
+### RUN for 538 nm
+test_output/538.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.553333594268188  54.9511169956612  0.9  100000000
+1    # n for medium below
+
+### RUN for 539 nm
+test_output/539.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.667152199787088  54.828799555360426  0.9  100000000
+1    # n for medium below
+
+### RUN for 540 nm
+test_output/540.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.781378837723285  54.706980353014394  0.9  100000000
+1    # n for medium below
+
+### RUN for 541 nm
+test_output/541.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.87270828969311  54.58565644210478  0.9  100000000
+1    # n for medium below
+
+### RUN for 542 nm
+test_output/542.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.964402570285834  54.464824898941814  0.9  100000000
+1    # n for medium below
+
+### RUN for 543 nm
+test_output/543.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  6.009312666840851  54.344482822445755  0.9  100000000
+1    # n for medium below
+
+### RUN for 544 nm
+test_output/544.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  6.054671758834273  54.22462733393077  0.9  100000000
+1    # n for medium below
+
+### RUN for 545 nm
+test_output/545.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  6.059414146589115  54.105255576891295  0.9  100000000
+1    # n for medium below
+
+### RUN for 546 nm
+test_output/546.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  6.065059510201215  53.986364716790895  0.9  100000000
+1    # n for medium below
+
+### RUN for 547 nm
+test_output/547.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  6.023248965408653  53.8679519408534  0.9  100000000
+1    # n for medium below
+
+### RUN for 548 nm
+test_output/548.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.981343585545197  53.75001445785646  0.9  100000000
+1    # n for medium below
+
+### RUN for 549 nm
+test_output/549.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.91479632117413  53.632549497927464  0.9  100000000
+1    # n for medium below
+
+### RUN for 550 nm
+test_output/550.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.846852468583733  53.51555431234169  0.9  100000000
+1    # n for medium below
+
+### RUN for 551 nm
+test_output/551.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.761783512221649  53.399026173322774  0.9  100000000
+1    # n for medium below
+
+### RUN for 552 nm
+test_output/552.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.6741702528726305  53.28296237384542  0.9  100000000
+1    # n for medium below
+
+### RUN for 553 nm
+test_output/553.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.588827987542376  53.1673602274403  0.9  100000000
+1    # n for medium below
+
+### RUN for 554 nm
+test_output/554.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.502676671583206  53.052217068001106  0.9  100000000
+1    # n for medium below
+
+### RUN for 555 nm
+test_output/555.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.4208773276545115  52.937530249593856  0.9  100000000
+1    # n for medium below
+
+### RUN for 556 nm
+test_output/556.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.339747775558382  52.823297146268246  0.9  100000000
+1    # n for medium below
+
+### RUN for 557 nm
+test_output/557.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.275332911478356  52.709515151871095  0.9  100000000
+1    # n for medium below
+
+### RUN for 558 nm
+test_output/558.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.211357894564047  52.596181679861914  0.9  100000000
+1    # n for medium below
+
+### RUN for 559 nm
+test_output/559.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.159845268987119  52.483294163130495  0.9  100000000
+1    # n for medium below
+
+### RUN for 560 nm
+test_output/560.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.108529158970342  52.370850053816504  0.9  100000000
+1    # n for medium below
+
+### RUN for 561 nm
+test_output/561.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.080013663489371  52.25884682313111  0.9  100000000
+1    # n for medium below
+
+### RUN for 562 nm
+test_output/562.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.051332716243342  52.14728196118052  0.9  100000000
+1    # n for medium below
+
+### RUN for 563 nm
+test_output/563.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.046880006903782  52.03615297679152  0.9  100000000
+1    # n for medium below
+
+### RUN for 564 nm
+test_output/564.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.0425207124724984  51.92545739733886  0.9  100000000
+1    # n for medium below
+
+### RUN for 565 nm
+test_output/565.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.067117762573064  51.81519276857466  0.9  100000000
+1    # n for medium below
+
+### RUN for 566 nm
+test_output/566.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.091890334013849  51.705356654459514  0.9  100000000
+1    # n for medium below
+
+### RUN for 567 nm
+test_output/567.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.146350209699944  51.595946636995585  0.9  100000000
+1    # n for medium below
+
+### RUN for 568 nm
+test_output/568.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.200867001658305  51.48696031606143  0.9  100000000
+1    # n for medium below
+
+### RUN for 569 nm
+test_output/569.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.286274291250854  51.37839530924869  0.9  100000000
+1    # n for medium below
+
+### RUN for 570 nm
+test_output/570.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.371671787919476  51.27024925170049  0.9  100000000
+1    # n for medium below
+
+### RUN for 571 nm
+test_output/571.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.475581186829134  51.162519795951674  0.9  100000000
+1    # n for medium below
+
+### RUN for 572 nm
+test_output/572.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.579558445746079  51.055204611770684  0.9  100000000
+1    # n for medium below
+
+### RUN for 573 nm
+test_output/573.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.67672950108163  50.94830138600321  0.9  100000000
+1    # n for medium below
+
+### RUN for 574 nm
+test_output/574.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.774061391169206  50.84180782241752  0.9  100000000
+1    # n for medium below
+
+### RUN for 575 nm
+test_output/575.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.82191639276594  50.735721641551415  0.9  100000000
+1    # n for medium below
+
+### RUN for 576 nm
+test_output/576.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.869864834859967  50.6300405805609  0.9  100000000
+1    # n for medium below
+
+### RUN for 577 nm
+test_output/577.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.82852912826091  50.52476239307044  0.9  100000000
+1    # n for medium below
+
+### RUN for 578 nm
+test_output/578.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.787335873501375  50.41988484902478  0.9  100000000
+1    # n for medium below
+
+### RUN for 579 nm
+test_output/579.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.630317228551954  50.31540573454249  0.9  100000000
+1    # n for medium below
+
+### RUN for 580 nm
+test_output/580.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.473409534681589  50.21132285177086  0.9  100000000
+1    # n for medium below
+
+### RUN for 581 nm
+test_output/581.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  5.217113214829936  50.10763401874259  0.9  100000000
+1    # n for medium below
+
+### RUN for 582 nm
+test_output/582.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  4.960873480098322  50.004337069233785  0.9  100000000
+1    # n for medium below
+
+### RUN for 583 nm
+test_output/583.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  4.647909856669605  49.90142985262365  0.9  100000000
+1    # n for medium below
+
+### RUN for 584 nm
+test_output/584.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  4.334978738155216  49.79891023375548  0.9  100000000
+1    # n for medium below
+
+### RUN for 585 nm
+test_output/585.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  4.016316501528024  49.696776092799304  0.9  100000000
+1    # n for medium below
+
+### RUN for 586 nm
+test_output/586.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  3.6977736338563263  49.59502532511586  0.9  100000000
+1    # n for medium below
+
+### RUN for 587 nm
+test_output/587.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  3.4069044497981666  49.49365584112209  0.9  100000000
+1    # n for medium below
+
+### RUN for 588 nm
+test_output/588.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  3.116120383504778  49.39266556615796  0.9  100000000
+1    # n for medium below
+
+### RUN for 589 nm
+test_output/589.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  2.8669947462715206  49.292052440354766  0.9  100000000
+1    # n for medium below
+
+### RUN for 590 nm
+test_output/590.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  2.618022658266127  49.191814418504805  0.9  100000000
+1    # n for medium below
+
+### RUN for 591 nm
+test_output/591.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  2.4114421448484062  49.09194946993238  0.9  100000000
+1    # n for medium below
+
+### RUN for 592 nm
+test_output/592.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  2.204921538744122  48.992455578366155  0.9  100000000
+1    # n for medium below
+
+### RUN for 593 nm
+test_output/593.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  2.035036333005875  48.89333074181291  0.9  100000000
+1    # n for medium below
+
+### RUN for 594 nm
+test_output/594.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  1.8649915492795408  48.79457297243253  0.9  100000000
+1    # n for medium below
+
+### RUN for 595 nm
+test_output/595.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  1.7243020715527235  48.696180296414376  0.9  100000000
+1    # n for medium below
+
+### RUN for 596 nm
+test_output/596.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  1.5837070630788803  48.59815075385485  0.9  100000000
+1    # n for medium below
+
+### RUN for 597 nm
+test_output/597.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  1.4665574035830795  48.50048239863632  0.9  100000000
+1    # n for medium below
+
+### RUN for 598 nm
+test_output/598.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  1.3491319574043155  48.40317329830726  0.9  100000000
+1    # n for medium below
+
+### RUN for 599 nm
+test_output/599.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  1.252518214352429  48.306221533963594  0.9  100000000
+1    # n for medium below
+
+### RUN for 600 nm
+test_output/600.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  1.1558621504232287  48.20962520013136  0.9  100000000
+1    # n for medium below
+
+### RUN for 601 nm
+test_output/601.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  1.0756196194589138  48.113382404650494  0.9  100000000
+1    # n for medium below
+
+### RUN for 602 nm
+test_output/602.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.9950899356901646  48.017491268559844  0.9  100000000
+1    # n for medium below
+
+### RUN for 603 nm
+test_output/603.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.9292203262746334  47.92194992598339  0.9  100000000
+1    # n for medium below
+
+### RUN for 604 nm
+test_output/604.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.8626134051084519  47.82675652401758  0.9  100000000
+1    # n for medium below
+
+### RUN for 605 nm
+test_output/605.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.8088665450662375  47.73190922261989  0.9  100000000
+1    # n for medium below
+
+### RUN for 606 nm
+test_output/606.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.7542319111377  47.63740619449843  0.9  100000000
+1    # n for medium below
+
+### RUN for 607 nm
+test_output/607.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.7146946100443602  47.543245625002776  0.9  100000000
+1    # n for medium below
+
+### RUN for 608 nm
+test_output/608.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.6702332420870661  47.44942571201585  0.9  100000000
+1    # n for medium below
+
+### RUN for 609 nm
+test_output/609.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.6338840321004391  47.35594466584694  0.9  100000000
+1    # n for medium below
+
+### RUN for 610 nm
+test_output/610.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.5973602748438716  47.26280070912574  0.9  100000000
+1    # n for medium below
+
+### RUN for 611 nm
+test_output/611.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.5672708371356129  47.16999207669756  0.9  100000000
+1    # n for medium below
+
+### RUN for 612 nm
+test_output/612.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.5376934895813466  47.07751701551955  0.9  100000000
+1    # n for medium below
+
+### RUN for 613 nm
+test_output/613.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.5131639390066266  46.985373784557936  0.9  100000000
+1    # n for medium below
+
+### RUN for 614 nm
+test_output/614.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.4887720240578055  46.89356065468637  0.9  100000000
+1    # n for medium below
+
+### RUN for 615 nm
+test_output/615.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.46910069029778245  46.80207590858522  0.9  100000000
+1    # n for medium below
+
+### RUN for 616 nm
+test_output/616.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.44943893757462505  46.71091784064201  0.9  100000000
+1    # n for medium below
+
+### RUN for 617 nm
+test_output/617.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.4328084047064185  46.620084756852634  0.9  100000000
+1    # n for medium below
+
+### RUN for 618 nm
+test_output/618.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.4163396073579788  46.52957497472381  0.9  100000000
+1    # n for medium below
+
+### RUN for 619 nm
+test_output/619.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.4021323970630765  46.43938682317636  0.9  100000000
+1    # n for medium below
+
+### RUN for 620 nm
+test_output/620.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.38812699348479507  46.34951864244948  0.9  100000000
+1    # n for medium below
+
+### RUN for 621 nm
+test_output/621.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.3767487467750907  46.259968784006006  0.9  100000000
+1    # n for medium below
+
+### RUN for 622 nm
+test_output/622.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.3655039561018348  46.170735610438555  0.9  100000000
+1    # n for medium below
+
+### RUN for 623 nm
+test_output/623.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.3558608674630523  46.08181749537669  0.9  100000000
+1    # n for medium below
+
+### RUN for 624 nm
+test_output/624.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.346136421829462  45.99321282339495  0.9  100000000
+1    # n for medium below
+
+### RUN for 625 nm
+test_output/625.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.33795020896196365  45.90491998992178  0.9  100000000
+1    # n for medium below
+
+### RUN for 626 nm
+test_output/626.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.3296279181316495  45.8169374011494  0.9  100000000
+1    # n for medium below
+
+### RUN for 627 nm
+test_output/627.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.32236651591211557  45.729263473944556  0.9  100000000
+1    # n for medium below
+
+### RUN for 628 nm
+test_output/628.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.3152504286915064  45.64189663576013  0.9  100000000
+1    # n for medium below
+
+### RUN for 629 nm
+test_output/629.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.30935058936476706  45.554835324547675  0.9  100000000
+1    # n for medium below
+
+### RUN for 630 nm
+test_output/630.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.30317880410701037  45.46807798867071  0.9  100000000
+1    # n for medium below
+
+### RUN for 631 nm
+test_output/631.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.29120864277333025  45.381623086818976  0.9  100000000
+1    # n for medium below
+
+### RUN for 632 nm
+test_output/632.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.28604994293302294  45.29546908792349  0.9  100000000
+1    # n for medium below
+
+### RUN for 633 nm
+test_output/633.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2817978666499257  45.20961447107239  0.9  100000000
+1    # n for medium below
+
+### RUN for 634 nm
+test_output/634.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.27747623044252395  45.1240577254277  0.9  100000000
+1    # n for medium below
+
+### RUN for 635 nm
+test_output/635.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2737216491177678  45.03879735014276  0.9  100000000
+1    # n for medium below
+
+### RUN for 636 nm
+test_output/636.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2703882145583629  44.95383185428065  0.9  100000000
+1    # n for medium below
+
+### RUN for 637 nm
+test_output/637.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2669544758349657  44.86915975673325  0.9  100000000
+1    # n for medium below
+
+### RUN for 638 nm
+test_output/638.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.26387441106140613  44.784779586141106  0.9  100000000
+1    # n for medium below
+
+### RUN for 639 nm
+test_output/639.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2612535464912653  44.700689880814224  0.9  100000000
+1    # n for medium below
+
+### RUN for 640 nm
+test_output/640.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.25880053696036337  44.6168891886534  0.9  100000000
+1    # n for medium below
+
+### RUN for 641 nm
+test_output/641.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2564114349633455  44.53337606707251  0.9  100000000
+1    # n for medium below
+
+### RUN for 642 nm
+test_output/642.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.25381238786131144  44.4501490829214  0.9  100000000
+1    # n for medium below
+
+### RUN for 643 nm
+test_output/643.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2522620159238577  44.36720681240968  0.9  100000000
+1    # n for medium below
+
+### RUN for 644 nm
+test_output/644.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2502061463817954  44.28454784103104  0.9  100000000
+1    # n for medium below
+
+### RUN for 645 nm
+test_output/645.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.24894182297587394  44.20217076348853  0.9  100000000
+1    # n for medium below
+
+### RUN for 646 nm
+test_output/646.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2475004180520773  44.12007418362038  0.9  100000000
+1    # n for medium below
+
+### RUN for 647 nm
+test_output/647.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.24616992571204901  44.038256714326586  0.9  100000000
+1    # n for medium below
+
+### RUN for 648 nm
+test_output/648.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.24469914668053389  43.956716977496235  0.9  100000000
+1    # n for medium below
+
+### RUN for 649 nm
+test_output/649.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.24328377936780451  43.87545360393545  0.9  100000000
+1    # n for medium below
+
+### RUN for 650 nm
+test_output/650.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.24199893992394209  43.794465233296116  0.9  100000000
+1    # n for medium below
+
+### RUN for 651 nm
+test_output/651.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2533273806720972  43.7137505140052  0.9  100000000
+1    # n for medium below
+
+### RUN for 652 nm
+test_output/652.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2511008495613933  43.63330810319477  0.9  100000000
+1    # n for medium below
+
+### RUN for 653 nm
+test_output/653.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.24880301627516746  43.55313666663274  0.9  100000000
+1    # n for medium below
+
+### RUN for 654 nm
+test_output/654.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2467570564597845  43.47323487865411  0.9  100000000
+1    # n for medium below
+
+### RUN for 655 nm
+test_output/655.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.24456461696326734  43.393601422093084  0.9  100000000
+1    # n for medium below
+
+### RUN for 656 nm
+test_output/656.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2425616013109684  43.31423498821564  0.9  100000000
+1    # n for medium below
+
+### RUN for 657 nm
+test_output/657.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.24048890287429092  43.23513427665279  0.9  100000000
+1    # n for medium below
+
+### RUN for 658 nm
+test_output/658.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.23879359648376705  43.15629799533455  0.9  100000000
+1    # n for medium below
+
+### RUN for 659 nm
+test_output/659.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.23670774180442095  43.07772486042439  0.9  100000000
+1    # n for medium below
+
+### RUN for 660 nm
+test_output/660.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.23498071356862782  42.99941359625444  0.9  100000000
+1    # n for medium below
+
+### RUN for 661 nm
+test_output/661.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.23268870794028043  42.921362935261186  0.9  100000000
+1    # n for medium below
+
+### RUN for 662 nm
+test_output/662.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.23037204797565938  42.84357161792185  0.9  100000000
+1    # n for medium below
+
+### RUN for 663 nm
+test_output/663.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.22814193807542324  42.766038392691335  0.9  100000000
+1    # n for medium below
+
+### RUN for 664 nm
+test_output/664.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2256210452988744  42.68876201593972  0.9  100000000
+1    # n for medium below
+
+### RUN for 665 nm
+test_output/665.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.22313025118410587  42.61174125189044  0.9  100000000
+1    # n for medium below
+
+### RUN for 666 nm
+test_output/666.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2205623553544283  42.53497487255894  0.9  100000000
+1    # n for medium below
+
+### RUN for 667 nm
+test_output/667.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2179921640008688  42.45846165769191  0.9  100000000
+1    # n for medium below
+
+### RUN for 668 nm
+test_output/668.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2152367817759514  42.38220039470719  0.9  100000000
+1    # n for medium below
+
+### RUN for 669 nm
+test_output/669.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.21265070205926895  42.30618987863405  0.9  100000000
+1    # n for medium below
+
+### RUN for 670 nm
+test_output/670.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.20993131455034017  42.23042891205422  0.9  100000000
+1    # n for medium below
+
+### RUN for 671 nm
+test_output/671.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2070348426923156  42.15491630504333  0.9  100000000
+1    # n for medium below
+
+### RUN for 672 nm
+test_output/672.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.2042735256999731  42.07965087511289  0.9  100000000
+1    # n for medium below
+
+### RUN for 673 nm
+test_output/673.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.20144426822662354  42.00463144715292  0.9  100000000
+1    # n for medium below
+
+### RUN for 674 nm
+test_output/674.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.19869409251213072  41.92985685337498  0.9  100000000
+1    # n for medium below
+
+### RUN for 675 nm
+test_output/675.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.19553990619629621  41.855325933255806  0.9  100000000
+1    # n for medium below
+
+### RUN for 676 nm
+test_output/676.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.19259787824004887  41.781037533481395  0.9  100000000
+1    # n for medium below
+
+### RUN for 677 nm
+test_output/677.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.18974490186572077  41.706990507891696  0.9  100000000
+1    # n for medium below
+
+### RUN for 678 nm
+test_output/678.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.18691457322239874  41.63318371742568  0.9  100000000
+1    # n for medium below
+
+### RUN for 679 nm
+test_output/679.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1840489369928837  41.55961603006703  0.9  100000000
+1    # n for medium below
+
+### RUN for 680 nm
+test_output/680.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1812601049244404  41.486286320790285  0.9  100000000
+1    # n for medium below
+
+### RUN for 681 nm
+test_output/681.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.17852652946114542  41.41319347150742  0.9  100000000
+1    # n for medium below
+
+### RUN for 682 nm
+test_output/682.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.17588364432752132  41.340336371014985  0.9  100000000
+1    # n for medium below
+
+### RUN for 683 nm
+test_output/683.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1729498257637024  41.26771391494172  0.9  100000000
+1    # n for medium below
+
+### RUN for 684 nm
+test_output/684.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.17011908604204656  41.195325005696596  0.9  100000000
+1    # n for medium below
+
+### RUN for 685 nm
+test_output/685.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16761640179157258  41.123168552417326  0.9  100000000
+1    # n for medium below
+
+### RUN for 686 nm
+test_output/686.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16510061210393906  41.05124347091943  0.9  100000000
+1    # n for medium below
+
+### RUN for 687 nm
+test_output/687.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16258751603960991  40.97954868364565  0.9  100000000
+1    # n for medium below
+
+### RUN for 688 nm
+test_output/688.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16018603482842445  40.90808311961591  0.9  100000000
+1    # n for medium below
+
+### RUN for 689 nm
+test_output/689.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15796171566843986  40.83684571437758  0.9  100000000
+1    # n for medium below
+
+### RUN for 690 nm
+test_output/690.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15549739241600036  40.76583540995645  0.9  100000000
+1    # n for medium below
+
+### RUN for 691 nm
+test_output/691.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15347925391793252  40.695051154807864  0.9  100000000
+1    # n for medium below
+
+### RUN for 692 nm
+test_output/692.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15154846608638764  40.62449190376845  0.9  100000000
+1    # n for medium below
+
+### RUN for 693 nm
+test_output/693.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1495124211460352  40.55415661800826  0.9  100000000
+1    # n for medium below
+
+### RUN for 694 nm
+test_output/694.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14757599343359468  40.48404426498328  0.9  100000000
+1    # n for medium below
+
+### RUN for 695 nm
+test_output/695.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14594400775432587  40.414153818388456  0.9  100000000
+1    # n for medium below
+
+### RUN for 696 nm
+test_output/696.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.144502290353179  40.344484258111066  0.9  100000000
+1    # n for medium below
+
+### RUN for 697 nm
+test_output/697.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14288269074261187  40.275034570184495  0.9  100000000
+1    # n for medium below
+
+### RUN for 698 nm
+test_output/698.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14133061537146568  40.20580374674252  0.9  100000000
+1    # n for medium below
+
+### RUN for 699 nm
+test_output/699.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1402033985108137  40.136790785973865  0.9  100000000
+1    # n for medium below
+
+### RUN for 700 nm
+test_output/700.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1388846857100725  40.06799469207729  0.9  100000000
+1    # n for medium below
+
+### RUN for 701 nm
+test_output/701.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13736109948158265  39.999414475216994  0.9  100000000
+1    # n for medium below
+
+### RUN for 702 nm
+test_output/702.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13617590327560902  39.93104915147838  0.9  100000000
+1    # n for medium below
+
+### RUN for 703 nm
+test_output/703.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13519725708663463  39.86289774282436  0.9  100000000
+1    # n for medium below
+
+### RUN for 704 nm
+test_output/704.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13408116281032562  39.794959277051866  0.9  100000000
+1    # n for medium below
+
+### RUN for 705 nm
+test_output/705.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1329905059784651  39.727232787748875  0.9  100000000
+1    # n for medium below
+
+### RUN for 706 nm
+test_output/706.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1320682326555252  39.659717314251715  0.9  100000000
+1    # n for medium below
+
+### RUN for 707 nm
+test_output/707.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1314122694581747  39.592411901602844  0.9  100000000
+1    # n for medium below
+
+### RUN for 708 nm
+test_output/708.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13044213011860847  39.52531560050891  0.9  100000000
+1    # n for medium below
+
+### RUN for 709 nm
+test_output/709.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12949667164683343  39.45842746729924  0.9  100000000
+1    # n for medium below
+
+### RUN for 710 nm
+test_output/710.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1288567932844162  39.391746563884624  0.9  100000000
+1    # n for medium below
+
+### RUN for 711 nm
+test_output/711.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1283259768486023  39.32527195771655  0.9  100000000
+1    # n for medium below
+
+### RUN for 712 nm
+test_output/712.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1275133348107338  39.25900272174671  0.9  100000000
+1    # n for medium below
+
+### RUN for 713 nm
+test_output/713.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.126930210262537  39.19293793438692  0.9  100000000
+1    # n for medium below
+
+### RUN for 714 nm
+test_output/714.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1263382664322853  39.12707667946931  0.9  100000000
+1    # n for medium below
+
+### RUN for 715 nm
+test_output/715.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12583064556121826  39.061418046206974  0.9  100000000
+1    # n for medium below
+
+### RUN for 716 nm
+test_output/716.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12530303478240967  38.99596112915484  0.9  100000000
+1    # n for medium below
+
+### RUN for 717 nm
+test_output/717.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12478513121604919  38.93070502817098  0.9  100000000
+1    # n for medium below
+
+### RUN for 718 nm
+test_output/718.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12443814191222191  38.865648848378186  0.9  100000000
+1    # n for medium below
+
+### RUN for 719 nm
+test_output/719.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1242422243654728  38.800791700125856  0.9  100000000
+1    # n for medium below
+
+### RUN for 720 nm
+test_output/720.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12366784521937371  38.73613269895235  0.9  100000000
+1    # n for medium below
+
+### RUN for 721 nm
+test_output/721.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12349869254231453  38.67167096554748  0.9  100000000
+1    # n for medium below
+
+### RUN for 722 nm
+test_output/722.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12340411090850831  38.60740562571548  0.9  100000000
+1    # n for medium below
+
+### RUN for 723 nm
+test_output/723.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12336554259061813  38.54333581033817  0.9  100000000
+1    # n for medium below
+
+### RUN for 724 nm
+test_output/724.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12309285491704941  38.47946065533853  0.9  100000000
+1    # n for medium below
+
+### RUN for 725 nm
+test_output/725.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12333693966269493  38.41577930164453  0.9  100000000
+1    # n for medium below
+
+### RUN for 726 nm
+test_output/726.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12359551787376405  38.3522908951533  0.9  100000000
+1    # n for medium below
+
+### RUN for 727 nm
+test_output/727.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12406798791885376  38.288994586695594  0.9  100000000
+1    # n for medium below
+
+### RUN for 728 nm
+test_output/728.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12446316868066787  38.22588953200052  0.9  100000000
+1    # n for medium below
+
+### RUN for 729 nm
+test_output/729.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12513133993744852  38.16297489166066  0.9  100000000
+1    # n for medium below
+
+### RUN for 730 nm
+test_output/730.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12604250302910805  38.100249831097365  0.9  100000000
+1    # n for medium below
+
+### RUN for 731 nm
+test_output/731.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.127101073294878  38.03771352052648  0.9  100000000
+1    # n for medium below
+
+### RUN for 732 nm
+test_output/732.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12826615563035013  37.975365134924246  0.9  100000000
+1    # n for medium below
+
+### RUN for 733 nm
+test_output/733.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12973374283313752  37.91320385399353  0.9  100000000
+1    # n for medium below
+
+### RUN for 734 nm
+test_output/734.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13097076988220216  37.85122886213036  0.9  100000000
+1    # n for medium below
+
+### RUN for 735 nm
+test_output/735.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13213504698872566  37.78943934839076  0.9  100000000
+1    # n for medium below
+
+### RUN for 736 nm
+test_output/736.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13353873333334923  37.727834506457725  0.9  100000000
+1    # n for medium below
+
+### RUN for 737 nm
+test_output/737.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13478917589783668  37.666413534608715  0.9  100000000
+1    # n for medium below
+
+### RUN for 738 nm
+test_output/738.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1359469434916973  37.60517563568319  0.9  100000000
+1    # n for medium below
+
+### RUN for 739 nm
+test_output/739.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13720549160242082  37.54412001705053  0.9  100000000
+1    # n for medium below
+
+### RUN for 740 nm
+test_output/740.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13874392741918565  37.483245890578246  0.9  100000000
+1    # n for medium below
+
+### RUN for 741 nm
+test_output/741.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13977920722961426  37.42255247260039  0.9  100000000
+1    # n for medium below
+
+### RUN for 742 nm
+test_output/742.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14108357658982276  37.362038983886244  0.9  100000000
+1    # n for medium below
+
+### RUN for 743 nm
+test_output/743.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1426093834042549  37.301704649609306  0.9  100000000
+1    # n for medium below
+
+### RUN for 744 nm
+test_output/744.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1441573555469513  37.24154869931652  0.9  100000000
+1    # n for medium below
+
+### RUN for 745 nm
+test_output/745.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1453579190671444  37.18157036689773  0.9  100000000
+1    # n for medium below
+
+### RUN for 746 nm
+test_output/746.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14702949288487432  37.12176889055541  0.9  100000000
+1    # n for medium below
+
+### RUN for 747 nm
+test_output/747.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14868587028980257  37.06214351277468  0.9  100000000
+1    # n for medium below
+
+### RUN for 748 nm
+test_output/748.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15033014577627182  37.00269348029351  0.9  100000000
+1    # n for medium below
+
+### RUN for 749 nm
+test_output/749.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15223164466023448  36.943418044073205  0.9  100000000
+1    # n for medium below
+
+### RUN for 750 nm
+test_output/750.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15371514850854873  36.88431645926911  0.9  100000000
+1    # n for medium below
+
+### RUN for 751 nm
+test_output/751.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1556773986518383  36.82538798520162  0.9  100000000
+1    # n for medium below
+
+### RUN for 752 nm
+test_output/752.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1573963249474764  36.76663188532732  0.9  100000000
+1    # n for medium below
+
+### RUN for 753 nm
+test_output/753.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.158956994086504  36.70804742721051  0.9  100000000
+1    # n for medium below
+
+### RUN for 754 nm
+test_output/754.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16043775705993174  36.649633882494754  0.9  100000000
+1    # n for medium below
+
+### RUN for 755 nm
+test_output/755.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1618503199517727  36.59139052687494  0.9  100000000
+1    # n for medium below
+
+### RUN for 756 nm
+test_output/756.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16265507107973098  36.53331664006929  0.9  100000000
+1    # n for medium below
+
+### RUN for 757 nm
+test_output/757.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16365515114367007  36.475411505791804  0.9  100000000
+1    # n for medium below
+
+### RUN for 758 nm
+test_output/758.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16442477902770042  36.417674411724796  0.9  100000000
+1    # n for medium below
+
+### RUN for 759 nm
+test_output/759.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1645576670616865  36.360104649491774  0.9  100000000
+1    # n for medium below
+
+### RUN for 760 nm
+test_output/760.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16449246238172055  36.30270151463042  0.9  100000000
+1    # n for medium below
+
+### RUN for 761 nm
+test_output/761.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16448426325619223  36.245464306565864  0.9  100000000
+1    # n for medium below
+
+### RUN for 762 nm
+test_output/762.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16393009969592096  36.1883923285842  0.9  100000000
+1    # n for medium below
+
+### RUN for 763 nm
+test_output/763.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16283978585898876  36.131484887806096  0.9  100000000
+1    # n for medium below
+
+### RUN for 764 nm
+test_output/764.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1618793623894453  36.07474129516078  0.9  100000000
+1    # n for medium below
+
+### RUN for 765 nm
+test_output/765.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16080399371683596  36.018160865360095  0.9  100000000
+1    # n for medium below
+
+### RUN for 766 nm
+test_output/766.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15936737360060213  35.961742916872865  0.9  100000000
+1    # n for medium below
+
+### RUN for 767 nm
+test_output/767.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1576435239762068  35.90548677189939  0.9  100000000
+1    # n for medium below
+
+### RUN for 768 nm
+test_output/768.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15584345538914204  35.84939175634622  0.9  100000000
+1    # n for medium below
+
+### RUN for 769 nm
+test_output/769.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15396238307654858  35.79345719980109  0.9  100000000
+1    # n for medium below
+
+### RUN for 770 nm
+test_output/770.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15218554323911668  35.73768243550801  0.9  100000000
+1    # n for medium below
+
+### RUN for 771 nm
+test_output/771.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15023200568556788  35.68206680034271  0.9  100000000
+1    # n for medium below
+
+### RUN for 772 nm
+test_output/772.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14835290931165218  35.62660963478808  0.9  100000000
+1    # n for medium below
+
+### RUN for 773 nm
+test_output/773.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1463762177824974  35.57131028290998  0.9  100000000
+1    # n for medium below
+
+### RUN for 774 nm
+test_output/774.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14466424089670182  35.5161680923331  0.9  100000000
+1    # n for medium below
+
+### RUN for 775 nm
+test_output/775.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1431601418554783  35.46118241421719  0.9  100000000
+1    # n for medium below
+
+### RUN for 776 nm
+test_output/776.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14134217941761018  35.40635260323326  0.9  100000000
+1    # n for medium below
+
+### RUN for 777 nm
+test_output/777.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13963145563006402  35.35167801754014  0.9  100000000
+1    # n for medium below
+
+### RUN for 778 nm
+test_output/778.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1381187489926815  35.29715801876119  0.9  100000000
+1    # n for medium below
+
+### RUN for 779 nm
+test_output/779.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13696156303584575  35.24279197196113  0.9  100000000
+1    # n for medium below
+
+### RUN for 780 nm
+test_output/780.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13572922943532467  35.18857924562315  0.9  100000000
+1    # n for medium below
+
+### RUN for 781 nm
+test_output/781.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13436718887090685  35.134519211626106  0.9  100000000
+1    # n for medium below
+
+### RUN for 782 nm
+test_output/782.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1332112582027912  35.08061124522197  0.9  100000000
+1    # n for medium below
+
+### RUN for 783 nm
+test_output/783.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13240326327085494  35.02685472501341  0.9  100000000
+1    # n for medium below
+
+### RUN for 784 nm
+test_output/784.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13128302814066412  34.9732490329316  0.9  100000000
+1    # n for medium below
+
+### RUN for 785 nm
+test_output/785.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1303079913109541  34.91979355421415  0.9  100000000
+1    # n for medium below
+
+### RUN for 786 nm
+test_output/786.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12950221303105355  34.86648767738325  0.9  100000000
+1    # n for medium below
+
+### RUN for 787 nm
+test_output/787.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12867581267654896  34.81333079422395  0.9  100000000
+1    # n for medium below
+
+### RUN for 788 nm
+test_output/788.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12827929711341857  34.760322299762656  0.9  100000000
+1    # n for medium below
+
+### RUN for 789 nm
+test_output/789.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12775727209448814  34.70746159224574  0.9  100000000
+1    # n for medium below
+
+### RUN for 790 nm
+test_output/790.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1271163756400347  34.65474807311838  0.9  100000000
+1    # n for medium below
+
+### RUN for 791 nm
+test_output/791.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1265675061494112  34.60218114700352  0.9  100000000
+1    # n for medium below
+
+### RUN for 792 nm
+test_output/792.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12626471431553365  34.549760221680984  0.9  100000000
+1    # n for medium below
+
+### RUN for 793 nm
+test_output/793.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12588587692379952  34.497484708066835  0.9  100000000
+1    # n for medium below
+
+### RUN for 794 nm
+test_output/794.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12559284199774265  34.44535402019278  0.9  100000000
+1    # n for medium below
+
+### RUN for 795 nm
+test_output/795.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12503449186682702  34.393367575185835  0.9  100000000
+1    # n for medium below
+
+### RUN for 796 nm
+test_output/796.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1247821496874094  34.34152479324807  0.9  100000000
+1    # n for medium below
+
+### RUN for 797 nm
+test_output/797.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12463275027275085  34.28982509763659  0.9  100000000
+1    # n for medium below
+
+### RUN for 798 nm
+test_output/798.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12447464103996753  34.23826791464358  0.9  100000000
+1    # n for medium below
+
+### RUN for 799 nm
+test_output/799.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12420650672912598  34.18685267357661  0.9  100000000
+1    # n for medium below
+
+### RUN for 800 nm
+test_output/800.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12431554606556892  34.135578806739005  0.9  100000000
+1    # n for medium below
+
+### RUN for 801 nm
+test_output/801.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12424110486358403  34.08444574941039  0.9  100000000
+1    # n for medium below
+
+### RUN for 802 nm
+test_output/802.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12403238888829947  34.03345293982743  0.9  100000000
+1    # n for medium below
+
+### RUN for 803 nm
+test_output/803.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12418314773589373  33.98259981916464  0.9  100000000
+1    # n for medium below
+
+### RUN for 804 nm
+test_output/804.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12421087354421616  33.93188583151543  0.9  100000000
+1    # n for medium below
+
+### RUN for 805 nm
+test_output/805.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1242777092754841  33.88131042387321  0.9  100000000
+1    # n for medium below
+
+### RUN for 806 nm
+test_output/806.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1243777439892292  33.830873046112735  0.9  100000000
+1    # n for medium below
+
+### RUN for 807 nm
+test_output/807.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12445610051602125  33.780573150971485  0.9  100000000
+1    # n for medium below
+
+### RUN for 808 nm
+test_output/808.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12472808118164538  33.73041019403128  0.9  100000000
+1    # n for medium below
+
+### RUN for 809 nm
+test_output/809.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12511426585167645  33.68038363369997  0.9  100000000
+1    # n for medium below
+
+### RUN for 810 nm
+test_output/810.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12541431437432765  33.630492931193345  0.9  100000000
+1    # n for medium below
+
+### RUN for 811 nm
+test_output/811.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12582556371390818  33.58073755051708  0.9  100000000
+1    # n for medium below
+
+### RUN for 812 nm
+test_output/812.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1261921117156744  33.53111695844889  0.9  100000000
+1    # n for medium below
+
+### RUN for 813 nm
+test_output/813.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12664844912290574  33.48163062452083  0.9  100000000
+1    # n for medium below
+
+### RUN for 814 nm
+test_output/814.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1268096524104476  33.43227802100165  0.9  100000000
+1    # n for medium below
+
+### RUN for 815 nm
+test_output/815.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12745768205076455  33.38305862287937  0.9  100000000
+1    # n for medium below
+
+### RUN for 816 nm
+test_output/816.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12795079167932272  33.333971907843946  0.9  100000000
+1    # n for medium below
+
+### RUN for 817 nm
+test_output/817.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12853871461004018  33.28501735627008  0.9  100000000
+1    # n for medium below
+
+### RUN for 818 nm
+test_output/818.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.12901630902290345  33.23619445120015  0.9  100000000
+1    # n for medium below
+
+### RUN for 819 nm
+test_output/819.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.129291211694479  33.18750267832727  0.9  100000000
+1    # n for medium below
+
+### RUN for 820 nm
+test_output/820.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13013302782922984  33.13894152597849  0.9  100000000
+1    # n for medium below
+
+### RUN for 821 nm
+test_output/821.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1306236560419202  33.090510485098115  0.9  100000000
+1    # n for medium below
+
+### RUN for 822 nm
+test_output/822.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13101374754309655  33.04220904923114  0.9  100000000
+1    # n for medium below
+
+### RUN for 823 nm
+test_output/823.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1319328225106001  32.994036714506834  0.9  100000000
+1    # n for medium below
+
+### RUN for 824 nm
+test_output/824.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13282559398561716  32.945992979622424  0.9  100000000
+1    # n for medium below
+
+### RUN for 825 nm
+test_output/825.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1335386088490486  32.89807734582692  0.9  100000000
+1    # n for medium below
+
+### RUN for 826 nm
+test_output/826.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13525447107106447  32.850289316905034  0.9  100000000
+1    # n for medium below
+
+### RUN for 827 nm
+test_output/827.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1363619918525219  32.80262839916127  0.9  100000000
+1    # n for medium below
+
+### RUN for 828 nm
+test_output/828.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1380396834909916  32.75509410140407  0.9  100000000
+1    # n for medium below
+
+### RUN for 829 nm
+test_output/829.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.13929043240100145  32.70768593493011  0.9  100000000
+1    # n for medium below
+
+### RUN for 830 nm
+test_output/830.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14099704818427564  32.66040341350875  0.9  100000000
+1    # n for medium below
+
+### RUN for 831 nm
+test_output/831.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1422535793930292  32.613246053366524  0.9  100000000
+1    # n for medium below
+
+### RUN for 832 nm
+test_output/832.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1439739659577608  32.566213373171784  0.9  100000000
+1    # n for medium below
+
+### RUN for 833 nm
+test_output/833.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.145249140560627  32.5193048940195  0.9  100000000
+1    # n for medium below
+
+### RUN for 834 nm
+test_output/834.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14590946481376887  32.47252013941609  0.9  100000000
+1    # n for medium below
+
+### RUN for 835 nm
+test_output/835.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14701934564858674  32.42585863526442  0.9  100000000
+1    # n for medium below
+
+### RUN for 836 nm
+test_output/836.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.14807301875948906  32.37931990984888  0.9  100000000
+1    # n for medium below
+
+### RUN for 837 nm
+test_output/837.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1483851353004575  32.33290349382066  0.9  100000000
+1    # n for medium below
+
+### RUN for 838 nm
+test_output/838.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.149024895735085  32.28660892018296  0.9  100000000
+1    # n for medium below
+
+### RUN for 839 nm
+test_output/839.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1496136682331562  32.240435724276495  0.9  100000000
+1    # n for medium below
+
+### RUN for 840 nm
+test_output/840.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1503233106508851  32.194383443764984  0.9  100000000
+1    # n for medium below
+
+### RUN for 841 nm
+test_output/841.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15097155475616456  32.14845161862083  0.9  100000000
+1    # n for medium below
+
+### RUN for 842 nm
+test_output/842.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15112996474653484  32.10263979111081  0.9  100000000
+1    # n for medium below
+
+### RUN for 843 nm
+test_output/843.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15158022172749042  32.05694750578197  0.9  100000000
+1    # n for medium below
+
+### RUN for 844 nm
+test_output/844.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1520424304008484  32.01137430944754  0.9  100000000
+1    # n for medium below
+
+### RUN for 845 nm
+test_output/845.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15260322711616756  31.96591975117304  0.9  100000000
+1    # n for medium below
+
+### RUN for 846 nm
+test_output/846.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15314976592361929  31.92058338226238  0.9  100000000
+1    # n for medium below
+
+### RUN for 847 nm
+test_output/847.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15360302378237248  31.87536475624415  0.9  100000000
+1    # n for medium below
+
+### RUN for 848 nm
+test_output/848.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1544141460955143  31.830263428857986  0.9  100000000
+1    # n for medium below
+
+### RUN for 849 nm
+test_output/849.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15501196211576462  31.785278958041012  0.9  100000000
+1    # n for medium below
+
+### RUN for 850 nm
+test_output/850.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1555837902203202  31.74041090391441  0.9  100000000
+1    # n for medium below
+
+### RUN for 851 nm
+test_output/851.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15580748207122086  31.695658828770064  0.9  100000000
+1    # n for medium below
+
+### RUN for 852 nm
+test_output/852.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15664560878276826  31.65102229705733  0.9  100000000
+1    # n for medium below
+
+### RUN for 853 nm
+test_output/853.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15687049772590397  31.606500875369875  0.9  100000000
+1    # n for medium below
+
+### RUN for 854 nm
+test_output/854.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15718378568440677  31.562094132432616  0.9  100000000
+1    # n for medium below
+
+### RUN for 855 nm
+test_output/855.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15760638201981783  31.51780163908877  0.9  100000000
+1    # n for medium below
+
+### RUN for 856 nm
+test_output/856.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1583753425180912  31.473622968286982  0.9  100000000
+1    # n for medium below
+
+### RUN for 857 nm
+test_output/857.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15874116533249616  31.42955769506855  0.9  100000000
+1    # n for medium below
+
+### RUN for 858 nm
+test_output/858.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15925267220288514  31.385605396554762  0.9  100000000
+1    # n for medium below
+
+### RUN for 859 nm
+test_output/859.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.15963614667207005  31.341765651934274  0.9  100000000
+1    # n for medium below
+
+### RUN for 860 nm
+test_output/860.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16012791888415814  31.298038042450628  0.9  100000000
+1    # n for medium below
+
+### RUN for 861 nm
+test_output/861.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16082757762819527  31.25442215138986  0.9  100000000
+1    # n for medium below
+
+### RUN for 862 nm
+test_output/862.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16117330095171928  31.21091756406814  0.9  100000000
+1    # n for medium below
+
+### RUN for 863 nm
+test_output/863.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16162577525526284  31.16752386781959  0.9  100000000
+1    # n for medium below
+
+### RUN for 864 nm
+test_output/864.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1617716852799058  31.12424065198409  0.9  100000000
+1    # n for medium below
+
+### RUN for 865 nm
+test_output/865.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16283144093304872  31.081067507895263  0.9  100000000
+1    # n for medium below
+
+### RUN for 866 nm
+test_output/866.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.162955456122756  31.03800402886847  0.9  100000000
+1    # n for medium below
+
+### RUN for 867 nm
+test_output/867.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16377410985529423  30.995049810188963  0.9  100000000
+1    # n for medium below
+
+### RUN for 868 nm
+test_output/868.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16412083683162926  30.95220444910006  0.9  100000000
+1    # n for medium below
+
+### RUN for 869 nm
+test_output/869.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16525600448995828  30.909467544791422  0.9  100000000
+1    # n for medium below
+
+### RUN for 870 nm
+test_output/870.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16607239919900893  30.866838698387443  0.9  100000000
+1    # n for medium below
+
+### RUN for 871 nm
+test_output/871.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1666031397730112  30.824317512935707  0.9  100000000
+1    # n for medium below
+
+### RUN for 872 nm
+test_output/872.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16688462272286417  30.78190359339547  0.9  100000000
+1    # n for medium below
+
+### RUN for 873 nm
+test_output/873.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1677754004225135  30.739596546626334  0.9  100000000
+1    # n for medium below
+
+### RUN for 874 nm
+test_output/874.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16859080610051752  30.697395981376925  0.9  100000000
+1    # n for medium below
+
+### RUN for 875 nm
+test_output/875.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.16921243909746408  30.65530150827364  0.9  100000000
+1    # n for medium below
+
+### RUN for 876 nm
+test_output/876.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1696303981728852  30.613312739809537  0.9  100000000
+1    # n for medium below
+
+### RUN for 877 nm
+test_output/877.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1708441099524498  30.57142929033324  0.9  100000000
+1    # n for medium below
+
+### RUN for 878 nm
+test_output/878.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1716149855181575  30.52965077603798  0.9  100000000
+1    # n for medium below
+
+### RUN for 879 nm
+test_output/879.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.17280991991609335  30.487976814950652  0.9  100000000
+1    # n for medium below
+
+### RUN for 880 nm
+test_output/880.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.17330450961366295  30.44640702692102  0.9  100000000
+1    # n for medium below
+
+### RUN for 881 nm
+test_output/881.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.17388567024841906  30.40494103361091  0.9  100000000
+1    # n for medium below
+
+### RUN for 882 nm
+test_output/882.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.17550325575843453  30.363578458483573  0.9  100000000
+1    # n for medium below
+
+### RUN for 883 nm
+test_output/883.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1761430463641882  30.322318926793045  0.9  100000000
+1    # n for medium below
+
+### RUN for 884 nm
+test_output/884.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.17746645199507474  30.281162065573643  0.9  100000000
+1    # n for medium below
+
+### RUN for 885 nm
+test_output/885.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.17805507822707295  30.24010750362947  0.9  100000000
+1    # n for medium below
+
+### RUN for 886 nm
+test_output/886.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.17878718757629397  30.199154871524076  0.9  100000000
+1    # n for medium below
+
+### RUN for 887 nm
+test_output/887.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.17931958490237593  30.15830380157009  0.9  100000000
+1    # n for medium below
+
+### RUN for 888 nm
+test_output/888.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.17990195773914458  30.11755392781902  0.9  100000000
+1    # n for medium below
+
+### RUN for 889 nm
+test_output/889.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.18139546850323676  30.076904886051082  0.9  100000000
+1    # n for medium below
+
+### RUN for 890 nm
+test_output/890.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.18349244775623083  30.03635631376507  0.9  100000000
+1    # n for medium below
+
+### RUN for 891 nm
+test_output/891.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1837277826294303  29.995907850168347  0.9  100000000
+1    # n for medium below
+
+### RUN for 892 nm
+test_output/892.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.1840631294026971  29.955559136166897  0.9  100000000
+1    # n for medium below
+
+### RUN for 893 nm
+test_output/893.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.18520256915315986  29.915309814355417  0.9  100000000
+1    # n for medium below
+
+### RUN for 894 nm
+test_output/894.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.18544279904663563  29.875159529007497  0.9  100000000
+1    # n for medium below
+
+### RUN for 895 nm
+test_output/895.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.18661254405975342  29.83510792606588  0.9  100000000
+1    # n for medium below
+
+### RUN for 896 nm
+test_output/896.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.18672541904076934  29.79515465313275  0.9  100000000
+1    # n for medium below
+
+### RUN for 897 nm
+test_output/897.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.18776450757682323  29.755299359460157  0.9  100000000
+1    # n for medium below
+
+### RUN for 898 nm
+test_output/898.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.18943527415394784  29.715541695940413  0.9  100000000
+1    # n for medium below
+
+### RUN for 899 nm
+test_output/899.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.19049425488710403  29.67588131509664  0.9  100000000
+1    # n for medium below
+
+### RUN for 900 nm
+test_output/900.mco  A    # output file
+100000    # No. of photons
+100000000  1    # dz, dr
+1  1  1    # No. of dz, dr, da
+1    # Number of layers
+#n  mu_a  mu_s  g  d
+1    # n for medium above
+1.4  0.19225528528541325  29.636317871073334  0.9  100000000
+1    # n for medium below
