@@ -1,0 +1,41 @@
+name: Approach-2-Grayscale-Windowing500_600-noPretraining-validation_2
+method: bayes
+parameters:
+  architecture:
+    value: Linknet
+  encoder:
+    value: timm-regnetx_320
+  in_channels:
+    value: 1
+  optimizer:
+    value: Adam
+  batch_size_source:
+    value: 16
+  batch_size_target:
+    value: 8
+  dataset_path:
+    value: ./data/FIVES_random_crops_threshold01
+  learning_rate_fea:
+    min: 0.001
+    max: 0.01
+  learning_rate_cls:
+    min: 0.001
+    max: 0.01
+  learning_rate_dis:
+    min: 0.0001
+    max: 0.001
+  ndf:
+    value: 512
+  epochs:
+    value: 10
+  seg_loss:
+    value: BCE
+  augmented:
+    value: true
+  window:
+    value: [500, 600]
+  choose_indices:
+    value: [2]
+metric:
+  name: test/dice_score_postprocessed
+  goal: maximize
