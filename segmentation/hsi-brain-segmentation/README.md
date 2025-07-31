@@ -1,6 +1,6 @@
 # HSI Brain Segmentation
 
-A comprehensive deep learning project for brain segmentation using hyperspectral imaging (HSI) data, featuring domain adaptation techniques and multiple neural network architectures.
+A deep learning framework for brain segmentation using hyperspectral imaging (HSI) data, featuring domain adaptation techniques and multiple neural network architectures.
 
 ## Project Overview
 
