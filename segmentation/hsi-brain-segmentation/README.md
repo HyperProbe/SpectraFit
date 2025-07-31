@@ -304,11 +304,6 @@ python scripts/train_sweep_FADA_supervised.py
 python scripts/train_sweep_FADA_unsupervised.py
 ```
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-
 ## Contact
 
 In case of questions, please contact Tim Mach or Ivan Ezhov
