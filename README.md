@@ -1,5 +1,5 @@
 # The structure of the repository
 
-/redefine - the code from the "Redefining spectral unmixing for in-vivo brain tissue analysis from hyperspectral imaging" paper
+- **/redefine** - The code for the ["Redefining spectral unmixing for in-vivo brain tissue analysis from hyperspectral imaging"](https://arxiv.org/abs/2503.00198) paper.
 
-/segmentation - the code for semantic segmentation of HSI brain images
+- **/segmentation** - The code for the ["Addressing Annotation Scarcity in Hyperspectral Brain Image Segmentation with Unsupervised Domain Adaptation"](https://arxiv.org/abs/2508.16934) paper.
