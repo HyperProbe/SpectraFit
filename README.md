@@ -88,6 +88,9 @@ Implements brute force method for finding coefficients (generates many possibili
 
 ---
 
+# COPYRIGHT NOTICE:
+This source code is the intellectual property of Technical University of Munich. All rights reserved. No license is granted for commercial use, modifications, or redistribution. This repository is for academic verification purposes only.
+
 # Approach
 
 1. Find coefficients of real spectra (by optimisation/bruteforce)
