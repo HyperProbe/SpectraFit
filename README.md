@@ -93,3 +93,6 @@ Implements brute force method for finding coefficients (generates many possibili
 1. Find coefficients of real spectra (by optimisation/bruteforce)
 2. Use resulting labels to train DL model
 3. Use DL model to obtain coefficients quickly
+
+# COPYRIGHT NOTICE:
+This source code is the intellectual property of Technical University of Munich. All rights reserved. No license is granted for commercial use, modifications, or redistribution. This repository is for academic verification purposes only.
