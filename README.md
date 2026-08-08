@@ -1,98 +1,82 @@
-# Setup
+# HSI-Biopsy
 
-1. Clone the framework repository
-2. Create virtual environment
-3. Execute [setup.py](http://setup.py) (also installs requirements)
-4. Add `fat.txt` to `/dataset/UCL-NIR-Spectra/spectra` folder
-5. Add `LWP483_10Jan2017_SharedHyperProbe.mat` to `/dataset` folder
+A Python-based toolkit for hyperspectral imaging (HSI) analysis of biopsy samples, designed to streamline data loading, preprocessing, visualization, and feature extraction for medical research.
 
-# Framework structure
+## Overview
 
-## Data Processing
+This project focuses on the analysis of hyperspectral imaging (HSI) data for biopsy samples, with the goal of improving diagnostic capabilities through advanced imaging techniques.
 
-`convert_dataset.py` 
+## Prerequisites
 
-Converts and saves Helicoid `.hdr` files into pytorch tensors
+- Python 3.8 or higher
+- pip
+- A Unix-like shell (bash) or Windows PowerShell
 
----
+## Installation
 
-`generate_dataset.py`
+1. Clone the repository:
 
-Contains different methods for generating synthetic spectra datasets and samples (2d and 1d, and coefficient distributions)
+   ```bash
+   git clone https://github.com/TimMachTUM/hsi-biopsy.git
+   cd hsi-biopsy
+   ```
 
----
+2. Create and activate a virtual environment:
 
-`datasets.py`
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate   # macOS/Linux
+   # or .\.venv\Scripts\activate   # Windows
+   ```
 
-Different torch Dataset classes. with [Spectrum, coefficient] pairs and [Spectrum, segmentation label] pairs
+3. Install required packages:
 
----
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-`preprocessing.py`
+## Configuration
 
-Read molecule specific spectra, Read wavelengths of helicoid dataset, interpolation
+1. Copy the example environment file and set your data paths:
 
-## Training and Optimisation Framework
+   ```bash
+   cp .env.example .env
+   ```
 
-`models.py`
+2. Edit `.env` and provide the absolute paths to your HSI data directory and metadata CSV:
 
-contains MLP (1d input) and CNN (2d input) model for finding coefficients
+   ```dotenv
+   HSI_DATA_DIR=/absolute/path/to/hsi/mat/files
+   METADATA_CSV_PATH=/absolute/path/to/processed/biopsy_metadata.csv
+   ```
 
----
+## Data Preparation
 
-`optimisation.py`
+- Place your raw HSI data (`.mat` files) in the directory pointed to by `HSI_DATA_DIR`.
+- Generate the metadata CSV by running the Excel processing script:
+  ```bash
+  python scripts/process_excel.py
+  ```
+- To generate preprocessed hsi_cubes and the reference spectrum for the scattering model, see the [notebooks/example_analysis.ipynb](notebooks/example_analysis.ipynb) notebook.
 
-Loads dataset and runs convex optimisation
+## Usage
 
----
+For detailed instructions on how to use the dataset, including code examples and best practices, see the [Dataset Usage Guide](docs/dataset_usage.md).
 
-`train.py` & `train_cnn.py`
+For interactive analysis examples, see [notebooks/example_analysis.ipynb](notebooks/example_analysis.ipynb).
 
-Runs MLP and CNN training respectively (with synthetic data)
+## Testing
 
----
+Run unit tests with pytest:
 
-`train_helicoid.py`
+```bash
+pytest --maxfail=1 --disable-warnings -q
+```
 
-Runs training with Helicoid dataset
+## Contributing
 
----
+Contributions, bug reports, and feature requests are welcome via GitHub issues and pull requests.
 
-`utils.py`
+## License
 
-Utilization methods (e.g. Beer-Lambert calculation)
-
----
-
-`config.py`
-
-Stores global variables used in different scripts
-
-## Notebooks
-
-`model_test.ipynb`
-
-Tests CNN model by plotting predicted and gt spectrograms
-
----
-
-`optimization.ipynb`
-
-Tests optimisation on Helicoid data (doesn't give good results)
-
----
-
-`dict_method.py`
-
-Implements brute force method for finding coefficients (generates many possibilities for parameter tuples and matches the best combination to groundtruth, by comparing the resulting spectra)
-
----
-
-# Approach
-
-1. Find coefficients of real spectra (by optimisation/bruteforce)
-2. Use resulting labels to train DL model
-3. Use DL model to obtain coefficients quickly
-
-# COPYRIGHT NOTICE:
-This source code is the intellectual property of Technical University of Munich. All rights reserved. No license is granted for commercial use, modifications, or redistribution. This repository is for academic verification purposes only.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for full details.

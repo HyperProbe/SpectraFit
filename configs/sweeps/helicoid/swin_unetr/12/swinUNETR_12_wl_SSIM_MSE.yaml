@@ -1,0 +1,86 @@
+name: swinUNETR_12_SSIM_MSE
+method: random
+parameters:
+  autoencoder_type:
+    value: SwinUNETR
+  in_channels:
+    value: 10
+  optimizer:
+    value: Adam
+  save_checkpoints:
+    value: False
+  image_wise_normalization:
+    value: True
+  test_ids:
+    value: ['008-01', '008-02', '012-01', '012-02', '015-01', '016-01','016-02','016-03','016-04', '016-05', '020-01', '025-02']
+  validation_ids:
+    value: ['013-01', '014-01', '022-02', '027-02'] 
+  device:
+    value: cuda:4
+  learning_rate:
+    min: 0.001
+    max: 0.01
+  num_epochs:
+    value: 20
+  early_stopping_patience:
+    value: 8
+  loss_function:
+    value: weighted_ssim_with_mse
+  swin_unetr_config:
+    parameters:
+      use_v2:
+        values:
+          - True
+          - False
+      feature_size:
+        values:
+          - 24
+          - 36
+          - 60
+          - 96
+      depths:
+        values:
+          - [2, 2, 2, 2]
+          - [2, 2, 2, 3]
+          - [2, 2, 2, 4]
+      num_heads:
+        values:
+          - [3, 6, 12, 24]
+          - [4, 8, 16, 32]
+      window_size:
+        values:
+          - 7
+          - 12
+      attn_drop_rate:
+        min: 0.0
+        max: 0.1
+      drop_rate:
+        min: 0.0
+        max: 0.1
+  loss_weights:
+    parameters: 
+      alpha:
+        value: 0.5
+  random_crop_size:
+    value: [224, 224]  # Example crop size, adjust as needed
+  inferer_mode:
+    value: sliding_window
+  sliding_window_roi_size:
+    value: [224, 224]
+  sliding_window_overlap:
+    value: 0.25
+  evaluate_full_resolution:
+    value: True
+  log_coarseness:
+    value: 1 
+  sample_type:
+    value: helicoid  # helicoid, biopsy2
+  project:
+    value: helicoid-autoencoder  # Project name for logging
+  reduced_wl_dir:
+    value: /home/macht/thesis/hsi-biopsy/results/helicoid_spectral_unmixing/coarseness_1_left_530_right_750_reduced_wl_set_12
+  gt_dir:
+    value: /home/macht/thesis/hsi-biopsy/results/helicoid_spectral_unmixing/coarseness_1_left_530_right_750
+metric:
+  name: test/mse
+  goal: minimize
