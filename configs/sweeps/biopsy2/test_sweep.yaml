@@ -1,0 +1,27 @@
+name: test_sweep
+method: random
+parameters:
+  autoencoder_type:
+    value: Conv
+  in_channels:
+    value: 10
+  optimizer:
+    value: Adam
+  encoder_channels:
+    value: [32,64]
+  kernel_size:
+    value: 3
+  batch_size:
+    value: 4
+  save_checkpoints:
+    value: False
+  device:
+    value: cuda:0
+  learning_rate:
+    min: 0.001
+    max: 0.01
+  num_epochs:
+    value: 3
+metric:
+  name: test/mse
+  goal: minimize

@@ -1,0 +1,59 @@
+name: unet_autoencoder_L1_HB
+method: random
+parameters:
+  autoencoder_type:
+    value: Unet
+  in_channels:
+    value: 10
+  optimizer:
+    value: Adam
+  kernel_size:
+    value: 3
+  padding:
+    value: 1
+  base_channels:
+    value: 64
+  batch_size:
+    value: 4
+  chosen_molecules:
+    value: ['HB']
+  save_checkpoints:
+    value: False
+  test_ids:
+    value: ['008-01', '008-02', '012-01', '012-02', '015-01', '016-01','016-02','016-03','016-04', '016-05', '020-01', '025-02']
+  validation_ids:
+    value: ['013-01', '014-01', '022-02', '027-02'] 
+  unet_depth:
+    value: 5
+  device:
+    value: cuda:2
+  device_ids:
+    value: [2, 3]
+  learning_rate:
+    min: 0.001
+    max: 0.01
+  activation:
+    value: ELU
+  num_epochs:
+    value: 20
+  early_stopping_patience:
+    value: 8
+  loss_function:
+    value: L1
+  center_crop_size:
+    value: [224, 224]  # Example crop size, adjust as needed
+  log_coarseness:
+    value: 1 
+  sample_type:
+    value: helicoid  # helicoid, biopsy2
+  project:
+    value: helicoid-autoencoder  # Project name for logging
+  reduced_wl_dir:
+    value: /home/macht/thesis/hsi-biopsy/results/helicoid_spectral_unmixing/coarseness_1_left_530_right_750_reduced
+  gt_dir:
+    value: /home/macht/thesis/hsi-biopsy/results/helicoid_spectral_unmixing/coarseness_1_left_530_right_750
+  normalization_dir:
+    value: /home/macht/thesis/hsi-biopsy/results/statistics/helicoid  # Directory for normalization statistics
+metric:
+  name: test/mse
+  goal: minimize
