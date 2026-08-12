@@ -30,9 +30,9 @@ Available `--pathlength-mode` options are:
 * `pathlength_from_wavelength` — wavelength-dependent pathlength interpolated from a predefined gray-matter pathlength spectrum
 * `gray_matter_delta_p1` — wavelength-dependent pathlength computed for gray matter using the delta-P1 approximation
 * `gray_matter_jacques` — wavelength-dependent pathlength computed using the Jacques model
-* `pixelwise_delta_p1_from_unitary` — pixelwise delta-P1 pathlength estimated from results obtained with unitary pathlength
-* `pixelwise_jacques_from_unitary` — pixelwise Jacques pathlength estimated from results obtained with unitary pathlength
-
+* `pixelwise_delta_p1_from_unitary` — pixelwise delta-P1 pathlength 
+* `pixelwise_jacques_from_unitary` — pixelwise Jacques pathlength
+  
 The pathlength-related model files are stored under:
 
 ```text
