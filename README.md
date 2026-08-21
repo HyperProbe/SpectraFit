@@ -4,7 +4,7 @@
 2. Create virtual environment
 3. Execute [setup.py](http://setup.py) (also installs requirements)
 4. Add `fat.txt` to `/dataset/UCL-NIR-Spectra/spectra` folder
-5. Add `LWP483_10Jan2017_SharedHyperProbe.mat` to `/dataset` folder
+5. Add your spectral file (e.g. `HyperProbe.mat`) to `/dataset` folder
 
 # Framework structure
 
