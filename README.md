@@ -1,3 +1,6 @@
+In the main branch, you can find the network-based approach to speed up standard spectral unmixing.
+The standard unmixing code is available in the D4.3 branch.
+
 # Setup
 
 1. Clone the framework repository
