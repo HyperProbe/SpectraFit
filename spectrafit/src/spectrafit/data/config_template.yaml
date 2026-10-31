@@ -1,0 +1,70 @@
+# SpectraFit settings
+# Run with:   spectrafit run <this file>        or load it in the GUI (File: "Load settings…")
+# Paths are relative to this file. Pixel coordinates are [row, column] in the ORIGINAL image.
+
+data:
+  file: my_measurement.mat      # a .mat file, or a folder / pattern (*.mat) with one file per time frame
+  variable: null                # name of the cube in the file; null = automatic (prefers Ref_hyper)
+  wavelengths: null             # null = automatic; or {start: 385, step: 5}; or a variable name; or a list
+  axes: null                    # null = automatic; else e.g. HWB (rows, columns, bands) or HWBT (time series)
+  is_reflectance: true          # false = raw counts, calibrated with the white/dark references below
+  white_reference: null         # variable name in the same file, or another .mat file
+  dark_reference: null
+  normalisation_offset: null    # added to reflectance before the log; null = 0.1 for raw data, 0 for reflectance
+  min_reflectance: 0.001        # zero or negative reflectance values are replaced by this
+  crop: null                    # [row_start, row_stop, col_start, col_stop]
+  binning: 4                    # average n×n pixels (4: 2048×2048 -> 512×512)
+  frames: null                  # time series: [start, stop] or [start, stop, step]; null = all
+
+reference:
+  type: pixel                   # none | pixel | roi | file | frame
+  pixel: [100, 100]             # type pixel: [row, column]
+  roi: null                     # type roi: polygon [[row, col], [row, col], ...]
+  file: null                    # type file: two columns wavelength_nm, reflectance
+  frame: null                   # type frame: [k] or [start, stop]; for pixel/roi in a time series: the frame to take it from
+
+chromophores:
+  names: [HbO2, HHb, oxCCO, redCCO, water, fat]   # see: spectrafit chromophores
+  extra_files: []               # your own chromophore files
+  baselines: {}                 # override typical tissue concentrations, e.g. {HbO2: 0.06}
+
+spectral:
+  range: [530, 750]             # fit range in nm
+  exclude: []                   # wavelength intervals to leave out, e.g. [[600, 610]]
+
+model:
+  mode: free_scattering         # no_scattering | fixed_b | free_scattering
+  fixed_b: 1.0                  # fixed_b mode: scattering power b (same for reference and pixels; Δa is fitted)
+  reference_scattering:         # free_scattering with a reference: scattering a0, b0 of the reference
+    method: grid                # grid (search, as in the paper code) | manual
+    a0: 0.0
+    b0: 1.0
+    a_steps: 3
+    b_steps: 25
+    grid_binning: 8             # extra subsampling during the grid search (speed)
+  a_max: 100.0                  # limits of the scattering amplitude a
+  b_max: 5.0                    # limits of the scattering power b
+  scattering_scale: 10.0        # factor 1/(1-g), g = 0.9
+  lambda0: 500.0                # reference wavelength of a·(λ/λ0)^-b, nm
+  absolute_offset: true         # no reference: also fit a constant offset
+
+pathlength:
+  mode: constant                # constant | gray_matter_table | table_file | delta_p1 | jacques | delta_p1_pixelwise | jacques_pixelwise
+  constant: 1.0                 # cm
+  file: null                    # table_file: two columns wavelength_nm, pathlength_cm
+  tissue: {a: 40.8, b: 3.089, g: 0.85, n: 1.36}   # baseline tissue scattering mu_s' = a (λ/500)^-b, anisotropy, refractive index
+  jacques_tissue: gray matter   # gray matter | tumor | blood vessel | general
+
+solver:
+  method: fast                  # fast (whole image at once) | exact (scipy, pixel by pixel; slow)
+  b_step: 0.05                  # free scattering: grid step for b before refinement
+  chunk_size: 20000
+
+mask:
+  min_reflectance: null         # skip pixels darker than this (mean over the fit range)
+  max_reflectance: null         # skip pixels brighter than this (specular highlights)
+  polygons: []                  # fit only inside these polygons [[[row, col], ...], ...]
+
+output:
+  folder: spectrafit_results
+  formats: [npz, tiff, mat]

@@ -1,0 +1,10 @@
+name: spectrafit
+display_name: SpectraFit
+contributions:
+  commands:
+    - id: spectrafit.widget
+      title: SpectraFit
+      python_name: spectrafit.napari_plugin.widget:SpectraFitWidget
+  widgets:
+    - command: spectrafit.widget
+      display_name: SpectraFit
