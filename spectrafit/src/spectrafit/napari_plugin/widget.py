@@ -28,6 +28,8 @@ from ..pathlength import JACQUES_TISSUES, global_pathlength
 
 AXES_CHOICES = ["(automatic)", "HWB", "WHB", "BHW", "BWH", "HBW", "WBH", "HWBT", "WHBT", "BHWT", "THWB", "HWTB"]
 MAIN_MAPS = ["HbT", "StO2", "diffCCO", "b", "delta_a", "residual_rms"]
+OVERLAYS = ("Fit region", "Crop", "Reference region", "Reference pixel")
+"""Marker layers that must always be drawn above the images (last = topmost)."""
 
 
 # ---------------------------------------------------------------------------- small helpers
@@ -501,8 +503,8 @@ class SpectraFitWidget(QWidget):
         rl.addWidget(QLabel("column"))
         rl.addWidget(self.ref_col)
         pl.addRow("Position (original pixels)", rr)
-        self.ref_row.valueChanged.connect(self._sync_geometry_layers)
-        self.ref_col.valueChanged.connect(self._sync_geometry_layers)
+        self.ref_row.valueChanged.connect(self._reference_boxes_changed)
+        self.ref_col.valueChanged.connect(self._reference_boxes_changed)
         lay.addWidget(self.ref_pixel_box)
 
         self.ref_roi_box = QGroupBox("Reference region")
@@ -537,12 +539,17 @@ class SpectraFitWidget(QWidget):
         lay.addStretch(1)
         return w
 
+    def _reference_boxes_changed(self, *_):
+        self._sync_geometry_layers()
+        self.status.setText(f"Reference pixel: row {self.ref_row.value()}, column {self.ref_col.value()} (original image).")
+
     def _start_pick_pixel(self):
         if self.data is None:
             return self._info("Load the data first.")
         layer = self._get_points_layer()
         layer.data = np.empty((0, 2))
         layer.mode = "add"
+        self._raise_overlays()
         self.viewer.layers.selection.active = layer
         self.status.setText("Click on the image to set the reference pixel.")
 
@@ -1104,9 +1111,7 @@ class SpectraFitWidget(QWidget):
                 if other.name.startswith("SpectraFit map: "):
                     other.visible = other is layer
             self.viewer.layers.move(self.viewer.layers.index(layer), len(self.viewer.layers))
-            for keep in ("Reference pixel", "Reference region", "Fit region", "Crop"):
-                if keep in self.viewer.layers:
-                    self.viewer.layers.move(self.viewer.layers.index(keep), len(self.viewer.layers))
+            self._raise_overlays()
         layer.visible = True
         self.viewer.layers.selection.active = layer
         self.status.setText(f"Showing {self.results.labels.get(key, key)}. Click a pixel to inspect its fit.")
@@ -1378,6 +1383,7 @@ class SpectraFitWidget(QWidget):
         if name not in self.viewer.layers:
             self.viewer.add_shapes(name=name, edge_color=colour, face_color=[0, 0, 0, 0], edge_width=1.5, ndim=2)
         layer = self.viewer.layers[name]
+        self._raise_overlays()
         self.viewer.layers.selection.active = layer
         layer.mode = mode
         self.status.setText(f"Draw in the '{name}' layer. Press Esc or choose the pan/zoom tool when done.")
@@ -1402,12 +1408,22 @@ class SpectraFitWidget(QWidget):
                 work = [np.array([self.data.to_working(p[0], p[1]) for p in poly]) for poly in polys]
                 self.viewer.add_shapes(work, shape_type="polygon", name=name, edge_width=1.5, face_color=[0, 0, 0, 0],
                                        edge_color="orange" if name.startswith("Ref") else "lime")
+        self._raise_overlays()
+
+    def _raise_overlays(self):
+        """Keep the reference pixel, regions and crop rectangle above all images (napari draws the last layer on top)."""
+        layers = self.viewer.layers
+        for name in OVERLAYS:
+            if name in layers and layers.index(name) != len(layers) - 1:
+                layers.move(layers.index(name), len(layers))
 
     # ======================================================================== layers & threads
     def _add_or_replace_image(self, name, data, **kw):
         if name in self.viewer.layers:
             self.viewer.layers.remove(name)
-        return self.viewer.add_image(data, name=name, **kw)
+        layer = self.viewer.add_image(data, name=name, **kw)
+        self._raise_overlays()
+        return layer
 
     def _remove_layers(self, prefix=None, names=None):
         for layer in list(self.viewer.layers):
