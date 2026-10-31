@@ -58,6 +58,20 @@ def _combo(items, data=None) -> QComboBox:
     return c
 
 
+def _compact_combo(c: QComboBox) -> None:
+    """Let a dropdown shrink with the panel (instead of forcing the panel as wide as its longest option),
+    while the opened list stays wide enough to show every option in full."""
+    from qtpy.QtWidgets import QSizePolicy
+
+    c.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+    c.setMinimumContentsLength(10)
+    c.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+    view = c.view()
+    view.setMinimumWidth(max((view.fontMetrics().horizontalAdvance(c.itemText(i)) for i in range(c.count())),
+                             default=0) + 40)
+    view.setTextElideMode(Qt.TextElideMode.ElideNone)
+
+
 def _set_combo_data(c: QComboBox, value) -> None:
     i = c.findData(value)
     if i >= 0:
@@ -88,7 +102,8 @@ def _scrollable(content: QWidget) -> QScrollArea:
     area.setWidget(content)
     area.setWidgetResizable(True)
     area.setFrameShape(QScrollArea.Shape.NoFrame)
-    area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+    # normally nothing is wider than the panel; if it is (large fonts), scroll instead of cutting it off
+    area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
     return area
 
 
@@ -285,6 +300,8 @@ class SpectraFitWidget(QWidget):
         self.setMinimumWidth(460)
         self._update_visibility()
         self._refresh_chromophore_table(Config().chromophores.names)
+        for combo in self.findChildren(QComboBox):
+            _compact_combo(combo)
 
     # ======================================================================== tab 1: data
     def _build_data_tab(self) -> QWidget:
@@ -421,6 +438,7 @@ class SpectraFitWidget(QWidget):
             self.var_combo.addItem(f"{k}", k)
             self.var_combo.setItemData(self.var_combo.count() - 1, f"shape {list(s)}", Qt.ItemDataRole.ToolTipRole)
         _set_combo_data(self.var_combo, info["cube"])
+        _compact_combo(self.var_combo)
         if info.get("format") == "ENVI":
             lines = [f"ENVI file: {info['shape'][0]} rows × {info['shape'][1]} columns × {info['shape'][2]} bands."]
             self.var_combo.setEnabled(False)
@@ -523,14 +541,9 @@ class SpectraFitWidget(QWidget):
         pl.addRow(_hint("Drag the cross to move it, or press 'Pick on image' and click the new position."))
         self.ref_row = _ispin(0, 100000, 0)
         self.ref_col = _ispin(0, 100000, 0)
-        rr = QWidget()
-        rl = QHBoxLayout(rr)
-        rl.setContentsMargins(0, 0, 0, 0)
-        rl.addWidget(QLabel("row"))
-        rl.addWidget(self.ref_row)
-        rl.addWidget(QLabel("column"))
-        rl.addWidget(self.ref_col)
-        pl.addRow("Position (original pixels)", rr)
+        pl.addRow("Row", self.ref_row)
+        pl.addRow("Column", self.ref_col)
+        pl.addRow(_hint("Row and column in the original image (before cropping and binning)."))
         self.ref_row.valueChanged.connect(self._reference_boxes_changed)
         self.ref_col.valueChanged.connect(self._reference_boxes_changed)
         lay.addWidget(self.ref_pixel_box)
@@ -1596,6 +1609,10 @@ class SpectraFitWidget(QWidget):
         self.ref_file_box.setVisible(t == "file")
         ts = self.data is not None and self.data.n_frames > 1
         self.ref_frame_box.setVisible(t == "frame" or (ts and t in ("pixel", "roi")))
+        self.ref_type.setToolTip({"none": "Fit the absolute attenuation −ln R (concentrations ≥ 0)",
+                                  "pixel": "Changes relative to one pixel", "roi": "Changes relative to the mean of a region",
+                                  "file": "Changes relative to a reflectance spectrum from a file",
+                                  "frame": "Time series: each pixel compared with itself in earlier frame(s)"}.get(t, ""))
         for name, show in (("Reference pixel", t == "pixel"), ("Reference region", t == "roi")):
             if hasattr(self, "viewer") and name in self.viewer.layers:
                 self.viewer.layers[name].visible = show

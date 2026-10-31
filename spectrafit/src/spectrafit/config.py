@@ -51,11 +51,11 @@ PATHLENGTH_ALIASES = {
 }
 REFERENCE_TYPES = ("none", "pixel", "roi", "file", "frame")
 REFERENCE_LABELS = {
-    "none": "No reference (absolute attenuation)",
+    "none": "None (absolute attenuation)",
     "pixel": "Single pixel",
     "roi": "Mean of a region",
     "file": "Spectrum from a file",
-    "frame": "Earlier frame of a time series (each pixel vs. itself)",
+    "frame": "Earlier frame (time series)",
 }
 
 
