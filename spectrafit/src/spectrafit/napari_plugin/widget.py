@@ -278,6 +278,10 @@ class SpectraFitWidget(QWidget):
         except Exception:  # e.g. when napari opens us as a plugin before the window exists
             pass
         self.viewer.mouse_drag_callbacks.append(self._on_click)
+        # the name of the map on screen is written on the image and always follows what is visible
+        for ev in (self.viewer.layers.events.inserted, self.viewer.layers.events.removed,
+                   self.viewer.layers.events.moved):
+            ev.connect(self._update_map_label)
         self.setMinimumWidth(460)
         self._update_visibility()
         self._refresh_chromophore_table(Config().chromophores.names)
@@ -1001,7 +1005,7 @@ class SpectraFitWidget(QWidget):
         lay.addWidget(self.map_list, 1)
         mrow = QHBoxLayout()
         b_all = QPushButton("Show all chromophores")
-        b_all.clicked.connect(lambda: self._check_maps(lambda k: k in (self.results.chromophores if self.results else [])))
+        b_all.clicked.connect(self._show_all_chromophores)
         b_none = QPushButton("Hide all")
         b_none.clicked.connect(lambda: self._check_maps(lambda k: False))
         mrow.addWidget(b_all)
@@ -1102,6 +1106,37 @@ class SpectraFitWidget(QWidget):
             except Exception as e:
                 self._error("Saving", e)
 
+    def _show_all_chromophores(self):
+        if self.results is None:
+            return
+        self._check_maps(lambda k: k in self.results.chromophores)
+        if self.results.chromophores:
+            self._focus_map(self.results.chromophores[0])
+
+    def _update_map_label(self, *_):
+        """Write the name of the map on screen onto the image (top left) and into the status line."""
+        overlay = self.viewer.text_overlay
+        if self.side_by_side.isChecked() and self.viewer.grid.enabled:
+            overlay.visible = False
+            if self.results is not None:
+                self.status.setText("Side by side: one map per panel, in the order of the layer list (left).")
+            return
+        shown = next((layer for layer in reversed(self.viewer.layers)
+                      if layer.visible and layer.name.startswith("SpectraFit map: ")), None)
+        if shown is None:
+            overlay.visible = False
+            if self.results is not None:
+                self.status.setText("No map shown: click a name in the list to view it.")
+            return
+        key = shown.name.replace("SpectraFit map: ", "")
+        label = self.results.labels.get(key, key) if self.results is not None else key
+        overlay.text = label
+        overlay.position = "top_left"
+        overlay.color = "white"
+        overlay.font_size = 12
+        overlay.visible = True
+        self.status.setText(f"Showing {label}. Click a pixel to inspect its fit.")
+
     def _check_maps(self, pred):
         for i in range(self.map_list.count()):
             it = self.map_list.item(i)
@@ -1120,8 +1155,10 @@ class SpectraFitWidget(QWidget):
         if on:
             for layer in self.viewer.layers:
                 layer.visible = layer.name.startswith("SpectraFit map: ")
-        elif self.viewer.layers.selection.active is not None:
+        elif self.viewer.layers.selection.active is not None and \
+                self.viewer.layers.selection.active.name.startswith("SpectraFit map: "):
             self._focus_map(self.viewer.layers.selection.active.name.replace("SpectraFit map: ", ""))
+        self._update_map_label()
 
     def _focus_map(self, key: str):
         """Show this map on top; hide the other maps unless side-by-side view is on."""
@@ -1141,7 +1178,7 @@ class SpectraFitWidget(QWidget):
             self._raise_overlays()
         layer.visible = True
         self.viewer.layers.selection.active = layer
-        self.status.setText(f"Showing {self.results.labels.get(key, key)}. Click a pixel to inspect its fit.")
+        self._update_map_label()
 
     def _show_map(self, key: str):
         r = self.results
@@ -1165,6 +1202,7 @@ class SpectraFitWidget(QWidget):
         layer = self._add_or_replace_image(f"SpectraFit map: {key}", data, colormap=cmap, contrast_limits=(lo, hi),
                                            visible=self.side_by_side.isChecked())
         layer.metadata["label"] = r.labels.get(key, key)
+        layer.events.visible.connect(self._update_map_label)  # e.g. the eye icon in the layer list
 
     # ======================================================================== pixel inspector
     def _on_click(self, viewer, event):
