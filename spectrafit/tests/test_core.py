@@ -329,3 +329,65 @@ def test_parallel_matches_serial(tmp_path):
     assert any("2 processor cores" in n for n in out[2].notes)
     for k in ("HbO2", "HHb", "oxCCO", "b", "residual_rms", "se_HbO2"):
         np.testing.assert_allclose(out[2].maps[k], out[1].maps[k], rtol=1e-10, atol=1e-14, equal_nan=True)
+
+
+# ------------------------------------------------------------------ ENVI (HELICOID format)
+@pytest.mark.parametrize("interleave", ["bil", "bip", "bsq"])
+def test_envi_layouts(tmp_path, interleave):
+    from spectrafit.synthetic import write_envi
+
+    sim = make_cube(shape=(12, 10), mode="no_scattering", realistic=True)
+    cube = sim["cube"][0].astype(np.float32)
+    write_envi(tmp_path / "cube", cube, sim["wavelengths"], interleave=interleave, dtype="<f4")
+    cfg = Config()
+    cfg.data.file = str(tmp_path / "cube.hdr")  # the header or the data file can be chosen
+    d = load_data(cfg.data)
+    assert d.cube.shape == (1, 12, 10, 127)
+    assert np.allclose(d.cube[0], cube) and np.allclose(d.wavelengths, sim["wavelengths"])
+
+
+def test_helicoid_layout_raw_counts(tmp_path):
+    """A HELICOID sample folder: 12-bit counts, one-line white/dark references, old Mac line endings."""
+    from spectrafit.synthetic import write_envi
+
+    rng = np.random.default_rng(3)
+    H, W, B = 16, 14, 127
+    wl = np.linspace(400.5, 1000.7, B)
+    R = rng.uniform(0.05, 0.4, (H, W, B))
+    white = rng.uniform(600, 1400, (1, W, B)).round()
+    dark = rng.uniform(17, 43, (1, W, B)).round()
+    raw = (R * (white - dark) + dark).round()
+    folder = tmp_path / "004-02"
+    folder.mkdir()
+    write_envi(folder / "raw", raw, wl, mac_line_endings=True)
+    write_envi(folder / "whiteReference", white, wl, mac_line_endings=True)
+    write_envi(folder / "darkReference", dark, wl, mac_line_endings=True)
+    from spectrafit.io import inspect_file
+
+    info = inspect_file(folder / "raw")
+    assert info["format"] == "ENVI" and info["white"].endswith("whiteReference.hdr")
+    cfg = Config()
+    cfg.data.file = str(folder)  # the sample folder itself
+    cfg.data.is_reflectance = False
+    cfg.data.binning = 2
+    cfg.data.crop = [2, 14, 0, 14]
+    d = load_data(cfg.data)
+    expected = ((raw - dark) / (white - dark) + 0.1)[2:14].reshape(6, 2, 7, 2, B).mean(axis=(1, 3))
+    assert d.cube.shape == (1, 6, 7, B)
+    assert np.allclose(d.cube[0], expected, rtol=1e-5)
+    assert any("references found next to the data" in n for n in d.notes)
+    cfg.data.is_reflectance = True
+    assert any("look like raw counts" in n for n in load_data(cfg.data).notes)
+
+
+def test_helicoid_fit_runs(tmp_path):
+    from spectrafit.synthetic import write_envi
+
+    sim = make_cube(shape=(20, 20), mode="fixed_b", fixed_b=1.2, seed=4, realistic=True,
+                    wavelengths=np.linspace(400.5, 1000.7, 826))
+    write_envi(tmp_path / "raw", sim["cube"][0], sim["wavelengths"], dtype="<f4")
+    cfg = _cfg(tmp_path, tmp_path / "raw", mode="fixed_b")
+    cfg.model.fixed_b = 1.2
+    res = run(cfg)
+    assert res.wavelengths.size > 290  # every HELICOID band in 530–750 nm is used
+    assert _rel_err(res.maps["HbO2"][0], sim["HbO2"][0]) < 2e-3

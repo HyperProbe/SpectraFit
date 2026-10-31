@@ -292,7 +292,7 @@ class SpectraFitWidget(QWidget):
         lay = QVBoxLayout(w)
         form = QFormLayout()
         self.file_edit = QLineEdit()
-        self.file_edit.setPlaceholderText("a .mat file, or a folder of .mat files (time series)")
+        self.file_edit.setPlaceholderText(".mat or ENVI file, or a folder (time series / HELICOID sample)")
         row = QWidget()
         rl = QHBoxLayout(row)
         rl.setContentsMargins(0, 0, 0, 0)
@@ -332,8 +332,8 @@ class SpectraFitWidget(QWidget):
         self.white_edit.setPlaceholderText("variable name in the file, or a .mat file")
         self.dark_edit = QLineEdit()
         self.dark_edit.setPlaceholderText("variable name in the file, or a .mat file")
-        self.white_row = _browse_row(self.white_edit, lambda: self._browse_into(self.white_edit, "*.mat"))
-        self.dark_row = _browse_row(self.dark_edit, lambda: self._browse_into(self.dark_edit, "*.mat"))
+        self.white_row = _browse_row(self.white_edit, lambda: self._browse_into(self.white_edit, "*.mat *.hdr"))
+        self.dark_row = _browse_row(self.dark_edit, lambda: self._browse_into(self.dark_edit, "*.mat *.hdr"))
         form.addRow("White reference", self.white_row)
         form.addRow("Dark reference", self.dark_row)
         self.offset_auto = QCheckBox("automatic")
@@ -384,18 +384,25 @@ class SpectraFitWidget(QWidget):
         return w
 
     def _browse_data_file(self):
-        f, _ = QFileDialog.getOpenFileName(self, "Hyperspectral data", "", "MATLAB files (*.mat);;All files (*)")
+        f, _ = QFileDialog.getOpenFileName(
+            self, "Hyperspectral data", "",
+            "Hyperspectral data (*.mat *.hdr);;MATLAB files (*.mat);;ENVI headers (*.hdr);;All files (*)")
         if f:
             self.file_edit.setText(f)
             self._inspect(f)
 
     def _browse_data_folder(self):
-        d = QFileDialog.getExistingDirectory(self, "Folder with one .mat file per time frame")
+        d = QFileDialog.getExistingDirectory(self, "Folder: one .mat file per time frame, or one ENVI cube (HELICOID)")
         if d:
             self.file_edit.setText(d)
-            files = sorted(Path(d).glob("*.mat"))
-            if files:
-                self._inspect(str(files[0]), n_files=len(files))
+            from ..io import resolve_files
+
+            try:
+                files = resolve_files(d)
+            except FileNotFoundError as e:
+                self.data_info.setPlainText(str(e))
+                return
+            self._inspect(files[0], n_files=len(files))
 
     def _browse_into(self, edit: QLineEdit, pattern: str):
         f, _ = QFileDialog.getOpenFileName(self, "Select file", "", f"Files ({pattern});;All files (*)")
@@ -414,8 +421,20 @@ class SpectraFitWidget(QWidget):
             self.var_combo.addItem(f"{k}", k)
             self.var_combo.setItemData(self.var_combo.count() - 1, f"shape {list(s)}", Qt.ItemDataRole.ToolTipRole)
         _set_combo_data(self.var_combo, info["cube"])
-        lines = ["Variables: " + ", ".join(f"{k} {list(s)}" for k, s in info["variables"].items()),
-                 f"Cube: '{info['cube']}' {list(info['shape'])}, detected axis order {info['axes']}"]
+        if info.get("format") == "ENVI":
+            lines = [f"ENVI file: {info['shape'][0]} rows × {info['shape'][1]} columns × {info['shape'][2]} bands."]
+            self.var_combo.setEnabled(False)
+            self.axes_combo.setEnabled(False)
+            if info.get("white"):
+                _set_combo_data(self.kind_combo, "raw")
+                self.white_edit.setText(info["white"])
+                self.dark_edit.setText(info.get("dark") or "")
+                lines.append("White/dark references found next to it: values set to raw counts, references filled in.")
+        else:
+            self.var_combo.setEnabled(True)
+            self.axes_combo.setEnabled(True)
+            lines = ["Variables: " + ", ".join(f"{k} {list(s)}" for k, s in info["variables"].items()),
+                     f"Cube: '{info['cube']}' {list(info['shape'])}, detected axis order {info['axes']}"]
         if info["wavelength_variable"]:
             lines.append(f"Wavelengths found in variable '{info['wavelength_variable']}'.")
         elif info["n_bands"] == 127:

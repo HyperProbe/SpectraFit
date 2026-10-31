@@ -123,3 +123,23 @@ def write_mat(path: str | Path, cube_thwb: np.ndarray, wavelengths: np.ndarray, 
 
         savemat(path, data, do_compression=True)
     return path
+
+
+def write_envi(path: str | Path, cube_hwb: np.ndarray, wavelengths: Optional[np.ndarray] = None,
+               interleave: str = "bil", dtype: str = "<u2", mac_line_endings: bool = False) -> Path:
+    """Save an (H, W, B) array as ENVI (binary file `path` + `path`.hdr), e.g. to mimic HELICOID data."""
+    path = Path(path)
+    H, W, B = cube_hwb.shape
+    order = {"bsq": (2, 0, 1), "bil": (0, 2, 1), "bip": (0, 1, 2)}[interleave]
+    np.ascontiguousarray(np.transpose(cube_hwb, order)).astype(dtype).tofile(path)
+    codes = {"u1": 1, "i2": 2, "i4": 3, "f4": 4, "f8": 5, "u2": 12, "u4": 13}
+    lines = ["ENVI", "description = {synthetic}", f"samples = {W}", f"lines = {H}", f"bands = {B}",
+             "header offset = 0", "file type = ENVI Standard", f"data type = {codes[np.dtype(dtype).str[1:]]}",
+             f"interleave = {interleave}", f"byte order = {0 if np.dtype(dtype).byteorder in '<=|' else 1}"]
+    if wavelengths is not None:
+        lines += ["wavelength units = nm", "wavelength = {"] + \
+                 [("," if i else "") + f"{w:g}" for i, w in enumerate(wavelengths)] + ["}"]
+    sep = "\r" if mac_line_endings else "\n"
+    with open(path.with_name(path.name + ".hdr"), "w", newline="") as fh:
+        fh.write(sep.join(lines) + sep)
+    return path

@@ -49,11 +49,11 @@ The panel on the right has five tabs, used in order. Click any pixel in the imag
 
 | Setting | What to choose |
 |---|---|
-| Data | A `.mat` file. For a time series: a folder with one `.mat` file per frame, or a single file with a 4-D array. |
+| Data | A `.mat` file, or an ENVI file (a data file plus its `.hdr` header, as in the HELICOID database: choose `raw` or `raw.hdr`, or simply the sample folder). For a time series: a folder with one `.mat` file per frame, or a single file with a 4-D array. |
 | Cube variable | Detected automatically (`Ref_hyper` is preferred, as written by the HyperProbe system). |
 | Axis order | Detected automatically. H = rows, W = columns, B = bands, T = time, in MATLAB order. |
 | Wavelengths | Read from a variable in the file when present. Otherwise 385–1015 nm / 5 nm is assumed for 127 bands, or enter the first wavelength and step. |
-| Values are | *Reflectance* if already calibrated; *Raw counts* to calibrate with white and dark references: R = (raw − dark)/(white − dark). References can be variables in the same file or other `.mat` files; a single line or a single spectrum is fine. |
+| Values are | *Reflectance* if already calibrated; *Raw counts* to calibrate with white and dark references: R = (raw − dark)/(white − dark). References can be variables in the same file, other `.mat` files or ENVI files; a single line or a single spectrum is fine. For ENVI data with `whiteReference`/`darkReference` files next to it (HELICOID), *Raw counts* and both references are filled in automatically. |
 | Offset added to R | *Automatic* adds 0.1 to calibrated raw data (as the HELICOID pipeline does) and nothing to reflectance data. Untick to choose. |
 | Binning | Averages n×n pixels while reading. 4 turns a 2048×2048 image into 512×512: 16× faster and less noisy. |
 | Crop | Click *Draw…*, drag a rectangle on the image, then *Crop to drawn rectangle*. |
@@ -199,7 +199,8 @@ The fitting model is the one in `src/scattering_model/scatter.py` and `scatter_o
 * **Resolution.** *Binning* averages n×n pixels; the paper code's *coarseness* kept every n-th pixel. The grid search's own subsampling is a setting (default 8, as before).
 * **Normalisation offset.** The +0.1 after white/dark calibration is kept as the default for raw data, and is now a visible setting.
 * **Chromophores and baselines** come from files, not code. The gray-matter baseline values are the defaults.
-* **Not carried over:** HELICOID-specific loading (ENVI files, label maps, blood-pixel reference selection), wavelength selection, and the deep-learning models. Those remain in `src/`.
+* **HELICOID data** (ENVI files with white/dark references) is read directly, calibrated as in the research code ((raw − dark)/(white − dark) + 0.1, non-positive values set to 0.01).
+* **Not carried over:** HELICOID label maps and the automatic blood-pixel reference (pick the reference pixel on the image instead), wavelength selection, and the deep-learning models. Those remain in `src/`.
 
 Calling SpectraFit from your own Python script: the multi-core fit starts worker processes with the "spawn" method, so put the script's code under `if __name__ == "__main__":`. Without it SpectraFit notices, uses one core and says so in the notes.
 

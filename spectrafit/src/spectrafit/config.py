@@ -62,7 +62,8 @@ REFERENCE_LABELS = {
 @dataclass
 class DataSettings:
     file: str = ""
-    """.mat file, or a folder / glob pattern of .mat files (one per time frame)."""
+    """.mat file; ENVI file (data file or its .hdr, e.g. HELICOID 'raw'); a folder or glob pattern of .mat files
+    (one per time frame); or a folder holding one ENVI cube."""
     variable: Optional[str] = None
     """Name of the cube inside the .mat file. Empty = detect automatically (prefers 'Ref_hyper')."""
     wavelengths: Optional[Any] = None
@@ -74,13 +75,15 @@ class DataSettings:
     is_reflectance: bool = True
     """True: values are already reflectance. False: raw counts, calibrate with white/dark."""
     white_reference: Optional[str] = None
-    """Variable name in the same file, or another .mat file (raw data only)."""
+    """Variable name in the same file, or another .mat or ENVI file (raw data only). For ENVI data, empty =
+    use whiteReference/darkReference files next to the cube when they exist (HELICOID layout)."""
     dark_reference: Optional[str] = None
     normalisation_offset: Optional[float] = None
     """Added to the reflectance before taking the log. Empty = 0.1 for raw data
     (as in the HELICOID pipeline), 0 for reflectance data."""
-    min_reflectance: float = 1e-3
-    """Reflectance values below this are set to it, to avoid log of zero."""
+    min_reflectance: Optional[float] = None
+    """Zero or negative reflectance values are replaced by this, to avoid the log of zero.
+    Empty = 0.01 for raw data (HELICOID pipeline), 0.001 for reflectance data (Biopsy pipeline)."""
     crop: Optional[List[int]] = None
     """[row_start, row_stop, col_start, col_stop] in original pixels."""
     binning: int = 1

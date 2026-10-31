@@ -3,15 +3,15 @@
 # Paths are relative to this file. Pixel coordinates are [row, column] in the ORIGINAL image.
 
 data:
-  file: my_measurement.mat      # a .mat file, or a folder / pattern (*.mat) with one file per time frame
+  file: my_measurement.mat      # a .mat file, an ENVI file (e.g. HELICOID raw), or a folder / pattern (*.mat) for a time series
   variable: null                # name of the cube in the file; null = automatic (prefers Ref_hyper)
   wavelengths: null             # null = automatic; or {start: 385, step: 5}; or a variable name; or a list
   axes: null                    # null = automatic; else e.g. HWB (rows, columns, bands) or HWBT (time series)
   is_reflectance: true          # false = raw counts, calibrated with the white/dark references below
-  white_reference: null         # variable name in the same file, or another .mat file
+  white_reference: null         # variable name in the same file, or another .mat/ENVI file; ENVI: null = whiteReference next to the data
   dark_reference: null
   normalisation_offset: null    # added to reflectance before the log; null = 0.1 for raw data, 0 for reflectance
-  min_reflectance: 0.001        # zero or negative reflectance values are replaced by this
+  min_reflectance: null         # zero/negative reflectance is replaced by this; null = 0.01 raw data, 0.001 reflectance
   crop: null                    # [row_start, row_stop, col_start, col_stop]
   binning: 4                    # average n×n pixels (4: 2048×2048 -> 512×512)
   frames: null                  # time series: [start, stop] or [start, stop, step]; null = all

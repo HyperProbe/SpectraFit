@@ -1,8 +1,9 @@
-"""Reading hyperspectral cubes from MATLAB .mat files.
+"""Reading hyperspectral cubes from MATLAB .mat files and ENVI files.
 
-Handles both MATLAB file versions (v5/v7 via scipy, v7.3 via h5py), finds the
-cube and its wavelengths automatically when possible, calibrates raw counts
-with white/dark references, and crops and bins while reading, so a
+Handles both MATLAB file versions (v5/v7 via scipy, v7.3 via h5py) and ENVI
+(a binary file plus a .hdr text header, as used by the HELICOID database).
+Finds the cube and its wavelengths automatically when possible, calibrates raw
+counts with white/dark references, and crops and bins while reading, so a
 2048×2048×127 cube never has to be held in memory at full resolution.
 
 Internally a cube is always float32 with axes (T, H, W, B): time, rows,
@@ -98,6 +99,155 @@ class MatFile:
         return np.asarray(arr if index is None else arr[index])
 
 
+# --------------------------------------------------------------------------- ENVI files
+ENVI_DTYPES = {1: "u1", 2: "i2", 3: "i4", 4: "f4", 5: "f8", 12: "u2", 13: "u4", 14: "i8", 15: "u8"}
+
+
+def envi_header_path(path: str | Path) -> Optional[Path]:
+    """The .hdr belonging to `path` (which may be the header itself or the binary file), if any."""
+    p = Path(path)
+    if p.suffix.lower() == ".hdr":
+        return p if p.is_file() else None
+    if p.suffix.lower() == ".mat":
+        return None
+    for cand in (p.with_name(p.name + ".hdr"), p.with_suffix(".hdr")):
+        if cand.is_file():
+            return cand
+    return None
+
+
+def is_envi(path: str | Path) -> bool:
+    return envi_header_path(path) is not None
+
+
+def read_envi_header(path: str | Path) -> Dict[str, str]:
+    """Parse an ENVI header. Copes with Windows, Unix and old Mac line endings, and {multi-line} values."""
+    text = Path(path).read_bytes().decode("latin-1").replace("\r\n", "\n").replace("\r", "\n")
+    lines = [ln.strip() for ln in text.split("\n")]
+    if not lines or not lines[0].upper().startswith("ENVI"):
+        raise ValueError(f"{path} is not an ENVI header (it should start with 'ENVI').")
+    out: Dict[str, str] = {}
+    i = 1
+    while i < len(lines):
+        line = lines[i]
+        i += 1
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        value = value.strip()
+        if value.startswith("{") and "}" not in value:
+            parts = [value]
+            while i < len(lines) and "}" not in lines[i]:
+                parts.append(lines[i])
+                i += 1
+            if i < len(lines):
+                parts.append(lines[i])
+                i += 1
+            value = " ".join(parts)
+        out[key.strip().lower()] = value
+    return out
+
+
+def _envi_list(value: str) -> List[str]:
+    return [v.strip() for v in value.strip().strip("{}").split(",") if v.strip()]
+
+
+class EnviFile:
+    """Read access to an ENVI cube with the same interface as MatFile.
+
+    The cube appears as variable 'cube' with axes (H, W, B) = (lines, samples, bands);
+    the wavelengths from the header appear as variable 'wavelength'.
+    """
+
+    def __init__(self, path: str | Path):
+        hdr = envi_header_path(path)
+        if hdr is None:
+            raise FileNotFoundError(f"No ENVI header (.hdr) found for {path}")
+        self.header = h = read_envi_header(hdr)
+        self.path = self._data_path(hdr)
+        try:
+            samples, lines, bands = int(h["samples"]), int(h["lines"]), int(h["bands"])
+            dtype = np.dtype(ENVI_DTYPES[int(h.get("data type", "4"))])
+        except KeyError as e:
+            raise ValueError(f"{hdr.name}: missing or unsupported header entry {e}") from None
+        dtype = dtype.newbyteorder(">" if int(h.get("byte order", "0")) == 1 else "<")
+        offset = int(h.get("header offset", "0"))
+        self.interleave = h.get("interleave", "bsq").strip().lower()
+        shapes = {"bsq": (bands, lines, samples), "bil": (lines, bands, samples), "bip": (lines, samples, bands)}
+        if self.interleave not in shapes:
+            raise ValueError(f"{hdr.name}: unknown interleave '{self.interleave}'")
+        expected = offset + int(np.prod(shapes[self.interleave])) * dtype.itemsize
+        if self.path.stat().st_size != expected:
+            raise ValueError(f"{self.path.name} has {self.path.stat().st_size} bytes, but its header describes "
+                             f"{expected} ({lines}×{samples}×{bands}, {dtype.name}).")
+        self._mm = np.memmap(self.path, dtype=dtype, mode="r", offset=offset, shape=shapes[self.interleave])
+        self._shape = (lines, samples, bands)
+        self.wavelengths = None
+        if "wavelength" in h:
+            wl = np.array([float(v) for v in _envi_list(h["wavelength"])])
+            if wl.size == bands:
+                if "micro" in h.get("wavelength units", "").lower() or wl.max() < 20:
+                    wl = wl * 1000.0
+                self.wavelengths = wl
+
+    @staticmethod
+    def _data_path(hdr: Path) -> Path:
+        stem = hdr.with_suffix("")
+        for cand in [stem] + [stem.with_suffix(ext) for ext in (".raw", ".img", ".dat", ".bin", ".bil", ".bsq", ".bip")]:
+            if cand.is_file():
+                return cand
+        raise FileNotFoundError(f"Found {hdr.name} but not the data file next to it (expected '{stem.name}').")
+
+    def close(self) -> None:
+        self._mm = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
+
+    def variables(self) -> Dict[str, Tuple[int, ...]]:
+        out: Dict[str, Tuple[int, ...]] = {"cube": self._shape}
+        if self.wavelengths is not None:
+            out["wavelength"] = (self.wavelengths.size,)
+        return out
+
+    def shape(self, name: str) -> Tuple[int, ...]:
+        return self.variables()[name]
+
+    def read(self, name: str, index: Optional[Tuple] = None) -> np.ndarray:
+        if name == "wavelength":
+            return self.wavelengths.copy()
+        r, c, b = index if index is not None else (slice(None),) * 3
+        if self.interleave == "bil":
+            return np.asarray(self._mm[r, b, c]).transpose(0, 2, 1)
+        if self.interleave == "bip":
+            return np.asarray(self._mm[r, c, b])
+        return np.asarray(self._mm[b, r, c]).transpose(1, 2, 0)
+
+
+def find_envi_references(path: str | Path) -> Tuple[Optional[str], Optional[str]]:
+    """White and dark reference files stored next to an ENVI cube (HELICOID: whiteReference, darkReference)."""
+    folder = Path(path).parent
+    found = {"white": None, "dark": None}
+    for hdr in sorted(folder.glob("*.hdr")):
+        name = hdr.stem.lower()
+        for kind in found:
+            if found[kind] is None and name.startswith(kind) and "ref" in name:
+                try:
+                    EnviFile._data_path(hdr)
+                    found[kind] = str(hdr)
+                except FileNotFoundError:
+                    pass
+    return found["white"], found["dark"]
+
+
+def open_data_file(path: str | Path):
+    """MatFile for .mat files, EnviFile for ENVI (binary + .hdr)."""
+    return EnviFile(path) if is_envi(path) else MatFile(path)
+
+
 # --------------------------------------------------------------------------- result object
 @dataclass
 class HyperspectralData:
@@ -149,12 +299,16 @@ def resolve_files(spec: str) -> List[str]:
     p = Path(spec).expanduser()
     if p.is_dir():
         files = [str(f) for f in p.glob("*.mat")]
+        if not files:  # a folder holding one ENVI cube (HELICOID: raw + raw.hdr + white/dark references)
+            cubes = [h for h in p.glob("*.hdr") if not h.stem.lower().startswith(("white", "dark"))]
+            if len(cubes) == 1:
+                files = [str(cubes[0])]
     elif any(ch in spec for ch in "*?["):
         files = glob.glob(str(p))
     else:
         files = [str(p)]
     if not files:
-        raise FileNotFoundError(f"No .mat files found for '{spec}'")
+        raise FileNotFoundError(f"No .mat or ENVI files found for '{spec}'")
 
     def natural(s):
         return [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\d+)", s)]
@@ -249,9 +403,12 @@ def _reference_array(spec: Optional[str], mat: MatFile, axes: str, n_bands: int)
     """White/dark reference as an array broadcastable to (H, W, B) — shape (h, w, B) with h, w ∈ {1, H}/{1, W}."""
     if not spec:
         return None
-    if spec.lower().endswith(".mat"):
-        with MatFile(spec) as other:
-            var = find_cube_variable(other.variables()) if len(other.variables()) > 1 else list(other.variables())[0]
+    if spec.lower().endswith(".mat") or is_envi(spec):
+        with open_data_file(spec) as other:
+            if isinstance(other, EnviFile):
+                var = "cube"
+            else:
+                var = find_cube_variable(other.variables()) if len(other.variables()) > 1 else list(other.variables())[0]
             arr = np.asarray(other.read(var), dtype=np.float32)
     else:
         arr = np.asarray(mat.read(spec), dtype=np.float32)
@@ -280,16 +437,20 @@ def _bin2d(block: np.ndarray, b: int) -> np.ndarray:
 
 # --------------------------------------------------------------------------- main entry
 def inspect_file(path: str | Path) -> dict:
-    """Quick look at a .mat file for the GUI: variables, guessed cube, axes and wavelengths."""
-    with MatFile(path) as mat:
+    """Quick look at a .mat or ENVI file for the GUI: variables, guessed cube, axes, wavelengths, references."""
+    with open_data_file(path) as mat:
         variables = mat.variables()
         cube = find_cube_variable(variables)
         shape = variables[cube]
         name, wl = find_wavelength_variable(mat, variables, shape)
         n_bands = len(wl) if wl is not None else (127 if 127 in shape else None)
         axes = detect_axes(shape, n_bands)
-    return {"variables": variables, "cube": cube, "shape": shape, "axes": axes,
-            "wavelength_variable": name, "n_bands": n_bands}
+    info = {"variables": variables, "cube": cube, "shape": shape, "axes": axes,
+            "wavelength_variable": name, "n_bands": n_bands, "format": "ENVI" if is_envi(path) else "MATLAB",
+            "white": None, "dark": None}
+    if is_envi(path):
+        info["white"], info["dark"] = find_envi_references(path)
+    return info
 
 
 def load_data(settings: DataSettings, progress: Progress = None) -> HyperspectralData:
@@ -297,7 +458,14 @@ def load_data(settings: DataSettings, progress: Progress = None) -> Hyperspectra
     binning = max(1, int(settings.binning))
     notes: List[str] = []
 
-    with MatFile(files[0]) as mat:
+    if not settings.is_reflectance and not settings.white_reference and is_envi(files[0]):
+        white, dark = find_envi_references(files[0])
+        if white:
+            settings.white_reference = white
+            settings.dark_reference = settings.dark_reference or dark
+            notes.append(f"White/dark references found next to the data: {Path(white).name}"
+                         + (f", {Path(dark).name}." if dark else " (no dark reference)."))
+    with open_data_file(files[0]) as mat:
         variables = mat.variables()
         var = settings.variable or find_cube_variable(variables)
         if var not in variables:
@@ -349,6 +517,10 @@ def load_data(settings: DataSettings, progress: Progress = None) -> Hyperspectra
         if offset:
             notes.append(f"Normalisation offset {offset:g} added after white/dark calibration (as in the HELICOID pipeline).")
 
+    min_refl = settings.min_reflectance
+    if min_refl is None:  # as in the research code: HELICOID (raw) 1e-2, Biopsy (reflectance) 1e-3
+        min_refl = 1e-3 if settings.is_reflectance else 1e-2
+
     Hb, Wb = (r1 - r0) // binning, (c1 - c0) // binning
     out = np.empty((len(frame_idx), Hb, Wb, nB), dtype=np.float32)
     rows_per_block = binning * max(1, 64 // binning)  # about 64 rows (≈70 MB for 2048 columns × 127 bands)
@@ -357,7 +529,7 @@ def load_data(settings: DataSettings, progress: Progress = None) -> Hyperspectra
     step = 0
     for ti, t in enumerate(frame_idx):
         fpath = files[t] if len(files) > 1 else files[0]
-        with MatFile(fpath) as mat:
+        with open_data_file(fpath) as mat:
             for rb in range(r0, r1, rows_per_block):
                 re_ = min(r1, rb + rows_per_block)
                 index = []
@@ -376,7 +548,7 @@ def load_data(settings: DataSettings, progress: Progress = None) -> Hyperspectra
                     denom = np.where(np.abs(denom) < 1e-12, np.nan, denom)
                     block = (block - dsl) / denom
                 block = block + offset
-                block = np.where(np.isfinite(block) & (block > 0), block, settings.min_reflectance)
+                block = np.where(np.isfinite(block) & (block > 0), block, min_refl)
                 out[ti, (rb - r0) // binning:(re_ - r0) // binning] = _bin2d(block, binning)
                 step += 1
                 if progress:
@@ -384,6 +556,11 @@ def load_data(settings: DataSettings, progress: Progress = None) -> Hyperspectra
 
     if binning > 1:
         notes.append(f"Binned {binning}×{binning}: working image is {Hb}×{Wb} pixels.")
+    if settings.is_reflectance:
+        typical = float(np.nanmedian(out[0, ::max(1, Hb // 64), ::max(1, Wb // 64)]))
+        if typical > 2.0:
+            notes.append(f"Warning: the values (median {typical:.4g}) look like raw counts, not reflectance. "
+                         "Set 'Values are' to raw counts and give white/dark references.")
     return HyperspectralData(
         cube=out, wavelengths=np.asarray(wavelengths, float), original_shape=(H, W),
         crop=(r0, r1, c0, c1), binning=binning, files=files, variable=var, axes=axes,
