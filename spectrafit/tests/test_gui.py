@@ -118,6 +118,7 @@ def test_clickable_image_cues(tmp_path, qtbot):
         with pytest.raises(StopIteration):
             next(gen)
         assert viewer.layers[INSPECTED].data.tolist() == [[30.0, 13.0]]
+        assert np.all(viewer.layers[INSPECTED].size == 1)  # outlines exactly that one pixel
         assert viewer.layers.selection.active is active  # the marker must not steal the selection
         assert viewer.layers[-1].name == "Reference pixel"
 

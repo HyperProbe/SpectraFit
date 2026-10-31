@@ -1294,19 +1294,23 @@ class SpectraFitWidget(QWidget):
             viewer.cursor.style = style
 
     def _mark_inspected(self, row: int, col: int):
-        """Yellow square around the pixel shown in the Fit inspector."""
-        size = max(2.0, max(self.data.shape) / 50)
+        """Yellow square on the pixel shown in the Fit inspector.
+
+        It is exactly one image pixel, so zooming in shows precisely which pixel it is,
+        but never smaller than 14 screen pixels, so it stays visible when zoomed out.
+        """
         if INSPECTED not in self.viewer.layers:
             previous = self.viewer.layers.selection.active  # adding a layer would make it the active one
-            self.viewer.add_points(np.empty((0, 2)), name=INSPECTED, ndim=2, symbol="square", size=size,
-                                   face_color="transparent", border_color="yellow", border_width=0.15)
+            self.viewer.add_points(np.empty((0, 2)), name=INSPECTED, ndim=2, symbol="square", size=1,
+                                   face_color="transparent", border_color="yellow", border_width=0.15,
+                                   canvas_size_limits=(14, 100000))
             self._raise_overlays()
             if previous is not None:
                 self.viewer.layers.selection.active = previous
         layer = self.viewer.layers[INSPECTED]
         with layer.events.data.blocker():
             layer.data = np.array([[row, col]], dtype=float)
-        layer.size = size
+        layer.size = 1
         layer.refresh()
 
     def _near_reference_marker(self, viewer) -> bool:
