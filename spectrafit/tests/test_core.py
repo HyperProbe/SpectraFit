@@ -313,3 +313,19 @@ def test_collinearity_warning(tmp_path):
     res = run(cfg)
     assert res.collinearity["condition_number"] > 1
     assert any("hard to separate" in n for n in res.notes) == (res.collinearity["level"] != "ok")
+
+
+def test_parallel_matches_serial(tmp_path):
+    """Several cores give exactly the same maps and a0/b0 as one core."""
+    sim = make_cube(shape=(64, 64), mode="free_scattering", a0=100 / 3, b0=1.2, noise=0.002, seed=11, realistic=True)
+    mat = write_mat(tmp_path / "p.mat", sim["cube"], sim["wavelengths"])
+    out = {}
+    for cores in (1, 2):
+        cfg = _cfg(tmp_path, mat)
+        cfg.solver.cores = cores
+        cfg.model.reference_scattering.grid_binning = 4
+        out[cores] = run(cfg)
+    assert (out[1].a0, out[1].b0) == (out[2].a0, out[2].b0)
+    assert any("2 processor cores" in n for n in out[2].notes)
+    for k in ("HbO2", "HHb", "oxCCO", "b", "residual_rms", "se_HbO2"):
+        np.testing.assert_allclose(out[2].maps[k], out[1].maps[k], rtol=1e-10, atol=1e-14, equal_nan=True)

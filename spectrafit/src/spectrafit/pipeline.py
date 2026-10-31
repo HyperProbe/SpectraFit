@@ -6,7 +6,8 @@ import json
 import logging
 import re
 import time
-from dataclasses import dataclass, field
+from concurrent.futures import as_completed
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
 
@@ -18,6 +19,7 @@ from .chromophores import (ChromophoreLibrary, absorption_matrix, collinearity_r
 from .config import Config
 from .io import HyperspectralData, load_data
 from .model import Problem, fit
+from .parallel import resolve_cores, start_pool
 from .pathlength import global_pathlength, mu_s_reduced, pixelwise_pathlength
 from .preprocess import Reference, attenuation, build_mask, build_reference, select_wavelengths
 
@@ -179,11 +181,46 @@ def run(cfg: Config, data: Optional[HyperspectralData] = None, progress: Progres
         if progress:
             progress(float(np.clip(frac, 0, 1)), msg)
 
+    import multiprocessing
+
+    if getattr(multiprocessing.current_process(), "_inheriting", False):
+        # We are inside a worker process that is still starting up: it is re-running the user's
+        # script because the script lacks the  if __name__ == "__main__":  guard. Stop at once,
+        # so the analysis is not repeated in every worker; the main process then uses one core.
+        raise RuntimeError('SpectraFit: put the code of your script under  if __name__ == "__main__":')
     cfg.validate()
-    notes: List[str] = []
     if data is None:
         data = load_data(cfg.data, progress=lambda f, m: report(0.15 * f, m))
-    notes += data.notes
+
+    # Several cores only pay off for the non-linear fits: starting the workers takes a second or two,
+    # while the linear models finish in about a second on one core.
+    n_cores = resolve_cores(cfg.solver.cores)
+    heavy = cfg.model.mode == "free_scattering" or cfg.solver.method == "exact"
+    n_pixels = int(np.prod(data.cube.shape[:3]))
+    pool, pool_note = None, None
+    if heavy and n_cores > 1 and n_pixels >= 4000:
+        report(0.16, f"Starting {n_cores} worker processes")
+        try:
+            pool = start_pool(n_cores)
+            pool_note = f"Fitted on {n_cores} processor cores."
+        except Exception:  # e.g. called from a script without the  if __name__ == "__main__":  guard
+            log.warning("Could not start worker processes; fitting on one core.", exc_info=True)
+            pool_note = ("Could not start worker processes, so one core was used. When calling SpectraFit "
+                         "from your own Python script, put the code under  if __name__ == \"__main__\":")
+    try:
+        results = _run(cfg, data, report, pool)
+    finally:
+        if pool is not None:
+            pool.shutdown(wait=False, cancel_futures=True)
+    results.timing_s = time.time() - t_start
+    if pool_note:
+        results.notes.append(pool_note)
+    report(1.0, f"Done in {results.timing_s:.1f} s")
+    return results
+
+
+def _run(cfg: Config, data: HyperspectralData, report, pool) -> Results:
+    notes: List[str] = list(data.notes)
 
     # ---- chromophores and wavelengths
     lib = ChromophoreLibrary(extra_files=cfg.chromophores.extra_files)
@@ -234,13 +271,14 @@ def run(cfg: Config, data: Optional[HyperspectralData] = None, progress: Progres
             problem.a0, problem.b0 = float(rs.a0), float(rs.b0)
         else:
             problem.a0, problem.b0, grid_info = _grid_search_reference(
-                problem, y_img, mask, PL, rs, s, lambda f, msg: report(0.17 + 0.23 * f, msg))
+                problem, y_img, mask, PL, rs, s, lambda f, msg: report(0.17 + 0.23 * f, msg), pool)
             notes.append(f"Reference scattering from grid search: a0 = {problem.a0:.4g}, b0 = {problem.b0:.4g}.")
 
     # ---- fit (pass 1)
     span = (0.40, 0.65) if pixelwise else (0.40, 0.95)
-    res = fit(problem, y, PL, method=s.method, b_step=s.b_step, chunk_size=s.chunk_size,
-              progress=lambda f, msg: report(span[0] + (span[1] - span[0]) * f, "Fitting" if not pixelwise else "Fitting (pass 1 of 2)"))
+    res = fit(problem, y, PL, method=s.method, b_step=s.b_step, chunk_size=s.chunk_size, executor=pool,
+              progress=lambda f, msg: report(span[0] + (span[1] - span[0]) * f,
+                                             msg if not pixelwise else f"{msg} (pass 1 of 2)"))
 
     # ---- pass 2 with per-pixel pathlength
     if pixelwise:
@@ -249,8 +287,8 @@ def run(cfg: Config, data: Optional[HyperspectralData] = None, progress: Progres
         PLp = np.ones((y.shape[0], Wf))
         if ok.any():
             PLp[ok] = pixelwise_pathlength(cfg.pathlength, wl, M, mu_a[ok], mu_s[ok])
-        res = fit(problem, y, PLp, method=s.method, b_step=s.b_step, chunk_size=s.chunk_size,
-                  progress=lambda f, msg: report(0.65 + 0.30 * f, "Fitting (pass 2 of 2, per-pixel pathlength)"))
+        res = fit(problem, y, PLp, method=s.method, b_step=s.b_step, chunk_size=s.chunk_size, executor=pool,
+                  progress=lambda f, msg: report(0.65 + 0.30 * f, f"{msg} (pass 2 of 2, per-pixel pathlength)"))
         PL_out = PLp.reshape(T, H, W, Wf).astype(np.float32)
         notes.append("Per-pixel pathlength from a first fit with unit pathlength (two passes).")
     else:
@@ -280,12 +318,18 @@ def run(cfg: Config, data: Optional[HyperspectralData] = None, progress: Progres
     results = Results(config=cfg, maps=maps, labels=labels, wavelengths=wl, band_idx=band_idx,
                       chromophores=names, M=M, pathlength=PL_out, problem=problem, reference=reference,
                       a0=problem.a0, b0=problem.b0, collinearity=coll, notes=notes, grid=grid_info)
-    results.timing_s = time.time() - t_start
-    report(1.0, f"Done in {results.timing_s:.1f} s")
     return results
 
 
-def _grid_search_reference(problem: Problem, y_img, mask, PL, rs, solver, report):
+def _grid_point_cost(problem: Problem, sub, PL, b_step, chunk_size) -> float:
+    """Mean least-squares cost of all pixels for one (a0, b0) of the reference (runs in a worker)."""
+    r = fit(problem, sub, PL, method="fast", b_step=b_step, chunk_size=chunk_size,
+            refine_iterations=8, uncertainties=False)
+    cost = 0.5 * (r["residual_rms"] ** 2) * sub.shape[1]  # = scipy least_squares 'cost'
+    return float(np.nanmean(cost))
+
+
+def _grid_search_reference(problem: Problem, y_img, mask, PL, rs, solver, report, pool=None):
     """Grid search for the reference scattering a0, b0, as in the research code (scipy.optimize.brute):
     for every (a0, b0) all pixels are fitted, and the pair with the lowest mean cost wins."""
     step = max(1, int(rs.grid_binning))
@@ -298,14 +342,23 @@ def _grid_search_reference(problem: Problem, y_img, mask, PL, rs, solver, report
     b_grid = np.arange(0.0, problem.b_max, problem.b_max / max(1, rs.b_steps))
     err = np.zeros((a_grid.size, b_grid.size))
     total = err.size
-    for i, a0 in enumerate(a_grid):
-        for j, b0 in enumerate(b_grid):
-            problem.a0, problem.b0 = float(a0), float(b0)
-            r = fit(problem, sub, PL, method="fast", b_step=max(solver.b_step, 0.1), chunk_size=solver.chunk_size,
-                    refine_iterations=8, uncertainties=False)
-            cost = 0.5 * (r["residual_rms"] ** 2) * sub.shape[1]  # = scipy least_squares 'cost'
-            err[i, j] = np.nanmean(cost)
-            report((i * b_grid.size + j + 1) / total, f"Reference scattering grid search ({i * b_grid.size + j + 1}/{total})")
+    b_step = max(solver.b_step, 0.1)
+    points = [(i, j, replace(problem, a0=float(a0), b0=float(b0)))
+              for i, a0 in enumerate(a_grid) for j, b0 in enumerate(b_grid)]
+    if pool is not None:
+        futures = {pool.submit(_grid_point_cost, pr, sub, PL, b_step, solver.chunk_size): (i, j) for i, j, pr in points}
+        try:
+            for done, fut in enumerate(as_completed(futures), 1):
+                err[futures[fut]] = fut.result()
+                report(done / total, f"Reference scattering grid search ({done}/{total})")
+        except BaseException:
+            for f in futures:
+                f.cancel()
+            raise
+    else:
+        for done, (i, j, pr) in enumerate(points, 1):
+            err[i, j] = _grid_point_cost(pr, sub, PL, b_step, solver.chunk_size)
+            report(done / total, f"Reference scattering grid search ({done}/{total})")
     i, j = np.unravel_index(np.nanargmin(err), err.shape)
     return float(a_grid[i]), float(b_grid[j]), {"a": a_grid, "b": b_grid, "mean_cost": err}
 

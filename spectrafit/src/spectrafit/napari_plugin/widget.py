@@ -904,6 +904,14 @@ class SpectraFitWidget(QWidget):
         af.addRow("Solver", self.solver_method)
         self.b_step = _dspin(0.005, 1, 0.05, 0.01, 3)
         af.addRow("b search step", self.b_step)
+        from ..parallel import available_cores
+
+        n_avail = available_cores()
+        self.cores = _ispin(0, n_avail, 0)
+        self.cores.setSpecialValueText(f"all but one ({max(1, n_avail - 1)} of {n_avail})")
+        self.cores.setToolTip("Processor cores for the scattering fit and the a0/b0 grid search. "
+                              "The linear models are fast on one core and always use one.")
+        af.addRow("Processor cores", self.cores)
         for child in self.adv_box.findChildren(QWidget):
             child.setVisible(False)
         self.adv_box.toggled.connect(lambda on: [c.setVisible(on) for c in self.adv_box.findChildren(QWidget)])
@@ -1300,6 +1308,7 @@ class SpectraFitWidget(QWidget):
 
         cfg.solver.method = self.solver_method.currentData()
         cfg.solver.b_step = self.b_step.value()
+        cfg.solver.cores = self.cores.value() or None
 
         mk = cfg.mask
         mk.min_reflectance = self.mask_min.value() if self.mask_min_on.isChecked() else None
@@ -1385,6 +1394,7 @@ class SpectraFitWidget(QWidget):
         self.jacques_tissue.setCurrentText(p.jacques_tissue)
         _set_combo_data(self.solver_method, cfg.solver.method)
         self.b_step.setValue(cfg.solver.b_step)
+        self.cores.setValue(int(cfg.solver.cores or 0))
         mk = cfg.mask
         self.mask_min_on.setChecked(mk.min_reflectance is not None)
         if mk.min_reflectance is not None:
@@ -1501,7 +1511,9 @@ class SpectraFitWidget(QWidget):
         self.load_button.setEnabled(False)
         self.run_button.setEnabled(False)
         self.status.setText(f"{label}…")
-        worker = create_worker(func, arg)
+        # Pass the error handler at creation: otherwise superqt adds its own handler that re-raises the error
+        # in the window thread, which PyQt6 turns into a crash (or a duplicate napari error notification).
+        worker = create_worker(func, arg, _connect={"errored": lambda e: self._error(label, e)}, _start_thread=False)
 
         def finished():
             self._worker = None
@@ -1510,7 +1522,6 @@ class SpectraFitWidget(QWidget):
             self.stop_button.setEnabled(False)
 
         worker.returned.connect(on_done)
-        worker.errored.connect(lambda e: self._error(label, e))
         worker.finished.connect(finished)
         self._worker = worker
         worker.start()

@@ -59,6 +59,7 @@ solver:
   method: fast                  # fast (whole image at once) | exact (scipy, pixel by pixel; slow)
   b_step: 0.05                  # free scattering: grid step for b before refinement
   chunk_size: 20000
+  cores: null                   # processor cores; null or 0 = all but one, 1 = a single core
 
 mask:
   min_reflectance: null         # skip pixels darker than this (mean over the fit range)

@@ -174,6 +174,8 @@ class SolverSettings:
     b_step: float = 0.05
     """Grid step for the scattering power b before local refinement (free scattering, fast solver)."""
     chunk_size: int = 20000
+    cores: Optional[int] = None
+    """Processor cores used for fitting. Empty or 0 = all but one (keeps the computer usable); 1 = no parallel work."""
 
 
 @dataclass

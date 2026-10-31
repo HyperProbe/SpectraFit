@@ -103,7 +103,7 @@ All options work with any chromophore set, including new chromophores. For the m
 
 **Pixels to fit:** skip pixels that are too dark (background) or too bright (specular highlights), or fit only inside polygons you draw.
 
-**Advanced:** limits of a and b, the scattering factor and λ₀, the absolute-mode offset, and the solver. *Fast* fits the whole image at once. *Exact* fits pixel by pixel with scipy, exactly like the paper code: slow, meant for checking small regions.
+**Advanced:** limits of a and b, the scattering factor and λ₀, the absolute-mode offset, the solver, and the number of processor cores. *Fast* fits the whole image at once. *Exact* fits pixel by pixel with scipy, exactly like the paper code: slow, meant for checking small regions. *Processor cores* defaults to all but one, so the computer stays usable; the scattering fit and the a₀/b₀ grid search are split across them (the results are identical to one core). The linear models are already fast and always use one core.
 
 ### Tab 4 · Chromophores
 
@@ -185,7 +185,7 @@ Paths in a settings file are relative to the file. Pixel coordinates are [row, c
 * **Check the `se_*` maps** before interpreting a chromophore map: a map whose standard error is as large as its values is noise.
 * **Haemoglobins and CCO** are well determined in 530–750 nm. On the example, ΔHbO2 is recovered to within 1 % of its range.
 * **Binning** reduces noise as well as run time; 4×4 is a good start for 2048×2048 images.
-* **Speed** on a 2-core test machine for 512×512 pixels (2048² binned 4×): linear models under 1 s; *a and b free* about 70 s, plus about 90 s for the a₀/b₀ grid search (skip it by entering a₀, b₀). Reading a 2 GB 2048×2048×127 file with binning takes a few seconds and about 0.4 GB of memory.
+* **Speed** for 512×512 pixels (2048² binned 4×): linear models take under 1 s. *a and b free* takes about 70 s on one core plus about 90 s for the a₀/b₀ grid search (skip it by entering a₀, b₀); both run on several cores, which on two cores halves the time and on an 8-core laptop should cut it 4–6 times. Reading a 2 GB 2048×2048×127 file with binning takes a few seconds and about 0.4 GB of memory.
 
 ---
 
@@ -200,5 +200,7 @@ The fitting model is the one in `src/scattering_model/scatter.py` and `scatter_o
 * **Normalisation offset.** The +0.1 after white/dark calibration is kept as the default for raw data, and is now a visible setting.
 * **Chromophores and baselines** come from files, not code. The gray-matter baseline values are the defaults.
 * **Not carried over:** HELICOID-specific loading (ENVI files, label maps, blood-pixel reference selection), wavelength selection, and the deep-learning models. Those remain in `src/`.
+
+Calling SpectraFit from your own Python script: the multi-core fit starts worker processes with the "spawn" method, so put the script's code under `if __name__ == "__main__":`. Without it SpectraFit notices, uses one core and says so in the notes.
 
 Run the tests with `pip install -e ".[gui,test]" pytest-qt` and `python -m pytest` (on a Linux server without a screen: `xvfb-run -a python -m pytest`).

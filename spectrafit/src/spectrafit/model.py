@@ -152,62 +152,68 @@ def _pl_rows(PL: np.ndarray, sl: slice) -> np.ndarray:
 
 def fit(problem: Problem, y: np.ndarray, PL: np.ndarray, method: str = "fast", b_step: float = 0.05,
         chunk_size: int = 20000, progress: Progress = None, refine_iterations: int = 22,
-        uncertainties: bool = True) -> Dict[str, np.ndarray]:
-    """Fit every row of y (N × W). Returns parameter arrays (N,), residual RMS, flags and standard errors."""
+        uncertainties: bool = True, executor=None) -> Dict[str, np.ndarray]:
+    """Fit every row of y (N × W). Returns parameter arrays (N,), residual RMS, flags and standard errors.
+
+    Pixels are fitted in independent blocks. With an `executor` (a process pool, see
+    spectrafit.parallel) the blocks run on several processor cores at once; the results
+    are identical to running them one after the other.
+    """
     y = np.asarray(y)
     N, W = y.shape
     lin_names = problem.linear_names()
     P = len(lin_names)
+    nb = 1 if problem.mode == "free_scattering" else 0
     beta = np.full((N, P), np.nan)
-    bvals = np.full(N, np.nan) if problem.mode == "free_scattering" else None
+    bvals = np.full(N, np.nan) if nb else None
     converged = np.zeros(N, bool)
-    at_bound = np.zeros((N, P + (1 if bvals is not None else 0)), bool)
+    at_bound = np.zeros((N, P + nb), bool)
     rms = np.full(N, np.nan)
-    se = np.full((N, P + (1 if bvals is not None else 0)), np.nan)
+    se = np.full((N, P + nb), np.nan)
     finite = np.all(np.isfinite(y), axis=1)
-    lo, hi = problem.bounds()
 
-    chunks = list(_chunks(N, chunk_size))
-    for ci, sl in enumerate(chunks):
-        yy = y[sl]
-        ok = finite[sl]
-        if not ok.any():
-            continue
-        idx = np.flatnonzero(ok) + sl.start
-        yk = yy[ok].astype(float)
-        PLk = PL[idx] if PL.ndim == 2 else PL
+    workers = getattr(executor, "_max_workers", 1) if executor is not None else 1
+    if workers > 1:  # enough blocks to keep every core busy, but not so small that overhead dominates
+        chunk_size = int(min(chunk_size, max(2000, np.ceil(N / (3 * workers)))))
+    jobs = []
+    for sl in _chunks(N, chunk_size):
+        idx = np.flatnonzero(finite[sl]) + sl.start
+        if idx.size:
+            jobs.append(idx)
 
-        def sub_progress(f, msg, _ci=ci):
-            if progress:
-                progress((_ci + f) / len(chunks), msg)
-
-        if method == "exact":
-            res = _fit_exact(problem, yk, PLk, lo, hi, sub_progress)
-        elif problem.mode == "free_scattering":
-            res = _fit_free_fast(problem, yk, PLk, lo, hi, b_step, refine_iterations, sub_progress)
-        else:
-            yt = problem.target(yk, PLk)
-            X = problem.design(PLk)
-            bk, conv, ab = solve_box(X, yt, lo, hi)
-            res = {"beta": bk, "converged": conv, "at_bound": ab, "b": None}
-
-        bk = res["beta"]
-        beta[idx] = bk
+    def store(idx, res):
+        beta[idx] = res["beta"]
         converged[idx] = res["converged"]
-        bk_b = res["b"]
+        at_bound[idx] = res["at_bound"]
+        rms[idx] = res["rms"]
+        se[idx] = res["se"]
         if bvals is not None:
-            bvals[idx] = bk_b
-            ab_b = (np.abs(bk_b) < 1e-6) | (np.abs(bk_b - problem.b_max) < 1e-6)
-            at_bound[idx] = np.column_stack([res["at_bound"], ab_b])
-        else:
-            at_bound[idx] = res["at_bound"]
-        pred = problem.predict(bk, PLk, bk_b)
-        r = yk - pred
-        rss = np.sum(r * r, axis=1)
-        rms[idx] = np.sqrt(rss / W)
-        if uncertainties:
-            se[idx] = _standard_errors(problem, bk, PLk, bk_b, rss)
-        sub_progress(1.0, "Fitting")
+            bvals[idx] = res["b"]
+
+    args = (method, b_step, refine_iterations, uncertainties)
+    if executor is not None and len(jobs) > 1:
+        futures = {executor.submit(fit_block, problem, y[idx].astype(float),
+                                   PL[idx] if PL.ndim == 2 else PL, *args): idx for idx in jobs}
+        try:
+            from concurrent.futures import as_completed
+
+            for done, fut in enumerate(as_completed(futures), 1):
+                store(futures[fut], fut.result())
+                if progress:
+                    progress(done / len(jobs), f"Fitting on {workers} cores ({done}/{len(jobs)} blocks)")
+        except BaseException:
+            for f in futures:
+                f.cancel()
+            raise
+    else:
+        for ji, idx in enumerate(jobs):
+            def sub_progress(f, msg, _ji=ji):
+                if progress:
+                    progress((_ji + f) / len(jobs), msg)
+
+            store(idx, fit_block(problem, y[idx].astype(float), PL[idx] if PL.ndim == 2 else PL, *args,
+                                 progress=sub_progress))
+            sub_progress(1.0, "Fitting")
 
     out: Dict[str, np.ndarray] = {name: beta[:, i] for i, name in enumerate(lin_names)}
     se_names = lin_names + (["b"] if bvals is not None else [])
@@ -220,6 +226,32 @@ def fit(problem: Problem, y: np.ndarray, PL: np.ndarray, method: str = "fast", b
         out[f"se_{name}"] = se[:, i]
     out["_param_names"] = np.array(se_names)
     return out
+
+
+def fit_block(problem: Problem, yk: np.ndarray, PLk: np.ndarray, method: str, b_step: float,
+              refine_iterations: int, uncertainties: bool, progress: Progress = None) -> Dict[str, np.ndarray]:
+    """Fit one block of pixels (all rows finite). Runs in this process or in a worker process."""
+    lo, hi = problem.bounds()
+    W = yk.shape[1]
+    if method == "exact":
+        res = _fit_exact(problem, yk, PLk, lo, hi, progress)
+    elif problem.mode == "free_scattering":
+        res = _fit_free_fast(problem, yk, PLk, lo, hi, b_step, refine_iterations, progress)
+    else:
+        yt = problem.target(yk, PLk)
+        X = problem.design(PLk)
+        bk, conv, ab = solve_box(X, yt, lo, hi)
+        res = {"beta": bk, "converged": conv, "at_bound": ab, "b": None}
+    bk, bk_b = res["beta"], res["b"]
+    at_bound = res["at_bound"]
+    if bk_b is not None:
+        ab_b = (np.abs(bk_b) < 1e-6) | (np.abs(bk_b - problem.b_max) < 1e-6)
+        at_bound = np.column_stack([at_bound, ab_b])
+    r = yk - problem.predict(bk, PLk, bk_b)
+    rss = np.sum(r * r, axis=1)
+    se = _standard_errors(problem, bk, PLk, bk_b, rss) if uncertainties else np.full(at_bound.shape, np.nan)
+    return {"beta": bk, "b": bk_b, "converged": res["converged"], "at_bound": at_bound,
+            "rms": np.sqrt(rss / W), "se": se}
 
 
 def _standard_errors(problem: Problem, beta, PL, b, rss) -> np.ndarray:
