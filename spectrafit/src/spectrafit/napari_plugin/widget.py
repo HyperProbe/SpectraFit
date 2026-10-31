@@ -493,6 +493,7 @@ class SpectraFitWidget(QWidget):
         b_pick.setToolTip("Click once on the image to place the reference pixel.")
         b_pick.clicked.connect(self._start_pick_pixel)
         pl.addRow(b_pick)
+        pl.addRow(_hint("Drag the cross to move it, or press 'Pick on image' and click the new position."))
         self.ref_row = _ispin(0, 100000, 0)
         self.ref_col = _ispin(0, 100000, 0)
         rr = QWidget()
@@ -564,19 +565,32 @@ class SpectraFitWidget(QWidget):
         return layer
 
     def _points_changed(self, event=None):
+        # napari announces a change before making it (adding/changing/removing); act only once it is done
+        action = str(getattr(event, "action", "") or "").lower()
+        if action in ("adding", "changing", "removing"):
+            return
         layer = self.viewer.layers["Reference pixel"]
         if len(layer.data) == 0 or self.data is None:
             return
         if len(layer.data) > 1:
             layer.data = layer.data[-1:]
             return
+        H, W = self.data.shape
         r, c = layer.data[-1][-2:]
-        orow, ocol = self.data.to_original(int(np.floor(r)), int(np.floor(c)))
+        # napari draws pixel i centred on coordinate i, so the pixel under a point is the rounded coordinate
+        ri = int(np.clip(np.floor(r + 0.5), 0, H - 1))
+        ci = int(np.clip(np.floor(c + 0.5), 0, W - 1))
+        if (ri, ci) != (r, c):  # snap the marker onto the pixel centre
+            with layer.events.data.blocker():
+                layer.data = np.array([[ri, ci]], dtype=float)
+            layer.refresh()
+        orow, ocol = self.data.to_original(ri, ci)
         for s, v in ((self.ref_row, orow), (self.ref_col, ocol)):
             s.blockSignals(True)
             s.setValue(int(v))
             s.blockSignals(False)
-        layer.mode = "pan_zoom"
+        if layer.mode == "add":  # one click places the marker; go back to normal clicking
+            layer.mode = "pan_zoom"
         _set_combo_data(self.ref_type, "pixel")
         self.status.setText(f"Reference pixel set to row {int(orow)}, column {int(ocol)} (original image).")
         self._plot_reference()
@@ -1147,6 +1161,9 @@ class SpectraFitWidget(QWidget):
         if active is not None and getattr(active, "mode", "") in ("add", "add_polygon", "add_rectangle", "add_ellipse",
                                                                     "add_path", "add_line", "direct", "select"):
             return
+        if self._near_reference_marker(viewer):
+            yield from self._drag_reference_marker(viewer, event)
+            return
         pos = viewer.cursor.position
         row, col = int(np.floor(pos[-2] + 0.5)), int(np.floor(pos[-1] + 0.5))
         H, W = self.data.shape
@@ -1169,6 +1186,40 @@ class SpectraFitWidget(QWidget):
             vals.append(f"{k} {v:.3g}")
         self.inspector.info.setText(where + ":  " + ",  ".join(vals))
         self.inspector.show_fit(fit, where, self.results.absolute)
+
+    def _near_reference_marker(self, viewer) -> bool:
+        """Is the mouse on the visible reference-pixel cross?"""
+        name = "Reference pixel"
+        if name not in viewer.layers or self.ref_type.currentData() != "pixel":
+            return False
+        layer = viewer.layers[name]
+        if not layer.visible or len(layer.data) != 1:
+            return False
+        pos = np.asarray(viewer.cursor.position[-2:], float)
+        size = float(np.max(layer.size)) if np.size(layer.size) else 3.0
+        return float(np.hypot(*(pos - layer.data[0][-2:]))) <= max(1.5, 0.5 * size)
+
+    def _drag_reference_marker(self, viewer, event):
+        """Press on the cross and drag: the marker follows the mouse, snapping to pixels."""
+        layer = viewer.layers["Reference pixel"]
+        H, W = self.data.shape
+        old_pan = viewer.camera.mouse_pan
+        viewer.camera.mouse_pan = False  # the image must not pan while the marker is dragged
+        try:
+            yield
+            while event.type == "mouse_move":
+                r, c = viewer.cursor.position[-2:]
+                ri = int(np.clip(np.floor(r + 0.5), 0, H - 1))
+                ci = int(np.clip(np.floor(c + 0.5), 0, W - 1))
+                with layer.events.data.blocker():
+                    layer.data = np.array([[ri, ci]], dtype=float)
+                layer.refresh()
+                orow, ocol = self.data.to_original(ri, ci)
+                self.status.setText(f"Moving reference pixel: row {int(orow)}, column {int(ocol)}")
+                yield
+        finally:
+            viewer.camera.mouse_pan = old_pan
+            self._points_changed()
 
     # ======================================================================== settings <-> widgets
     def gather_config(self) -> Config:

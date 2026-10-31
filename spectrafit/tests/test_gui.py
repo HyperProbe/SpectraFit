@@ -43,3 +43,44 @@ def test_widget_full_workflow(tmp_path, qtbot):
         assert w2.gather_config().to_dict() == cfg.to_dict()
     finally:
         viewer.close()
+
+
+def test_reference_marker_pick_and_drag(tmp_path, qtbot):
+    """The cross snaps to the pixel it is drawn on, can be dragged, stays above the image after reloading."""
+    from spectrafit.napari_plugin.widget import SpectraFitWidget
+    from spectrafit.synthetic import make_cube, write_mat
+
+    sim = make_cube(shape=(40, 40), mode="no_scattering", seed=1, realistic=True)
+    mat = write_mat(tmp_path / "cube.mat", sim["cube"], sim["wavelengths"])
+    viewer = napari.Viewer(show=False)
+    try:
+        w = SpectraFitWidget(viewer)
+        w.file_edit.setText(str(mat))
+        w.binning.setValue(2)
+        w._loaded(w._do_load(w.gather_config().data))
+        w._start_pick_pixel()
+        viewer.layers["Reference pixel"].add(np.array([[10.7, 5.2]]))
+        assert viewer.layers["Reference pixel"].data.tolist() == [[11.0, 5.0]]
+        assert (w.ref_row.value(), w.ref_col.value()) == (22, 10)  # binning 2
+
+        class Ev:
+            type = "mouse_press"
+
+        ev = Ev()
+        viewer.cursor.position = (11.2, 4.9)
+        gen = w._on_click(viewer, ev)
+        next(gen)
+        assert viewer.camera.mouse_pan is False
+        ev.type = "mouse_move"
+        viewer.cursor.position = (15.4, 8.6)
+        next(gen)
+        ev.type = "mouse_release"
+        with pytest.raises(StopIteration):
+            next(gen)
+        assert viewer.camera.mouse_pan is True
+        assert (w.ref_row.value(), w.ref_col.value()) == (30, 18)
+
+        w._loaded(w._do_load(w.gather_config().data))  # reloading must not hide the cross
+        assert viewer.layers[-1].name == "Reference pixel"
+    finally:
+        viewer.close()
