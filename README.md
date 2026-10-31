@@ -1,5 +1,9 @@
 # SpectraFit
 
+> **Looking for the program to analyse your own measurements?** See the [`spectrafit/`](spectrafit/) folder:
+> a graphical application (napari) with a one-command installer for macOS and Linux and a user guide.
+> The rest of this repository is the research code used for the paper.
+
 Code used for spectral unmixing and molecular mapping of HELICOID hyperspectral images.
 
 This branch contains the implementation used for the paper experiments, including different approaches for modeling the wavelength-dependent optical pathlength.

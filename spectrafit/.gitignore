@@ -1,0 +1,7 @@
+*.egg-info/
+__pycache__/
+.pytest_cache/
+spectrafit_results/
+spectrafit_example/
+# the repository root ignores every "data" folder; the package data must be versioned
+!src/spectrafit/data/
