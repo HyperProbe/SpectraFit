@@ -1035,8 +1035,10 @@ class SpectraFitWidget(QWidget):
         mh.addWidget(self.side_by_side)
         lay.addLayout(mh)
         self.map_list = QListWidget()
+        self._toggled_item = None  # item whose tick box the current mouse click changed
         self.map_list.itemChanged.connect(self._map_toggled)
-        self.map_list.itemClicked.connect(lambda it: self._focus_map(it.data(Qt.ItemDataRole.UserRole)))
+        self.map_list.pressed.connect(lambda *_: setattr(self, "_toggled_item", None))
+        self.map_list.itemClicked.connect(self._map_clicked)
         lay.addWidget(self.map_list, 1)
         mrow = QHBoxLayout()
         b_all = QPushButton("Show all chromophores")
@@ -1178,12 +1180,21 @@ class SpectraFitWidget(QWidget):
             it.setCheckState(Qt.CheckState.Checked if pred(it.data(Qt.ItemDataRole.UserRole)) else Qt.CheckState.Unchecked)
 
     def _map_toggled(self, item: QListWidgetItem):
+        self._toggled_item = item
         key = item.data(Qt.ItemDataRole.UserRole)
         name = f"SpectraFit map: {key}"
         if item.checkState() == Qt.CheckState.Checked:
             self._show_map(key)
         elif name in self.viewer.layers:
             self.viewer.layers.remove(name)
+            self._update_map_label()
+
+    def _map_clicked(self, item: QListWidgetItem):
+        """Clicking a name shows that map; clicking its tick box only ticks or unticks it."""
+        toggled, self._toggled_item = self._toggled_item is item, None
+        if toggled and item.checkState() != Qt.CheckState.Checked:
+            return  # just unticked: leave it removed
+        self._focus_map(item.data(Qt.ItemDataRole.UserRole))
 
     def _toggle_grid(self, on: bool):
         self.viewer.grid.enabled = on

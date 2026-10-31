@@ -126,3 +126,54 @@ def test_clickable_image_cues(tmp_path, qtbot):
         assert INSPECTED not in viewer.layers
     finally:
         viewer.close()
+
+
+def test_map_list_tick_and_untick(tmp_path, qtbot):
+    """Clicking a tick box ticks/unticks the map; clicking a name shows that map."""
+    from qtpy.QtCore import QPoint, Qt
+    from qtpy.QtTest import QTest
+
+    from spectrafit.napari_plugin.widget import SpectraFitWidget
+    from spectrafit.synthetic import make_cube, write_mat
+
+    sim = make_cube(shape=(20, 20), mode="no_scattering", seed=1, realistic=True)
+    mat = write_mat(tmp_path / "cube.mat", sim["cube"], sim["wavelengths"])
+    viewer = napari.Viewer(show=False)
+    try:
+        w = SpectraFitWidget(viewer)
+        w.file_edit.setText(str(mat))
+        w.binning.setValue(1)
+        w._loaded(w._do_load(w.gather_config().data))
+        w.ref_row.setValue(0)
+        w.ref_col.setValue(0)
+        w.autosave.setChecked(False)
+        w._fitted(w._do_fit(w.gather_config()))
+        w.show()
+        lw = w.map_list
+        it = lw.item(0)
+        key = it.data(Qt.ItemDataRole.UserRole)
+        layer = f"SpectraFit map: {key}"
+
+        def click(x):
+            lw.scrollToItem(it)
+            r = lw.visualItemRect(it)
+            QTest.mouseClick(lw.viewport(), Qt.MouseButton.LeftButton, pos=QPoint(r.left() + x, r.center().y()))
+
+        def ticked():
+            return it.checkState() == Qt.CheckState.Checked
+
+        assert not ticked() and layer not in viewer.layers
+        click(10)  # tick box
+        assert ticked() and layer in viewer.layers
+        click(10)  # tick box again: must untick
+        assert not ticked() and layer not in viewer.layers
+        click(80)  # the name: shows it
+        assert ticked() and viewer.layers[layer].visible and viewer.layers.selection.active.name == layer
+        click(80)  # the name again: stays shown
+        assert ticked()
+        w._check_maps(lambda k: False)  # "Hide all"
+        assert not any(l.name.startswith("SpectraFit map: ") for l in viewer.layers)
+        click(80)  # the name right after "Hide all" still shows it
+        assert ticked() and layer in viewer.layers
+    finally:
+        viewer.close()
