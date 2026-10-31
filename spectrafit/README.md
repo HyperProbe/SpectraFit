@@ -8,7 +8,7 @@ It is the user-facing version of the fitting code in this repository (branch `d4
 
 ## 1. Installing (macOS and Linux)
 
-1. Unzip the folder anywhere (e.g. your Downloads folder).
+1. Download the `SpectraFit-app` zip file from the [latest release](https://github.com/HyperProbe/SpectraFit/releases/latest) and unzip it anywhere (e.g. your Downloads folder).
 2. Open a Terminal in that folder. On macOS: right-click the folder in Finder → *Services* → *New Terminal at Folder*, or open Terminal, type `cd ` (with a space) and drag the folder into the window, then press Enter.
 3. Type `bash install.sh` and press Enter.
 
