@@ -940,14 +940,6 @@ class SpectraFitWidget(QWidget):
         af.addRow("Solver", self.solver_method)
         self.b_step = _dspin(0.005, 1, 0.05, 0.01, 3)
         af.addRow("b search step", self.b_step)
-        from ..parallel import available_cores
-
-        n_avail = available_cores()
-        self.cores = _ispin(0, n_avail, 0)
-        self.cores.setSpecialValueText(f"all but one ({max(1, n_avail - 1)} of {n_avail})")
-        self.cores.setToolTip("Processor cores for the scattering fit and the a0/b0 grid search. "
-                              "The linear models are fast on one core and always use one.")
-        af.addRow("Processor cores", self.cores)
         for child in self.adv_box.findChildren(QWidget):
             child.setVisible(False)
         self.adv_box.toggled.connect(lambda on: [c.setVisible(on) for c in self.adv_box.findChildren(QWidget)])
@@ -1011,6 +1003,15 @@ class SpectraFitWidget(QWidget):
         self.autosave = QCheckBox("save after each run (with the settings file)")
         self.autosave.setChecked(True)
         f.addRow(self.autosave)
+        from ..parallel import available_cores
+
+        n_avail = available_cores()
+        self.n_cores_max = max(1, n_avail - 1)  # one core stays free so the computer remains usable
+        self.cores = _ispin(1, self.n_cores_max, self.n_cores_max)
+        self.cores.setSuffix(f"  of {n_avail}")
+        self.cores.setToolTip(f"Processor cores used by the scattering fit and the a0/b0 grid search (1 to {self.n_cores_max}; "
+                              "one core is left free). The linear models are fast and always use one core.")
+        f.addRow("Processor cores", self.cores)
         lay.addLayout(f)
         row = QHBoxLayout()
         self.run_button = QPushButton("Run fit")
@@ -1378,7 +1379,7 @@ class SpectraFitWidget(QWidget):
 
         cfg.solver.method = self.solver_method.currentData()
         cfg.solver.b_step = self.b_step.value()
-        cfg.solver.cores = self.cores.value() or None
+        cfg.solver.cores = None if self.cores.value() >= self.n_cores_max else self.cores.value()
 
         mk = cfg.mask
         mk.min_reflectance = self.mask_min.value() if self.mask_min_on.isChecked() else None
@@ -1464,7 +1465,7 @@ class SpectraFitWidget(QWidget):
         self.jacques_tissue.setCurrentText(p.jacques_tissue)
         _set_combo_data(self.solver_method, cfg.solver.method)
         self.b_step.setValue(cfg.solver.b_step)
-        self.cores.setValue(int(cfg.solver.cores or 0))
+        self.cores.setValue(self.n_cores_max if not cfg.solver.cores else min(int(cfg.solver.cores), self.n_cores_max))
         mk = cfg.mask
         self.mask_min_on.setChecked(mk.min_reflectance is not None)
         if mk.min_reflectance is not None:

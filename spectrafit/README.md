@@ -103,7 +103,7 @@ All options work with any chromophore set, including new chromophores. For the m
 
 **Pixels to fit:** skip pixels that are too dark (background) or too bright (specular highlights), or fit only inside polygons you draw.
 
-**Advanced:** limits of a and b, the scattering factor and λ₀, the absolute-mode offset, the solver, and the number of processor cores. *Fast* fits the whole image at once. *Exact* fits pixel by pixel with scipy, exactly like the paper code: slow, meant for checking small regions. *Processor cores* defaults to all but one, so the computer stays usable; the scattering fit and the a₀/b₀ grid search are split across them (the results are identical to one core). The linear models are already fast and always use one core.
+**Advanced:** limits of a and b, the scattering factor and λ₀, the absolute-mode offset, and the solver. *Fast* fits the whole image at once. *Exact* fits pixel by pixel with scipy, exactly like the paper code: slow, meant for checking small regions.
 
 ### Tab 4 · Chromophores
 
@@ -140,7 +140,7 @@ Settings files refer to added chromophores by their file path, so the settings a
 
 ### Tab 5 · Run
 
-Press **Run fit**. Progress is shown at the bottom, and *Stop* interrupts. With *save after each run* ticked, every run creates a new time-stamped folder. The maps appear as layers; click a name in the list to view it, or tick *side by side* to compare several. Notes and warnings about the run appear below the list.
+Press **Run fit**. Progress is shown at the bottom, and *Stop* interrupts. **Processor cores** (1 to the number of cores minus one; default all but one, so the computer stays usable) speeds up the scattering fit and the a₀/b₀ grid search; the results are identical to one core. The linear models are already fast and always use one core. With *save after each run* ticked, every run creates a new time-stamped folder. The maps appear as layers; click a name in the list to view it, or tick *side by side* to compare several. Notes and warnings about the run appear below the list.
 
 **Save settings…** (top) writes the current settings to a file; **Load settings…** restores them.
 
