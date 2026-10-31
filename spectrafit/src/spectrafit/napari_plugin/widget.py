@@ -17,7 +17,7 @@ from qtpy.QtCore import QObject, Qt, Signal
 from qtpy.QtWidgets import (QAbstractItemView, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox,
                             QFileDialog, QFormLayout, QGroupBox, QHBoxLayout, QHeaderView, QLabel, QLineEdit,
                             QListWidget, QListWidgetItem, QMessageBox, QPlainTextEdit, QProgressBar, QPushButton,
-                            QSpinBox, QTableWidget, QTableWidgetItem, QTabWidget, QVBoxLayout, QWidget)
+                            QScrollArea, QSpinBox, QTableWidget, QTableWidgetItem, QTabWidget, QVBoxLayout, QWidget)
 
 from ..chromophores import (UNIT_DESCRIPTIONS, Chromophore, ChromophoreLibrary, absorption_matrix, builtin_dir,
                             collinearity_report, common_range, detection_limits, read_chromophore_file, user_dir,
@@ -80,6 +80,16 @@ def _hint(text: str) -> QLabel:
     return lab
 
 
+def _scrollable(content: QWidget) -> QScrollArea:
+    """Put a tab's content in a vertical scroll area: a scroll bar appears when the window is too short."""
+    area = QScrollArea()
+    area.setWidget(content)
+    area.setWidgetResizable(True)
+    area.setFrameShape(QScrollArea.Shape.NoFrame)
+    area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+    return area
+
+
 class _Signals(QObject):
     progress = Signal(float, str)
 
@@ -120,7 +130,7 @@ class InspectorWidget(QWidget):
         self.info = QLabel("Click a pixel in the image to see its spectrum and fit.")
         self.info.setWordWrap(True)
         lay.addWidget(self.info)
-        self.plot = PlotPanel(height=3.6)
+        self.plot = PlotPanel(height=3.0)
         lay.addWidget(self.plot)
         self.show_components = QCheckBox("Show contribution of each chromophore")
         self.show_components.setChecked(True)
@@ -240,11 +250,13 @@ class SpectraFitWidget(QWidget):
         outer.addLayout(top)
 
         self.tabs = QTabWidget()
-        self.tabs.addTab(self._build_data_tab(), "1 Data")
-        self.tabs.addTab(self._build_reference_tab(), "2 Reference")
-        self.tabs.addTab(self._build_chromophore_tab(), "3 Chromophores")
-        self.tabs.addTab(self._build_model_tab(), "4 Model")
-        self.tabs.addTab(self._build_run_tab(), "5 Run")
+        self.tabs.addTab(_scrollable(self._build_data_tab()), "1 Data")
+        self.tabs.addTab(_scrollable(self._build_reference_tab()), "2 Reference")
+        self.tabs.addTab(_scrollable(self._build_chromophore_tab()), "3 Chromophores")
+        self.tabs.addTab(_scrollable(self._build_model_tab()), "4 Model")
+        self.tabs.addTab(_scrollable(self._build_run_tab()), "5 Run")
+        # tabs scroll, so they would otherwise shrink to nothing next to the Fit inspector
+        self.tabs.setMinimumHeight(430)
         outer.addWidget(self.tabs, 1)
 
         self.progress = QProgressBar()
@@ -587,13 +599,18 @@ class SpectraFitWidget(QWidget):
         self.chrom_table.horizontalHeaderItem(4).setToolTip(
             "Smallest change the fit can resolve (1 standard deviation) for noise of 0.001 in ΔA, "
             "with the current wavelength range and model. Orange/red: large compared with the baseline.")
-        self.chrom_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        header = self.chrom_table.horizontalHeader()
+        for col, mode in ((0, QHeaderView.ResizeMode.ResizeToContents), (1, QHeaderView.ResizeMode.ResizeToContents),
+                          (2, QHeaderView.ResizeMode.Interactive), (3, QHeaderView.ResizeMode.ResizeToContents),
+                          (4, QHeaderView.ResizeMode.Stretch)):
+            header.setSectionResizeMode(col, mode)
+        self.chrom_table.setColumnWidth(2, 80)
         self.chrom_table.verticalHeader().setVisible(False)
+        self.chrom_table.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.chrom_table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         self.chrom_table.itemChanged.connect(lambda *_: self._update_chromophore_plot())
         self.chrom_table.verticalHeader().setDefaultSectionSize(24)
-        self.chrom_table.setMinimumHeight(24 * 11 + 30)
-        lay.addWidget(self.chrom_table, 1)
+        lay.addWidget(self.chrom_table)
         row = QHBoxLayout()
         b_add = QPushButton("Add chromophore from file…")
         b_add.clicked.connect(self._add_chromophore)
@@ -607,7 +624,15 @@ class SpectraFitWidget(QWidget):
         lay.addWidget(self.coll_label)
         self.chrom_plot = PlotPanel(height=2.3)
         lay.addWidget(self.chrom_plot)
+        lay.addStretch(1)
         return w
+
+    def _fit_table_height(self):
+        """Make the chromophore table exactly as tall as its rows (no empty block, no inner scrolling)."""
+        t = self.chrom_table
+        rows = sum(t.rowHeight(r) for r in range(t.rowCount()))
+        height = t.horizontalHeader().sizeHint().height() + rows + 2 * t.frameWidth() + 2
+        t.setFixedHeight(height)
 
     def _refresh_chromophore_table(self, selected: List[str], baselines: Optional[dict] = None):
         self.library = ChromophoreLibrary(extra_files=getattr(self, "_extra_files", []))
@@ -636,8 +661,10 @@ class SpectraFitWidget(QWidget):
             d = QTableWidgetItem("")
             d.setFlags(Qt.ItemFlag.ItemIsEnabled)
             t.setItem(r, 4, d)
-        t.resizeColumnToContents(0)
+        t.resizeColumnsToContents()
+        t.setColumnWidth(2, max(80, t.columnWidth(2)))
         t.blockSignals(False)
+        self._fit_table_height()
         self._update_chromophore_plot()
 
     def _selected_chromophores(self):
@@ -658,7 +685,7 @@ class SpectraFitWidget(QWidget):
         if not hasattr(self, "chrom_plot") or not hasattr(self, "range_lo"):
             return
         names, _ = self._selected_chromophores()
-        self.chrom_plot.clear("Absorption of selected chromophores (per unit concentration)")
+        self.chrom_plot.clear("Absorption per unit concentration")
         if not names:
             self.coll_label.setText("Select at least one chromophore.")
             self.chrom_plot.draw()
