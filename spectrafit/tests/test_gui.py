@@ -84,3 +84,44 @@ def test_reference_marker_pick_and_drag(tmp_path, qtbot):
         assert viewer.layers[-1].name == "Reference pixel"
     finally:
         viewer.close()
+
+
+def test_clickable_image_cues(tmp_path, qtbot):
+    """Crosshair cursor over the image, hand over the reference cross, yellow square on the inspected pixel."""
+    from spectrafit.napari_plugin.widget import INSPECTED, SpectraFitWidget
+    from spectrafit.synthetic import make_cube, write_mat
+
+    sim = make_cube(shape=(40, 40), mode="no_scattering", seed=1, realistic=True)
+    mat = write_mat(tmp_path / "cube.mat", sim["cube"], sim["wavelengths"])
+    viewer = napari.Viewer(show=False)
+    try:
+        w = SpectraFitWidget(viewer)
+        w.file_edit.setText(str(mat))
+        w.binning.setValue(1)
+        w._loaded(w._do_load(w.gather_config().data))
+        w.ref_row.setValue(5)
+        w.ref_col.setValue(5)
+
+        class Ev:
+            type = "mouse_move"
+
+        for pos, style in (((20, 20), "crosshair"), ((5, 5), "pointing"), ((-10, -10), "standard")):
+            viewer.cursor.position = pos
+            w._on_mouse_move(viewer, Ev())
+            assert viewer.cursor.style == style
+
+        active = viewer.layers.selection.active
+        ev = Ev()
+        ev.type = "mouse_press"
+        viewer.cursor.position = (30.3, 12.8)
+        gen = w._on_click(viewer, ev)
+        with pytest.raises(StopIteration):
+            next(gen)
+        assert viewer.layers[INSPECTED].data.tolist() == [[30.0, 13.0]]
+        assert viewer.layers.selection.active is active  # the marker must not steal the selection
+        assert viewer.layers[-1].name == "Reference pixel"
+
+        w._loaded(w._do_load(w.gather_config().data))  # a new image clears the old marker
+        assert INSPECTED not in viewer.layers
+    finally:
+        viewer.close()

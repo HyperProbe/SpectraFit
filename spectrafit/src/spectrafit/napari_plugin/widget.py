@@ -28,7 +28,8 @@ from ..pathlength import JACQUES_TISSUES, global_pathlength
 
 AXES_CHOICES = ["(automatic)", "HWB", "WHB", "BHW", "BWH", "HBW", "WBH", "HWBT", "WHBT", "BHWT", "THWB", "HWTB"]
 MAIN_MAPS = ["HbT", "StO2", "diffCCO", "b", "delta_a", "residual_rms"]
-OVERLAYS = ("Fit region", "Crop", "Reference region", "Reference pixel")
+OVERLAYS = ("Fit region", "Crop", "Reference region", "Inspected pixel", "Reference pixel")
+INSPECTED = "Inspected pixel"
 """Marker layers that must always be drawn above the images (last = topmost)."""
 
 
@@ -293,6 +294,7 @@ class SpectraFitWidget(QWidget):
         except Exception:  # e.g. when napari opens us as a plugin before the window exists
             pass
         self.viewer.mouse_drag_callbacks.append(self._on_click)
+        self.viewer.mouse_move_callbacks.append(self._on_mouse_move)
         # the name of the map on screen is written on the image and always follows what is visible
         for ev in (self.viewer.layers.events.inserted, self.viewer.layers.events.removed,
                    self.viewer.layers.events.moved):
@@ -481,7 +483,7 @@ class SpectraFitWidget(QWidget):
     def _loaded(self, data):
         self.data = data
         self.results = None
-        self._remove_layers(prefix="SpectraFit: ")
+        self._remove_layers(prefix="SpectraFit: ", names=[INSPECTED])
         T = data.n_frames
         rgb = np.stack([data.rgb(frame=t) for t in range(T)]) if T > 1 else data.rgb()
         self._add_or_replace_image("SpectraFit: colour preview", rgb, rgb=True)
@@ -1257,6 +1259,7 @@ class SpectraFitWidget(QWidget):
         frame = int(steps[-3]) if self.data.n_frames > 1 and len(steps) >= 3 else 0
         frame = min(max(frame, 0), self.data.n_frames - 1)
         orow, ocol = self.data.to_original(row, col)
+        self._mark_inspected(row, col)
         where = f"pixel row {int(orow)}, col {int(ocol)}" + (f", frame {frame}" if self.data.n_frames > 1 else "")
         if self.results is None:
             self.inspector.show_reflectance(self.data.wavelengths, self.data.cube[frame, row, col], where)
@@ -1270,6 +1273,41 @@ class SpectraFitWidget(QWidget):
             vals.append(f"{k} {v:.3g}")
         self.inspector.info.setText(where + ":  " + ",  ".join(vals))
         self.inspector.show_fit(fit, where, self.results.absolute)
+
+    def _on_mouse_move(self, viewer, event):
+        """Cursor shows what a click does: crosshair over the image (inspect), hand over the reference cross (drag)."""
+        if self.data is None:
+            return
+        active = viewer.layers.selection.active
+        if active is not None and getattr(active, "mode", "pan_zoom") != "pan_zoom":
+            return  # drawing / picking tools keep napari's own cursor
+        pos = viewer.cursor.position
+        H, W = self.data.shape
+        row, col = np.floor(pos[-2] + 0.5), np.floor(pos[-1] + 0.5)
+        if self._near_reference_marker(viewer):
+            style = "pointing"
+        elif 0 <= row < H and 0 <= col < W:
+            style = "crosshair"
+        else:
+            style = "standard"
+        if viewer.cursor.style != style:
+            viewer.cursor.style = style
+
+    def _mark_inspected(self, row: int, col: int):
+        """Yellow square around the pixel shown in the Fit inspector."""
+        size = max(2.0, max(self.data.shape) / 50)
+        if INSPECTED not in self.viewer.layers:
+            previous = self.viewer.layers.selection.active  # adding a layer would make it the active one
+            self.viewer.add_points(np.empty((0, 2)), name=INSPECTED, ndim=2, symbol="square", size=size,
+                                   face_color="transparent", border_color="yellow", border_width=0.15)
+            self._raise_overlays()
+            if previous is not None:
+                self.viewer.layers.selection.active = previous
+        layer = self.viewer.layers[INSPECTED]
+        with layer.events.data.blocker():
+            layer.data = np.array([[row, col]], dtype=float)
+        layer.size = size
+        layer.refresh()
 
     def _near_reference_marker(self, viewer) -> bool:
         """Is the mouse on the visible reference-pixel cross?"""

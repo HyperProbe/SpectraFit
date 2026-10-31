@@ -43,7 +43,7 @@ This writes a synthetic 128×128 image (`example_cube.mat`, 385–1015 nm in 5 n
 
 ## 3. Using the program
 
-The panel on the right has five tabs, used in order. Click any pixel in the image at any time: the **Fit inspector** plots its spectrum, or after a fit the measured and fitted attenuation with each chromophore's contribution.
+The panel on the right has five tabs, used in order. Click any pixel in the image at any time: the **Fit inspector** plots its spectrum, or after a fit the measured and fitted attenuation with each chromophore's contribution. Over the image the mouse pointer becomes a crosshair, and a small yellow square marks the pixel being inspected.
 
 ### Tab 1 · Data
 
