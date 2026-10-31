@@ -1,3 +1,7 @@
+> **⬇ Download the SpectraFit application** for analysing your own hyperspectral measurements:
+> [latest release](https://github.com/HyperProbe/SpectraFit/releases/latest) (the `SpectraFit-app` zip file).
+> Unzip it and follow the user guide inside ([spectrafit/README.md](spectrafit/README.md)). No programming needed.
+
 In the main branch, you can find the network-based approach to speed up standard spectral unmixing.
 The standard unmixing code is available in the D4.3 branch.
 
