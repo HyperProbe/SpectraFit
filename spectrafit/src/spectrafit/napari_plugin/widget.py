@@ -252,11 +252,15 @@ class SpectraFitWidget(QWidget):
         outer.addLayout(top)
 
         self.tabs = QTabWidget()
-        self.tabs.addTab(_scrollable(self._build_data_tab()), "1 Data")
-        self.tabs.addTab(_scrollable(self._build_reference_tab()), "2 Reference")
-        self.tabs.addTab(_scrollable(self._build_chromophore_tab()), "3 Chromophores")
-        self.tabs.addTab(_scrollable(self._build_model_tab()), "4 Model")
-        self.tabs.addTab(_scrollable(self._build_run_tab()), "5 Run")
+        # the chromophore checks depend on the fit range and model, so Model comes before Chromophores
+        data_tab, ref_tab = self._build_data_tab(), self._build_reference_tab()
+        chrom_tab = self._build_chromophore_tab()
+        model_tab, run_tab = self._build_model_tab(), self._build_run_tab()
+        self.tabs.addTab(_scrollable(data_tab), "1 Data")
+        self.tabs.addTab(_scrollable(ref_tab), "2 Reference")
+        self.tabs.addTab(_scrollable(model_tab), "3 Model")
+        self.tabs.addTab(_scrollable(chrom_tab), "4 Chromophores")
+        self.tabs.addTab(_scrollable(run_tab), "5 Run")
         # tabs scroll, so they would otherwise shrink to nothing next to the Fit inspector
         self.tabs.setMinimumHeight(430)
         outer.addWidget(self.tabs, 1)
@@ -609,12 +613,13 @@ class SpectraFitWidget(QWidget):
             return self._info(ref.description)
         self.inspector.show_reflectance(self.data.wavelengths, ref.spectrum, "Reference spectrum")
 
-    # ======================================================================== tab 3: chromophores
+    # ======================================================================== tab 4: chromophores
     def _build_chromophore_tab(self) -> QWidget:
         w = QWidget()
         lay = QVBoxLayout(w)
         lay.addWidget(_hint("Tick the absorbers to fit. The baseline is the typical tissue concentration, "
-                            "used only by the δ-P1 / Jacques pathlength models."))
+                            "used only by the δ-P1 / Jacques pathlength models. The checks below use the "
+                            "fit range and model chosen in tab 3."))
         self.chrom_table = QTableWidget(0, 5)
         self.chrom_table.setHorizontalHeaderLabels(["Fit", "Chromophore", "Baseline", "Unit", "± resolvable"])
         self.chrom_table.horizontalHeaderItem(4).setToolTip(
@@ -787,7 +792,7 @@ class SpectraFitWidget(QWidget):
         user_dir().mkdir(parents=True, exist_ok=True)
         QDesktopServices.openUrl(QUrl.fromLocalFile(str(user_dir())))
 
-    # ======================================================================== tab 4: model
+    # ======================================================================== tab 3: model
     def _build_model_tab(self) -> QWidget:
         w = QWidget()
         lay = QVBoxLayout(w)

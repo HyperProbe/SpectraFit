@@ -72,40 +72,7 @@ The differential Beer–Lambert law fits *changes* relative to a reference spect
 
 *Plot reference spectrum* shows what will be used.
 
-### Tab 3 · Chromophores
-
-Tick the absorbers to fit. Built in (from the [White Monte Carlo framework](https://github.com/CCaredda/White-Monte-Carlo/tree/main/spectra), 400–1000 nm): HbO2, HHb, oxCCO, redCCO, water, fat, and oxidised/reduced cytochromes b and c.
-
-* **Baseline:** the typical tissue concentration (gray-matter values by default). It is used only by the δ-P1 and Jacques pathlength models, and for StO₂ in differential mode. You can edit it in the table.
-* **± resolvable:** the smallest change the fit can resolve (one standard deviation) for noise of 0.001 in ΔA, with the current wavelength range and model. Green means small compared with the baseline; orange or red means the data will hardly constrain that chromophore.
-* The plot shows the selected spectra over the fit range. The coloured dot warns when two spectra are too similar to be separated.
-
-**Adding a new chromophore:** *Add chromophore from file…*, choose a two-column text/CSV file (wavelength in nm, value), give it a name and say what the values are:
-
-| Choice in the dialog | `unit:` in the file | Concentration unit |
-|---|---|---|
-| Molar extinction coefficient, base 10, cm⁻¹ M⁻¹ (e.g. Prahl tables) | `eps10_per_M_cm` | mM |
-| Molar extinction coefficient, base 10, cm⁻¹ mM⁻¹ | `eps10_per_mM_cm` | mM |
-| Specific absorption coefficient, natural log, cm⁻¹ mM⁻¹ | `mua_per_mM_cm` | mM |
-| Absorption coefficient of the pure substance, cm⁻¹ | `mua_per_cm` | volume fraction |
-
-It is saved in `~/.spectrafit/chromophores` and is available from then on. You can also put files there directly, in this format:
-
-```text
-# name: ICG
-# label: Indocyanine green
-# unit: eps10_per_M_cm
-# baseline: 0
-# source: where the spectrum comes from
-wavelength_nm,value
-600,1234
-601,1250
-...
-```
-
-Settings files refer to added chromophores by their file path, so the settings also work on a colleague's computer if the file is shared alongside.
-
-### Tab 4 · Model
+### Tab 3 · Model
 
 **Fit range** (default 530–750 nm) and wavelengths to **leave out** (e.g. `600-610, 700-705`).
 
@@ -137,6 +104,39 @@ All options work with any chromophore set, including new chromophores. For the m
 **Pixels to fit:** skip pixels that are too dark (background) or too bright (specular highlights), or fit only inside polygons you draw.
 
 **Advanced:** limits of a and b, the scattering factor and λ₀, the absolute-mode offset, and the solver. *Fast* fits the whole image at once. *Exact* fits pixel by pixel with scipy, exactly like the paper code: slow, meant for checking small regions.
+
+### Tab 4 · Chromophores
+
+Tick the absorbers to fit. The checks on this tab use the fit range and model chosen in tab 3, so set those first. Built in (from the [White Monte Carlo framework](https://github.com/CCaredda/White-Monte-Carlo/tree/main/spectra), 400–1000 nm): HbO2, HHb, oxCCO, redCCO, water, fat, and oxidised/reduced cytochromes b and c.
+
+* **Baseline:** the typical tissue concentration (gray-matter values by default). It is used only by the δ-P1 and Jacques pathlength models, and for StO₂ in differential mode. You can edit it in the table.
+* **± resolvable:** the smallest change the fit can resolve (one standard deviation) for noise of 0.001 in ΔA, with the current wavelength range and model. Green means small compared with the baseline; orange or red means the data will hardly constrain that chromophore.
+* The plot shows the selected spectra over the fit range. The coloured dot warns when two spectra are too similar to be separated.
+
+**Adding a new chromophore:** *Add chromophore from file…*, choose a two-column text/CSV file (wavelength in nm, value), give it a name and say what the values are:
+
+| Choice in the dialog | `unit:` in the file | Concentration unit |
+|---|---|---|
+| Molar extinction coefficient, base 10, cm⁻¹ M⁻¹ (e.g. Prahl tables) | `eps10_per_M_cm` | mM |
+| Molar extinction coefficient, base 10, cm⁻¹ mM⁻¹ | `eps10_per_mM_cm` | mM |
+| Specific absorption coefficient, natural log, cm⁻¹ mM⁻¹ | `mua_per_mM_cm` | mM |
+| Absorption coefficient of the pure substance, cm⁻¹ | `mua_per_cm` | volume fraction |
+
+It is saved in `~/.spectrafit/chromophores` and is available from then on. You can also put files there directly, in this format:
+
+```text
+# name: ICG
+# label: Indocyanine green
+# unit: eps10_per_M_cm
+# baseline: 0
+# source: where the spectrum comes from
+wavelength_nm,value
+600,1234
+601,1250
+...
+```
+
+Settings files refer to added chromophores by their file path, so the settings also work on a colleague's computer if the file is shared alongside.
 
 ### Tab 5 · Run
 
