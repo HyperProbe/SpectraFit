@@ -56,9 +56,11 @@ The panel on the right has five tabs, used in order. Click any pixel in the imag
 | Values are | *Reflectance* if already calibrated; *Raw counts* to calibrate with white and dark references: R = (raw − dark)/(white − dark). References can be variables in the same file, other `.mat` files or ENVI files; a single line or a single spectrum is fine. For ENVI data with `whiteReference`/`darkReference` files next to it (HELICOID), *Raw counts* and both references are filled in automatically. |
 | Offset added to R | *Automatic* adds 0.1 to calibrated raw data (as the HELICOID pipeline does) and nothing to reflectance data. Untick to choose. |
 | Binning | Averages n×n pixels while reading. 4 turns a 2048×2048 image into 512×512: 16× faster and less noisy. |
-| Crop | Click *Draw…*, drag a rectangle on the image, then *Crop to drawn rectangle*. |
+| Crop | Click *Draw…*, drag a rectangle on the image, then *Crop to drawn rectangle*. *Undo crop* goes back to the whole image. |
 
 Then press **Load data**. A colour preview appears; the full reflectance cube is the hidden layer *SpectraFit: reflectance* (move the band slider below the image).
+
+**Analysing the next image.** Choose the new file and press **Load data**. Everything that belonged to the previous image is cleared: its fit results and maps, the crop, the reference pixel or region, the fit region, and white/dark references that were filled in automatically. All other settings (model, chromophores, wavelength range, binning, output folder, processor cores) are kept, so the same analysis can be repeated. Choose the reference for the new image in tab 2. If you press *Run fit* without doing so, the program asks whether to reuse the reference pixel of the previous image. Reloading the *same* image, for example with other binning, keeps its crop and reference.
 
 ### Tab 2 · Reference
 

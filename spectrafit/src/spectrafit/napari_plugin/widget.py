@@ -23,7 +23,7 @@ from ..chromophores import (UNIT_DESCRIPTIONS, Chromophore, ChromophoreLibrary, 
                             collinearity_report, common_range, detection_limits, read_chromophore_file, user_dir,
                             write_chromophore_file)
 from ..config import (MODE_LABELS, PATHLENGTH_LABELS, PATHLENGTH_MODES, REFERENCE_LABELS, REFERENCE_TYPES, Config)
-from ..io import inspect_file, read_spectrum_file
+from ..io import inspect_file, read_spectrum_file, resolve_files
 from ..pathlength import JACQUES_TISSUES, global_pathlength
 
 AXES_CHOICES = ["(automatic)", "HWB", "WHB", "BHW", "BWH", "HBW", "WBH", "HWBT", "WHBT", "BHWT", "THWB", "HWTB"]
@@ -108,6 +108,11 @@ def _scrollable(content: QWidget) -> QScrollArea:
     return area
 
 
+def _source_key(files) -> tuple:
+    """Identifies an image (its file or files), to tell a new image from a reload of the same one."""
+    return tuple(sorted(str(Path(f).expanduser().resolve()) for f in files))
+
+
 class _Signals(QObject):
     progress = Signal(float, str)
 
@@ -155,6 +160,13 @@ class InspectorWidget(QWidget):
         lay.addWidget(self.show_components)
         self._last = None
         self.show_components.toggled.connect(lambda: self._last and self.show_fit(*self._last))
+
+    def reset(self):
+        """Forget the last pixel (used when new data are loaded)."""
+        self._last = None
+        self.info.setText("Click a pixel in the image to see its spectrum and fit.")
+        self.plot.clear("")
+        self.plot.canvas.draw_idle()
 
     def show_reflectance(self, wl, spec, title):
         self.plot.clear(title)
@@ -256,6 +268,9 @@ class SpectraFitWidget(QWidget):
         self._signals.progress.connect(self._on_progress)
         self.library = ChromophoreLibrary()
         self._file_info = None
+        self._image_key = None  # which image the crop, reference and regions belong to
+        self._ref_confirmed = False  # reference pixel chosen for the current image
+        self._auto_refs = False  # white/dark references were filled in automatically for the current file
 
         outer = QVBoxLayout(self)
         top = QHBoxLayout()
@@ -382,12 +397,14 @@ class SpectraFitWidget(QWidget):
         b_crop.clicked.connect(self._apply_crop)
         b_draw = QPushButton("Draw…")
         b_draw.clicked.connect(lambda: self._start_shape_layer("Crop", "add_rectangle", "yellow"))
-        b_reset = QPushButton("Reset")
-        b_reset.clicked.connect(self._reset_crop)
+        self.undo_crop_button = QPushButton("Undo crop")
+        self.undo_crop_button.setToolTip("Go back to the whole image (the data is reloaded).")
+        self.undo_crop_button.setEnabled(False)
+        self.undo_crop_button.clicked.connect(self._reset_crop)
         cl.addWidget(self.crop_label, 1)
         cl.addWidget(b_draw)
         cl.addWidget(b_crop)
-        cl.addWidget(b_reset)
+        cl.addWidget(self.undo_crop_button)
         lay.addWidget(crop_box)
         self._crop = None
 
@@ -449,12 +466,16 @@ class SpectraFitWidget(QWidget):
                 _set_combo_data(self.kind_combo, "raw")
                 self.white_edit.setText(info["white"])
                 self.dark_edit.setText(info.get("dark") or "")
+                self._auto_refs = True
                 lines.append("White/dark references found next to it: values set to raw counts, references filled in.")
+            else:
+                self._forget_auto_refs(lines)
         else:
             self.var_combo.setEnabled(True)
             self.axes_combo.setEnabled(True)
             lines = ["Variables: " + ", ".join(f"{k} {list(s)}" for k, s in info["variables"].items()),
                      f"Cube: '{info['cube']}' {list(info['shape'])}, detected axis order {info['axes']}"]
+            self._forget_auto_refs(lines)
         if info["wavelength_variable"]:
             lines.append(f"Wavelengths found in variable '{info['wavelength_variable']}'.")
         elif info["n_bands"] == 127:
@@ -467,12 +488,24 @@ class SpectraFitWidget(QWidget):
         self.data_info.setPlainText("\n".join(lines))
         self.status.setText("Check the settings, then press 'Load data'.")
 
+    def _forget_auto_refs(self, lines):
+        """White/dark references filled in for the previous file do not belong to this one."""
+        if self._auto_refs:
+            self.white_edit.clear()
+            self.dark_edit.clear()
+            _set_combo_data(self.kind_combo, "refl")
+            self._auto_refs = False
+            lines.append("The white/dark references of the previous file were cleared.")
+
     # ------------------------------------------------------------------ load
     def _load_data(self):
         try:
             cfg = self.gather_config()
+            new_image = _source_key(resolve_files(cfg.data.file)) != self._image_key
         except Exception as e:
             return self._error("Settings", e)
+        if new_image:
+            cfg.data.crop = None  # a crop drawn on another image does not apply
         self._run_in_thread(self._do_load, cfg.data, on_done=self._loaded, label="Loading")
 
     def _do_load(self, data_settings):
@@ -480,9 +513,36 @@ class SpectraFitWidget(QWidget):
 
         return load_data(data_settings, progress=self._emit)
 
-    def _loaded(self, data):
-        self.data = data
+    def _clear_results(self):
+        """Forget the last fit: maps, map list, inspector, run notes, progress."""
         self.results = None
+        self._remove_layers(prefix="SpectraFit map: ", names=[INSPECTED])
+        self.map_list.blockSignals(True)
+        self.map_list.clear()
+        self.map_list.blockSignals(False)
+        self.viewer.text_overlay.visible = False
+        self.notes.clear()
+        self.progress.setValue(0)
+        self.inspector.reset()
+
+    def _forget_image_geometry(self):
+        """Forget what was drawn or chosen on the previous image: crop, reference pixel/region, fit region."""
+        self._crop = None
+        self.crop_label.setText("whole image")
+        self.undo_crop_button.setEnabled(False)
+        self._roi_original = None
+        self._mask_polys_original = []
+        self._ref_confirmed = False
+        self._remove_layers(names=["Crop", "Reference region", "Fit region", "Reference pixel"])
+
+    def _loaded(self, data):
+        key = _source_key(data.files)
+        new_image = key != self._image_key
+        self.data = data
+        self._clear_results()
+        if new_image:
+            self._forget_image_geometry()
+            self._image_key = key
         self._remove_layers(prefix="SpectraFit: ", names=[INSPECTED])
         T = data.n_frames
         rgb = np.stack([data.rgb(frame=t) for t in range(T)]) if T > 1 else data.rgb()
@@ -495,6 +555,9 @@ class SpectraFitWidget(QWidget):
         H, W = data.shape
         lines = [f"Loaded {len(data.files)} file(s); working image {H}×{W} pixels, {T} frame(s), "
                  f"{data.wavelengths.size} bands {data.wavelengths[0]:g}–{data.wavelengths[-1]:g} nm."] + data.notes
+        if new_image:
+            lines.append("New image: results, crop, reference and regions of the previous image were cleared; "
+                         "the other settings were kept.")
         self.data_info.setPlainText("\n".join(lines))
         self.status.setText("Data loaded. Next: choose the reference in tab 2.")
         self.viewer.reset_view()
@@ -512,12 +575,14 @@ class SpectraFitWidget(QWidget):
         r1, c1 = self.data.to_original(rows.max(), cols.max())
         self._crop = [int(r0), int(np.ceil(r1)), int(c0), int(np.ceil(c1))]
         self.crop_label.setText(f"rows {self._crop[0]}–{self._crop[1]}, cols {self._crop[2]}–{self._crop[3]}")
+        self.undo_crop_button.setEnabled(True)
         self._remove_layers(names=["Crop"])
         self._load_data()
 
     def _reset_crop(self):
         self._crop = None
         self.crop_label.setText("whole image")
+        self.undo_crop_button.setEnabled(False)
         if self.data is not None:
             self._load_data()
 
@@ -546,8 +611,9 @@ class SpectraFitWidget(QWidget):
         pl.addRow("Row", self.ref_row)
         pl.addRow("Column", self.ref_col)
         pl.addRow(_hint("Row and column in the original image (before cropping and binning)."))
-        self.ref_row.valueChanged.connect(self._reference_boxes_changed)
-        self.ref_col.valueChanged.connect(self._reference_boxes_changed)
+        for box in (self.ref_row, self.ref_col):
+            box.valueChanged.connect(self._reference_boxes_changed)
+            box.editingFinished.connect(self._reference_boxes_changed)  # also confirms an unchanged value
         lay.addWidget(self.ref_pixel_box)
 
         self.ref_roi_box = QGroupBox("Reference region")
@@ -583,6 +649,7 @@ class SpectraFitWidget(QWidget):
         return w
 
     def _reference_boxes_changed(self, *_):
+        self._ref_confirmed = True
         self._sync_geometry_layers()
         self.status.setText(f"Reference pixel: row {self.ref_row.value()}, column {self.ref_col.value()} (original image).")
 
@@ -631,6 +698,7 @@ class SpectraFitWidget(QWidget):
             s.blockSignals(True)
             s.setValue(int(v))
             s.blockSignals(False)
+        self._ref_confirmed = True
         if layer.mode == "add":  # one click places the marker; go back to normal clicking
             layer.mode = "pan_zoom"
         _set_combo_data(self.ref_type, "pixel")
@@ -1067,6 +1135,17 @@ class SpectraFitWidget(QWidget):
             cfg.validate()
         except Exception as e:
             return self._error("Settings", e)
+        if cfg.reference.type == "pixel" and not self._ref_confirmed:
+            r, c = cfg.reference.pixel
+            ok = QMessageBox.question(self, "Reference pixel", "No reference pixel has been chosen for this image yet.\n\n"
+                                      f"Use row {r}, column {c} (the one from the previous image)?\n\n"
+                                      "Choose No to pick one in tab 2 first.")
+            if ok != QMessageBox.StandardButton.Yes:
+                self.tabs.setCurrentIndex(1)
+                self.status.setText("Choose the reference pixel: 'Pick on image', or type its row and column.")
+                return
+            self._ref_confirmed = True
+            self._sync_geometry_layers()
         n_px = int(np.prod(self.data.cube.shape[:3]))
         if cfg.solver.method == "exact" and n_px > 5000:
             ok = QMessageBox.question(self, "Exact solver", f"The exact solver fits {n_px} pixels one by one; this can "
@@ -1215,6 +1294,10 @@ class SpectraFitWidget(QWidget):
             if item is None:
                 return
             item.setCheckState(Qt.CheckState.Checked)  # adds the layer
+            if name not in self.viewer.layers:  # it was ticked already: add it directly
+                if self.results is None:
+                    return
+                self._show_map(key)
         layer = self.viewer.layers[name]
         if not self.side_by_side.isChecked():
             for other in self.viewer.layers:
@@ -1550,6 +1633,13 @@ class SpectraFitWidget(QWidget):
         except Exception as e:
             return self._error("Settings file", e)
         self.apply_config(cfg)
+        try:  # the crop, reference and regions in the file belong to its data file: keep them when it is loaded
+            self._image_key = _source_key(resolve_files(cfg.data.file))
+        except Exception:
+            self._image_key = None
+        self._ref_confirmed = True
+        self._auto_refs = False
+        self.undo_crop_button.setEnabled(bool(self._crop))
         self.status.setText(f"Settings loaded from {path}. Press 'Load data' in tab 1.")
 
     def _load_settings_dialog(self):
@@ -1587,11 +1677,12 @@ class SpectraFitWidget(QWidget):
         """Redraw reference pixel / regions from the original-pixel coordinates (e.g. after changing binning)."""
         if self.data is None:
             return
-        r, c = self.data.to_working(self.ref_row.value(), self.ref_col.value())
-        layer = self._get_points_layer()
-        layer.events.data.disconnect(self._points_changed)
-        layer.data = np.array([[np.floor(r), np.floor(c)]])
-        layer.events.data.connect(self._points_changed)
+        if self._ref_confirmed:  # no cross until a reference pixel is chosen for this image
+            r, c = self.data.to_working(self.ref_row.value(), self.ref_col.value())
+            layer = self._get_points_layer()
+            layer.events.data.disconnect(self._points_changed)
+            layer.data = np.array([[np.floor(r), np.floor(c)]])
+            layer.events.data.connect(self._points_changed)
         for name, polys in (("Reference region", [self._roi_original] if getattr(self, "_roi_original", None) else []),
                             ("Fit region", getattr(self, "_mask_polys_original", []) or [])):
             if polys and name not in self.viewer.layers:

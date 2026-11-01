@@ -177,3 +177,72 @@ def test_map_list_tick_and_untick(tmp_path, qtbot):
         assert ticked() and layer in viewer.layers
     finally:
         viewer.close()
+
+
+def test_new_image_starts_clean(tmp_path, qtbot, monkeypatch):
+    """After a fit, loading another image clears the fit and everything drawn on the old image;
+    reloading the same image (e.g. other binning) keeps crop and reference."""
+    from qtpy.QtCore import Qt
+    from qtpy.QtWidgets import QMessageBox
+
+    from spectrafit.napari_plugin.widget import INSPECTED, SpectraFitWidget
+    from spectrafit.synthetic import make_cube, write_envi, write_mat
+
+    a = make_cube(shape=(20, 20), mode="no_scattering", seed=1, realistic=True)
+    b = make_cube(shape=(16, 18), mode="no_scattering", seed=2, realistic=True)
+    mat_a = write_mat(tmp_path / "a.mat", a["cube"], a["wavelengths"])
+    mat_b = write_mat(tmp_path / "b.mat", b["cube"], b["wavelengths"])
+    envi_dir = tmp_path / "envi"
+    envi_dir.mkdir()
+    write_envi(envi_dir / "raw", (a["cube"][0] * 1000).astype("u2"), a["wavelengths"])
+    write_envi(envi_dir / "whiteReference", np.full((1, 20, a["wavelengths"].size), 1000, "u2"), a["wavelengths"])
+    viewer = napari.Viewer(show=False)
+    try:
+        w = SpectraFitWidget(viewer)
+        w.binning.setValue(1)
+        w.autosave.setChecked(False)
+        w.file_edit.setText(str(mat_a))
+        w._loaded(w._do_load(w.gather_config().data))
+        w.ref_row.setValue(3)
+        w.ref_col.setValue(4)
+        w._crop = [0, 18, 0, 18]
+        w._fitted(w._do_fit(w.gather_config()))
+        lw = w.map_list
+        assert lw.count() > 0 and any(l.name.startswith("SpectraFit map: ") for l in viewer.layers)
+        w.inspector.info.setText("pixel row 1, col 1: HbO2 0.1")
+
+        # same image again (e.g. other binning): fit cleared, crop and reference kept
+        w._loaded(w._do_load(w.gather_config().data))
+        assert w.results is None and lw.count() == 0
+        assert w._crop == [0, 18, 0, 18] and w._ref_confirmed and "Reference pixel" in viewer.layers
+
+        # another image: everything from the first one is gone
+        w._fitted(w._do_fit(w.gather_config()))
+        w.file_edit.setText(str(mat_b))
+        cfg = w.gather_config()
+        w._loaded(w._do_load(cfg.data))
+        assert w.results is None and lw.count() == 0 and w.notes.toPlainText() == ""
+        assert not any(l.name.startswith("SpectraFit map: ") for l in viewer.layers) and INSPECTED not in viewer.layers
+        assert w.inspector.info.text().startswith("Click a pixel") and w.inspector._last is None
+        assert not viewer.text_overlay.visible and w.progress.value() == 0
+        assert w._crop is None and not w.undo_crop_button.isEnabled() and "Reference pixel" not in viewer.layers
+        assert w.data.shape == (16, 18)  # loaded without the old crop
+        assert "previous image were cleared" in w.data_info.toPlainText()
+
+        # running now asks before reusing the old reference pixel; "No" goes to tab 2
+        monkeypatch.setattr(QMessageBox, "question", lambda *a, **k: QMessageBox.StandardButton.No)
+        started = []
+        monkeypatch.setattr(w, "_run_in_thread", lambda *a, **k: started.append(1))
+        w._run_fit()
+        assert not started and w.tabs.currentIndex() == 1
+        monkeypatch.setattr(QMessageBox, "question", lambda *a, **k: QMessageBox.StandardButton.Yes)
+        w._run_fit()
+        assert started and w._ref_confirmed and "Reference pixel" in viewer.layers
+
+        # white/dark references found next to an ENVI file are not carried over to the next file
+        w._inspect(str(envi_dir / "raw.hdr"))
+        assert w.white_edit.text() and w.kind_combo.currentData() == "raw"
+        w._inspect(str(mat_a))
+        assert w.white_edit.text() == "" and w.kind_combo.currentData() == "refl"
+    finally:
+        viewer.close()
