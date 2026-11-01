@@ -19,7 +19,7 @@ This repository holds two kinds of things:
 | [Releases](https://github.com/HyperProbe/SpectraFit/releases) | Ready-to-install versions of the application | |
 | [`d4.1`](https://github.com/HyperProbe/SpectraFit/tree/d4.1) | Neural-network approach to speed up spectral unmixing: data processing, synthetic training data, networks and training scripts | [arXiv:2309.16735](https://arxiv.org/abs/2309.16735) |
 | [`d4.2`](https://github.com/HyperProbe/SpectraFit/tree/d4.2) | `redefine/`: spectral unmixing methods for in-vivo brain tissue, including Monte Carlo simulations. `segmentation/`: brain segmentation with unsupervised domain adaptation | [arXiv:2503.00198](https://arxiv.org/abs/2503.00198), [arXiv:2508.16934](https://arxiv.org/abs/2508.16934) |
-| [`d4.3`](https://github.com/HyperProbe/SpectraFit/tree/d4.3) | Standard spectral unmixing with the differential modified Beer–Lambert law and several optical-pathlength models, as used for the paper experiments. The application is built on this code | |
+| [`d4.3`](https://github.com/HyperProbe/SpectraFit/tree/d4.3) | Standard spectral unmixing with the differential modified Beer–Lambert law and several optical-pathlength models, as used for the paper experiments. The application is built on this code | Coming soon... |
 | [Zenodo](https://zenodo.org/records/23855206) | Result figures and notebooks with their plots for `d4.1` and `d4.2`, moved there to keep this repository small | |
 
 To get the code of one branch, for example `d4.3`:
