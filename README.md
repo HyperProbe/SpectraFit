@@ -4,7 +4,7 @@ Spectral unmixing of hyperspectral images of brain tissue: turning measured spec
 
 This repository holds two kinds of things:
 
-- **The SpectraFit application** (this branch and the [Releases](https://github.com/HyperProbe/SpectraFit/releases)): a program with a graphical interface for experimental physicists. No programming is needed.
+- **The SpectraFit application** (this branch and the [Releases](https://github.com/HyperProbe/SpectraFit/releases)): a program with a graphical interface for everyone. No programming is needed.
 - **The research code** behind the HyperProbe deliverables D4.1, D4.2 and D4.3 (one branch each), as used for the papers listed below.
 
 > **⬇ Download the SpectraFit application** for analysing your own hyperspectral measurements:
