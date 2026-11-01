@@ -23,18 +23,82 @@ def _blob(shape, rng, n=3) -> np.ndarray:
     return out / (np.abs(out).max() + 1e-12)
 
 
+def _vessel_tree(shape, rng, n_trunks=4):
+    """Branching vessels as smooth random curves.
+
+    Returns, per pixel, how much of it is vessel (0..1) and whether that vessel is an artery.
+    """
+    H, W = shape
+    rr, cc = np.mgrid[0:H, 0:W].astype(float)
+    fill = np.zeros(shape)
+    artery = np.zeros(shape, bool)
+
+    def draw(r, c, angle, radius, length, is_artery, depth):
+        nonlocal fill, artery
+        step = 1.5
+        for i in range(int(length / step)):
+            angle += rng.normal(0, 0.12)
+            r += step * np.sin(angle)
+            c += step * np.cos(angle)
+            if not (-10 < r < H + 10 and -10 < c < W + 10):
+                return
+            d = np.hypot(rr - r, cc - c)
+            tube = 1 / (1 + np.exp((d - radius) / 0.6))  # soft-edged disc
+            new = tube > fill
+            fill = np.maximum(fill, tube)
+            artery = np.where(new & (tube > 0.5), is_artery, artery)
+            if depth < 2 and rng.random() < 0.025:  # side branch
+                draw(r, c, angle + rng.choice([-1, 1]) * rng.uniform(0.6, 1.2), radius * 0.6,
+                     length * 0.45, is_artery, depth + 1)
+            radius = max(0.8, radius * 0.995)
+
+    for k in range(n_trunks):
+        side = rng.integers(4)  # start on an edge and run across the image
+        t = rng.uniform(0.15, 0.85)
+        r, c, angle = [(0, t * W, np.pi / 2), (H - 1, t * W, -np.pi / 2),
+                       (t * H, 0, 0.0), (t * H, W - 1, np.pi)][side]
+        draw(r, c, angle + rng.normal(0, 0.3), rng.uniform(2.0, 3.5) * min(H, W) / 160,
+             1.3 * max(H, W), k % 2 == 0, 0)
+    return fill, artery
+
+
+def _tissue_fields(shape, rng, names):
+    """Absolute tissue maps (mM or volume fraction): vessels on a capillary background."""
+    fill, artery = _vessel_tree(shape, rng)
+    # blood volume fraction: capillary background about 3 %, vessels mostly blood
+    background = 0.03 + 0.003 * _blob(shape, rng, n=4)
+    blood = background + (0.6 - background) * fill
+    # oxygen saturation: arteries 97 %, veins 60 %, tissue 70 % with one less-oxygenated patch
+    patch = np.clip(_blob(shape, rng, n=1), 0, 1)
+    s_tissue = 0.72 - 0.08 * patch
+    sat = np.where(fill > 0.05, np.where(artery, 0.97, 0.60), s_tissue)
+    sat = s_tissue + (sat - s_tissue) * fill
+    hbt = 2.3 * blood * 0.004  # mM of haemoglobin seen at the surface (scaled so vessels look dark, not black)
+    out = {"HbO2": hbt * sat, "HHb": hbt * (1 - sat)}
+    smooth = {"oxCCO": (0.0064, 0.0008), "redCCO": (0.0016, 0.0003), "water": (0.73, 0.01), "fat": (0.1, 0.01)}
+    for n in names:
+        if n not in out:
+            base, amp = smooth.get(n, (0.0, 0.0005))
+            out[n] = base + amp * _blob(shape, rng)
+    return out, fill
+
+
 def make_cube(shape=(64, 64), wavelengths: Optional[np.ndarray] = None,
               chromophores: Sequence[str] = ("HbO2", "HHb", "oxCCO", "redCCO", "water", "fat"),
               mode: str = "free_scattering", absolute: bool = False, n_frames: int = 1,
               a0: float = 20.0, b0: float = 1.2, fixed_b: float = 1.2, scattering_scale: float = 10.0,
               lambda0: float = 500.0, pathlength: Optional[np.ndarray] = None, offset: float = 0.3,
-              noise: float = 0.0, seed: int = 0, realistic: bool = False) -> Dict[str, np.ndarray]:
+              noise: float = 0.0, seed: int = 0, realistic: bool = False,
+              pattern: str = "blobs") -> Dict[str, np.ndarray]:
     """Forward-simulate reflectance with the same model the fit uses.
 
     Differential cubes have a reference pixel at (0, 0) whose spectrum equals the
     reference: every map is zero there (Δc = 0, a = a0, b = b0).
     Returns the cube (T, H, W, B) and the true maps.
     realistic=True keeps changes tissue-like (|ΔA| of a few tenths), as in the example dataset.
+    pattern="tissue" (differential only) draws branching vessels on capillary tissue instead of
+    smooth blobs; the reference pixel is then the least-perfused tissue pixel (truth["reference_pixel"]),
+    so blood only adds absorption and the reflectance stays below 1.
     """
     rng = np.random.default_rng(seed)
     wl = HYPERPROBE_DEFAULT_WAVELENGTHS.copy() if wavelengths is None else np.asarray(wavelengths, float)
@@ -48,8 +112,26 @@ def make_cube(shape=(64, 64), wavelengths: Optional[np.ndarray] = None,
     truth: Dict[str, np.ndarray] = {}
     scale = {"mM": 0.004, "fraction": 0.01} if realistic else {"mM": 0.02, "fraction": 0.05}
     amp_a, amp_b, amp_da = (0.05, 0.004, 0.05) if realistic else (2.0, 0.15, 1.5)
+    if pattern == "tissue":  # gentle scattering changes: vessels, not scattering, should dominate the image
+        amp_a, amp_b, amp_da = 0.01, 0.001, 0.01
     base = np.array([c.baseline for c in chroms])
+    ref = (0, 0)
+    if pattern == "tissue":
+        if absolute:
+            raise ValueError("pattern='tissue' is only available for differential (reference) cubes")
+        fields, fill = _tissue_fields(shape, rng, [c.name for c in chroms])
+        hbt = fields.get("HbO2", 0) + fields.get("HHb", 0)
+        quiet = np.where(fill < 0.01, hbt, np.inf)  # least blood, away from vessels
+        H, W = shape
+        margin = np.full(shape, np.inf)
+        margin[H // 8:H - H // 8, W // 8:W - W // 8] = 0  # not at the very edge
+        ref = tuple(int(i) for i in np.unravel_index(np.argmin(quiet + margin), shape))
+        truth["reference_pixel"] = np.array(ref)
     for k, c in enumerate(chroms):
+        if pattern == "tissue":
+            v = fields[c.name] - fields[c.name][ref]
+            truth[c.name] = np.stack([v * (1 + 0.1 * t) for t in range(T)])
+            continue
         pat = np.stack([_blob(shape, rng) * (1 + 0.5 * t) for t in range(T)])
         if absolute:
             v = base[k] + 0.5 * base[k] * pat if base[k] > 0 else 0.002 * (pat + 1)
@@ -69,12 +151,12 @@ def make_cube(shape=(64, 64), wavelengths: Optional[np.ndarray] = None,
             truth["a"] = a0 + amp_a * np.stack([_blob(shape, rng) for _ in range(T)])
         truth["b"] = b0 + amp_b * np.stack([_blob(shape, rng) for _ in range(T)])
         if not absolute:
-            truth["a"][:, 0, 0] = a0
-            truth["b"][:, 0, 0] = b0
+            truth["a"][(slice(None),) + ref] = a0
+            truth["b"][(slice(None),) + ref] = b0
     if not absolute:
         for k in truth:
-            if k not in ("a", "b"):
-                truth[k][:, 0, 0] = 0.0
+            if k not in ("a", "b", "reference_pixel"):
+                truth[k][(slice(None),) + ref] = 0.0
     C = np.stack([truth[c.name] for c in chroms], axis=-1)  # T,H,W,K
     absorb = C @ M.T
     if mode == "fixed_b":
@@ -92,8 +174,14 @@ def make_cube(shape=(64, 64), wavelengths: Optional[np.ndarray] = None,
         A = A + truth["offset"][..., None]
         R = np.exp(-A)
     else:
-        # reference reflectance: a plausible tissue-like spectrum
-        R_ref = 0.4 * np.exp(-0.02 * (M @ base))  # smooth, tissue-like, never near zero
+        if pattern == "tissue":
+            # diffuse reflectance of tissue: R ≈ exp(−k·√(μa/μs')), so blood makes blue/green dark and red bright
+            mua = np.maximum(M @ base, 0)
+            mus = 20.0 * (wl / 500.0) ** -1.2
+            R_ref = 0.6 * np.exp(-1.3 * np.sqrt(mua / mus))
+        else:
+            # reference reflectance: a plausible tissue-like spectrum
+            R_ref = 0.4 * np.exp(-0.02 * (M @ base))  # smooth, tissue-like, never near zero
         R = R_ref * np.exp(-A)
         truth["reference_spectrum"] = R_ref
     if noise:

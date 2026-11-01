@@ -60,9 +60,10 @@ def cmd_example(args) -> int:
 
     folder = Path(args.folder)
     folder.mkdir(parents=True, exist_ok=True)
-    # a0 lies on the default grid-search grid, so the example reproduces the true maps
-    sim = make_cube(shape=(128, 128), mode="free_scattering", a0=100 / 3, b0=1.2, noise=0.001, seed=3,
-                    realistic=True)
+    # simulated tissue with blood vessels; a0 lies on the default grid-search grid, so the fit reproduces the truth
+    sim = make_cube(shape=(160, 160), mode="free_scattering", a0=100 / 3, b0=1.2, noise=0.001, seed=3,
+                    realistic=True, pattern="tissue")
+    ref_r, ref_c = (int(v) for v in sim["reference_pixel"])
     write_mat(folder / "example_cube.mat", sim["cube"], sim["wavelengths"])
     import numpy as np
 
@@ -70,10 +71,11 @@ def cmd_example(args) -> int:
                         **{k: v for k, v in sim.items() if k not in ("cube",)})
     src = Path(str(resources.files("spectrafit") / "data" / "config_template.yaml"))
     text = src.read_text(encoding="utf-8").replace("file: my_measurement.mat", "file: example_cube.mat")
-    text = text.replace("pixel: [100, 100]", "pixel: [0, 0]").replace("binning: 4 ", "binning: 1 ")
+    text = text.replace("pixel: [100, 100]", f"pixel: [{ref_r}, {ref_c}]").replace("binning: 4 ", "binning: 1 ")
     (folder / "example_settings.yaml").write_text(text, encoding="utf-8")
     print(f"Example data written to {folder}:")
-    print("  example_cube.mat        synthetic 128×128 image, 385–1015 nm, reference pixel at row 0, col 0")
+    print(f"  example_cube.mat        simulated 160×160 tissue image with blood vessels, 385–1015 nm, "
+          f"reference pixel at row {ref_r}, col {ref_c}")
     print("  example_truth.npz       the true maps used to simulate it")
     print("  example_settings.yaml   settings to analyse it")
     print(f"Try:  spectrafit run {folder / 'example_settings.yaml'}    or open it in the GUI")

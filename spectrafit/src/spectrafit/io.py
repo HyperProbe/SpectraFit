@@ -280,15 +280,17 @@ class HyperspectralData:
     def to_original(self, row: float, col: float) -> Tuple[float, float]:
         return row * self.binning + self.crop[0], col * self.binning + self.crop[2]
 
-    def rgb(self, bands=(630.0, 540.0, 460.0), frame: int = 0) -> np.ndarray:
-        """Simple colour preview from three bands, scaled to 0–1 per channel (2–98 percentile)."""
-        chans = []
-        for wl in bands:
-            i = int(np.argmin(np.abs(self.wavelengths - wl)))
-            c = self.cube[frame, :, :, i].astype(np.float32)
-            lo, hi = np.nanpercentile(c, [2, 98])
-            chans.append(np.clip((c - lo) / (hi - lo + 1e-12), 0, 1))
-        return np.stack(chans, axis=-1)
+    def rgb(self, bands=(630.0, 540.0, 460.0), frame: int = 0, gamma: float = 1 / 1.8) -> np.ndarray:
+        """Colour preview from three bands (red, green, blue), 0–1.
+
+        The three bands are stretched together (1–99.5 percentile of all of them), not each on its own:
+        reflectance is already calibrated against white, so this keeps the true colours. Stretching each
+        band separately would turn small differences in a flat image into strong colour casts.
+        """
+        idx = [int(np.argmin(np.abs(self.wavelengths - wl))) for wl in bands]
+        rgb = self.cube[frame][:, :, idx].astype(np.float32)
+        lo, hi = np.nanpercentile(rgb, [1, 99.5])
+        return np.nan_to_num(np.clip((rgb - lo) / (hi - lo + 1e-12), 0, 1) ** gamma)
 
 
 # --------------------------------------------------------------------------- helpers

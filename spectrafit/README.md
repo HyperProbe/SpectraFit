@@ -37,7 +37,7 @@ SpectraFit also appears in napari under *Plugins → SpectraFit*.
 spectrafit example ~/spectrafit_example
 ```
 
-This writes a synthetic 128×128 image (`example_cube.mat`, 385–1015 nm in 5 nm steps), the true maps used to make it, and matching settings. In the program, click **Load settings…**, choose `example_settings.yaml`, then **Load data** (tab 1) and **Run fit** (tab 5). Your maps should match `example_truth.npz`. You will also see warnings that water and fat cannot be determined between 530 and 750 nm (see section 6).
+This writes a simulated 160×160 image of tissue with blood vessels (`example_cube.mat`, 385–1015 nm in 5 nm steps), the true maps used to make it, and matching settings with the reference pixel in vessel-free tissue. In the program, click **Load settings…**, choose `example_settings.yaml`, then **Load data** (tab 1) and **Run fit** (tab 5). The haemoglobin maps should match `example_truth.npz` closely. You will also see warnings that water and fat cannot be determined between 530 and 750 nm (see section 6).
 
 ---
 

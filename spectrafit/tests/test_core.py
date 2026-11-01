@@ -391,3 +391,32 @@ def test_helicoid_fit_runs(tmp_path):
     res = run(cfg)
     assert res.wavelengths.size > 290  # every HELICOID band in 530–750 nm is used
     assert _rel_err(res.maps["HbO2"][0], sim["HbO2"][0]) < 2e-3
+
+
+def test_tissue_example_is_physical_and_recoverable(tmp_path):
+    """The vessel pattern stays a valid reflectance (0..1) and its haemoglobin maps are recovered."""
+    sim = make_cube(shape=(48, 48), mode="no_scattering", seed=3, realistic=True, pattern="tissue")
+    R = sim["cube"]
+    assert R.min() >= 0 and R.max() < 1
+    r, c = sim["reference_pixel"]
+    hbt = sim["HbO2"][0] + sim["HHb"][0]
+    assert hbt[r, c] == 0 and hbt.min() > -1e-4 and hbt.max() > 1e-3  # blood only adds absorption
+    cfg = Config()
+    cfg.data.file = str(write_mat(tmp_path / "t.mat", R, sim["wavelengths"]))
+    cfg.data.binning = 1
+    cfg.reference.type, cfg.reference.pixel = "pixel", [int(r), int(c)]
+    cfg.chromophores.names = ["HbO2", "HHb", "oxCCO", "redCCO", "water", "fat"]
+    cfg.model.mode = "no_scattering"
+    res = run(cfg)
+    for k in ("HbO2", "HHb"):
+        assert np.nanmax(np.abs(res.maps[k] - sim[k])) < 0.02 * np.ptp(sim[k])
+
+
+def test_example_command_writes_tissue_example(tmp_path):
+    from spectrafit.cli import main
+
+    assert main(["example", str(tmp_path)]) == 0
+    truth = np.load(tmp_path / "example_truth.npz")
+    r, c = truth["reference_pixel"]
+    text = (tmp_path / "example_settings.yaml").read_text()
+    assert f"pixel: [{r}, {c}]" in text
