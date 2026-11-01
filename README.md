@@ -1,3 +1,5 @@
+> **Figures:** the result figures that were in the `D4.1/` folder (`Helicoid`, `hyperprobe_biopsies`, `piglet_and_scattering`) are archived on Zenodo to keep this repository small: https://doi.org/10.5281/zenodo.XXXXXXX
+
 # Setup
 
 1. Clone the framework repository
