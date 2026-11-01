@@ -1,5 +1,5 @@
 """SpectraFit: spectral unmixing of hyperspectral images with the (differential) modified Beer–Lambert law."""
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 from .config import Config  # noqa: E402,F401

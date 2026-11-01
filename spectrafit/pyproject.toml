@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "spectrafit"
-version = "0.1.3"
+version = "0.1.4"
 description = "Spectral unmixing of hyperspectral images (modified Beer–Lambert law) with a napari interface"
 readme = "README.md"
 license = { text = "MIT" }
