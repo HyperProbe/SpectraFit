@@ -6,7 +6,7 @@
 
 # Figures and executed notebooks
 
-To keep this repository small, the result figures (formerly `redefine/results/`) and the notebooks with their plots are archived on Zenodo: https://doi.org/10.5281/zenodo.XXXXXXX
+To keep this repository small, the result figures (formerly `redefine/results/`) and the notebooks with their plots are archived on Zenodo: https://zenodo.org/records/23855206
 
 The notebooks here contain the same code with the plots cleared; running them recreates the plots.
 
