@@ -4,6 +4,10 @@ SpectraFit turns hyperspectral images into maps of chromophore concentrations (o
 
 It is the user-facing version of the fitting code in this repository (branch `d4.3`), reorganised so that no programming is needed.
 
+![SpectraFit after fitting the simulated example](docs/screenshot.png)
+
+*SpectraFit after fitting the simulated example. **1** The five tabs with all settings, used from left to right. **2** The image with the chosen map, here the change in total haemoglobin (ΔHbT); the cyan cross is the reference pixel, the small square the inspected pixel. **3** The Fit inspector: measured and fitted attenuation of the inspected pixel, with the contribution of each chromophore. **4** The result maps: click a name to show it.*
+
 ---
 
 ## 1. Installing (macOS and Linux)
@@ -43,7 +47,7 @@ This writes a simulated 160×160 image of tissue with blood vessels (`example_cu
 
 ## 3. Using the program
 
-The panel on the right has five tabs, used in order. Click any pixel in the image at any time: the **Fit inspector** plots its spectrum, or after a fit the measured and fitted attenuation with each chromophore's contribution. Over the image the mouse pointer becomes a crosshair, and a small yellow square marks the pixel being inspected (zoom in and it frames exactly that pixel).
+The panel on the right has five tabs, used in order (the **User guide** button above them opens this guide). Click any pixel in the image at any time: the **Fit inspector** plots its spectrum, or after a fit the measured and fitted attenuation with each chromophore's contribution. Over the image the mouse pointer becomes a crosshair, and a small yellow square marks the pixel being inspected (zoom in and it frames exactly that pixel).
 
 ### Tab 1 · Data
 
@@ -207,3 +211,5 @@ The fitting model is the one in `src/scattering_model/scatter.py` and `scatter_o
 Calling SpectraFit from your own Python script: the multi-core fit starts worker processes with the "spawn" method, so put the script's code under `if __name__ == "__main__":`. Without it SpectraFit notices, uses one core and says so in the notes.
 
 Run the tests with `pip install -e ".[gui,test]" pytest-qt` and `python -m pytest` (on a Linux server without a screen: `xvfb-run -a python -m pytest`).
+
+**User guide and screenshot.** Edit only this `README.md`. Then run `python tools/build_guide.py`, which writes `README.html` (the guide in the release zip, which opens with a double-click). A test fails if you forget. `python tools/make_screenshot.py` remakes `docs/screenshot.png` from the simulated example; with `--data FILE --ref ROW COL --credit "…"` it uses a real image instead. `README.md`, `docs/`, `tools/` and `tests/` are left out of the release zip (`.gitattributes`).

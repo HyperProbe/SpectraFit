@@ -4,6 +4,7 @@
 set -euo pipefail
 PREFIX="${SPECTRAFIT_HOME:-$HOME/.spectrafit}"
 rm -rf "$PREFIX/env"
+rm -f "$PREFIX/README.html"
 rm -f "$HOME/.local/bin/spectrafit" "$HOME/Desktop/SpectraFit.command" "$HOME/Desktop/SpectraFit.desktop" \
       "$HOME/.local/share/applications/spectrafit.desktop"
 if [ "${1:-}" = "--all" ]; then

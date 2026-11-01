@@ -1,0 +1,7 @@
+# Left out of the release zip (git archive): people get README.html, the user guide that opens
+# in a browser. README.md (the source of README.html), the screenshot, the tools that make both,
+# and the tests stay in the repository for developers.
+README.md export-ignore
+docs/ export-ignore
+tools/ export-ignore
+tests/ export-ignore

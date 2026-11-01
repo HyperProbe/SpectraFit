@@ -108,6 +108,20 @@ def _scrollable(content: QWidget) -> QScrollArea:
     return area
 
 
+GUIDE_URL = "https://github.com/HyperProbe/SpectraFit/blob/main/spectrafit/README.md"
+
+
+def find_guide() -> Optional[Path]:
+    """README.html: copied next to the installation by install.sh, or in the source folder."""
+    import os
+
+    home = Path(os.environ.get("SPECTRAFIT_HOME", Path.home() / ".spectrafit"))
+    for p in (home / "README.html", Path(__file__).resolve().parents[3] / "README.html"):
+        if p.is_file():
+            return p
+    return None
+
+
 def _source_key(files) -> tuple:
     """Identifies an image (its file or files), to tell a new image from a reload of the same one."""
     return tuple(sorted(str(Path(f).expanduser().resolve()) for f in files))
@@ -278,8 +292,12 @@ class SpectraFitWidget(QWidget):
         b_load.clicked.connect(self._load_settings_dialog)
         b_save = QPushButton("Save settings…")
         b_save.clicked.connect(self._save_settings_dialog)
+        b_guide = QPushButton("User guide")
+        b_guide.setToolTip("Open the user guide in your web browser.")
+        b_guide.clicked.connect(self._open_guide)
         top.addWidget(b_load)
         top.addWidget(b_save)
+        top.addWidget(b_guide)
         outer.addLayout(top)
 
         self.tabs = QTabWidget()
@@ -1641,6 +1659,15 @@ class SpectraFitWidget(QWidget):
         self._auto_refs = False
         self.undo_crop_button.setEnabled(bool(self._crop))
         self.status.setText(f"Settings loaded from {path}. Press 'Load data' in tab 1.")
+
+    def _open_guide(self):
+        from qtpy.QtCore import QUrl
+        from qtpy.QtGui import QDesktopServices
+
+        path = find_guide()
+        url = QUrl.fromLocalFile(str(path)) if path else QUrl(GUIDE_URL)
+        if not QDesktopServices.openUrl(url):
+            self._info(f"Could not open a web browser. The user guide is at {path or GUIDE_URL}")
 
     def _load_settings_dialog(self):
         f, _ = QFileDialog.getOpenFileName(self, "Load settings", "", "Settings (*.yaml *.yml)")

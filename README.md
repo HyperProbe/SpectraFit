@@ -9,7 +9,9 @@ This repository holds two kinds of things:
 
 > **⬇ Download the SpectraFit application** for analysing your own hyperspectral measurements:
 > [latest release](https://github.com/HyperProbe/SpectraFit/releases/latest) (the `SpectraFit-app` zip file).
-> Unzip it and follow the user guide inside ([spectrafit/README.md](spectrafit/README.md)).
+> Unzip it and open `README.html`, the user guide (also readable here: [spectrafit/README.md](spectrafit/README.md)).
+
+![The SpectraFit application after fitting a simulated example](spectrafit/docs/screenshot.png)
 
 ## What is where
 

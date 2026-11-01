@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "spectrafit"
 version = "0.1.4"
 description = "Spectral unmixing of hyperspectral images (modified Beer–Lambert law) with a napari interface"
-readme = "README.md"
+readme = { text = "Spectral unmixing of hyperspectral images with a napari interface. User guide: README.html, or https://github.com/HyperProbe/SpectraFit/blob/main/spectrafit/README.md", content-type = "text/plain" }
 license = { text = "MIT" }
 requires-python = ">=3.10"
 authors = [{ name = "HyperProbe / SpectraFit contributors" }]
@@ -21,7 +21,7 @@ dependencies = [
 
 [project.optional-dependencies]
 gui = ["napari[qt]>=0.5", "qtpy"]
-test = ["pytest>=7"]
+test = ["pytest>=7", "markdown>=3.4"]
 
 [project.scripts]
 spectrafit = "spectrafit.cli:main"

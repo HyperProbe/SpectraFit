@@ -56,6 +56,7 @@ say "3/4  Installing SpectraFit and napari (the image viewer)…"
 # ---------------------------------------------------------------- 4. launchers
 say "4/4  Adding launchers…"
 ln -sf "$ENV/bin/spectrafit" "$BIN/spectrafit"
+cp "$HERE/README.html" "$PREFIX/README.html" 2>/dev/null || true  # opened by the 'User guide' button
 
 if [ "$(uname)" = "Darwin" ]; then
   LAUNCHER="$HOME/Desktop/SpectraFit.command"
