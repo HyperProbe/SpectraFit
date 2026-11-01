@@ -197,7 +197,7 @@ SpectraFit also appears in napari under *Plugins → SpectraFit*.
 </tr>
 </tbody>
 </table>
-<p>All options work with any chromophore set, including new chromophores. For the model-based ones every chromophore contributes its baseline to μa; unknown baselines can stay 0. <em>Plot pathlength</em> shows the curve that will be used.</p>
+<p>All options work with any chromophore set, including new chromophores. For the model-based ones every chromophore contributes its baseline to μa; unknown baselines can stay 0. <em>Plot pathlength</em> shows the curve that will be used. For the per-pixel models it shows an example curve for tissue at the baseline concentrations before a fit, and afterwards the curves the fit actually used at the reference pixel and at the inspected pixel.</p>
 <p><strong>Pixels to fit:</strong> skip pixels that are too dark (background) or too bright (specular highlights), or fit only inside polygons you draw.</p>
 <p><strong>Advanced:</strong> limits of a and b, the scattering factor and λ₀, the absolute-mode offset, and the solver. <em>Fast</em> fits the whole image at once. <em>Exact</em> fits pixel by pixel with scipy, exactly like the paper code: slow, meant for checking small regions.</p>
 <h3 id="tab-4-chromophores">Tab 4 · Chromophores</h3>
@@ -295,7 +295,7 @@ wavelength_nm,value
 </tr>
 </tbody>
 </table>
-<p>Maps: one per chromophore (Δc, or c without reference); scattering (<code>a</code>, <code>b</code>, <code>delta_a</code>, <code>delta_b</code>), or <code>offset</code> without reference; derived <code>HbT</code>, <code>diffCCO</code> and <code>StO2</code>; <code>residual_rms</code> (fit quality); <code>se_*</code> (standard error of every fitted quantity); and <code>flag</code> (0 ok, 1 a parameter at its limit, 2 not converged). In differential mode StO₂ is computed from the baseline plus the fitted changes, and its label says so. Pixels that were not fitted are NaN.</p>
+<p>Maps: one per chromophore (Δc, or c without reference); scattering (<code>a</code>, <code>b</code>, <code>delta_a</code>, <code>delta_b</code>), or <code>offset</code> without reference; derived <code>HbT</code>, <code>diffCCO</code> and <code>StO2</code>; <code>residual_rms</code> (fit quality); <code>se_*</code> (standard error of every fitted quantity, in the saved results only); and <code>flag</code> (0 ok, 1 a parameter at its limit, 2 not converged). In differential mode StO₂ is computed from the baseline plus the fitted changes, and its label says so. Pixels that were not fitted are NaN.</p>
 <hr>
 <h2 id="5-command-line-and-batch-processing">5. Command line and batch processing</h2>
 <pre><code class="language-bash">spectrafit                          # open the program
@@ -310,7 +310,7 @@ spectrafit chromophores             # list available chromophores
 <h2 id="6-things-to-know-about-accuracy">6. Things to know about accuracy</h2>
 <ul>
 <li><strong>Water and fat are barely constrained below ~750 nm.</strong> Their absorption there is tiny, and it can be traded against the scattering term. In the example (530–750 nm, noise 0.1 %) their standard errors are 13 % and 320 % of the typical tissue content, and the program warns about exactly this. Use a range extending into the near infrared (e.g. 500–900 nm) if water and fat matter, or leave them out.</li>
-<li><strong>Check the <code>se_*</code> maps</strong> before interpreting a chromophore map: a map whose standard error is as large as its values is noise.</li>
+<li><strong>Check the standard errors</strong> before interpreting a chromophore map: the run notes list the typical standard error of each chromophore, and a map whose values are not much larger than it is noise. The per-pixel <code>se_*</code> maps are in the saved results but not in the map list: they all show the pattern of the fit-residual map, each scaled by its own factor (the error at a pixel is its residual times a factor set by the model), so the residual map shows <em>where</em> the fit is less certain and the number shows <em>how much</em> for each chromophore.</li>
 <li><strong>Haemoglobins and CCO</strong> are well determined in 530–750 nm. On the example, ΔHbO2 is recovered to within 1 % of its range.</li>
 <li><strong>Binning</strong> reduces noise as well as run time; 4×4 is a good start for 2048×2048 images.</li>
 <li><strong>Speed</strong> for 512×512 pixels (2048² binned 4×): linear models take under 1 s. <em>a and b free</em> takes about 70 s on one core plus about 90 s for the a₀/b₀ grid search (skip it by entering a₀, b₀); both run on several cores, which on two cores halves the time and on an 8-core laptop should cut it 4–6 times. Reading a 2 GB 2048×2048×127 file with binning takes a few seconds and about 0.4 GB of memory.</li>

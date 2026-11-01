@@ -296,6 +296,7 @@ def _run(cfg: Config, data: HyperspectralData, report, pool) -> Results:
 
     # ---- data-driven warnings
     notes.append(reference.description)
+    notes.append(_typical_errors(res, chroms))
     for n, base in zip(names, baselines):  # is each chromophore actually determined by the data?
         se = np.nanmedian(res[f"se_{n}"])
         if not np.isfinite(se) or se <= 0:
@@ -361,6 +362,23 @@ def _grid_search_reference(problem: Problem, y_img, mask, PL, rs, solver, report
             report(done / total, f"Reference scattering grid search ({done}/{total})")
     i, j = np.unravel_index(np.nanargmin(err), err.shape)
     return float(a_grid[i]), float(b_grid[j]), {"a": a_grid, "b": b_grid, "mean_cost": err}
+
+
+def _typical_errors(res, chroms) -> str:
+    """One line: the median standard error of every fitted quantity.
+
+    The se_* maps of all chromophores show the same pattern as the fit residual (the error at a pixel is
+    its residual times a factor set by the model); what differs between them is this size.
+    """
+    units = {c.name: ("mM" if c.concentration_unit == "mM" else "") for c in chroms}
+    parts = []
+    for n in res["_param_names"]:
+        se = np.nanmedian(res[f"se_{n}"])
+        if np.isfinite(se):
+            u = units.get(n, "")
+            parts.append(f"{n} ± {se:.2g}{' ' + u if u else ''}")
+    return ("Typical standard error (median over pixels): " + ", ".join(parts) + ". Per-pixel standard errors "
+            "are in the saved results (se_…); their maps look like the fit residual map, scaled.")
 
 
 def _pixel_optics(problem: Problem, res, baselines, cfg: Config):

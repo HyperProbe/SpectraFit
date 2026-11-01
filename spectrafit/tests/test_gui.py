@@ -246,3 +246,46 @@ def test_new_image_starts_clean(tmp_path, qtbot, monkeypatch):
         assert w.white_edit.text() == "" and w.kind_combo.currentData() == "refl"
     finally:
         viewer.close()
+
+
+def test_error_maps_not_listed_and_pathlength_plot(tmp_path, qtbot):
+    """se_* maps are saved but not listed; per-pixel pathlength plots show real per-pixel curves after a fit."""
+    from qtpy.QtCore import Qt
+
+    from spectrafit.napari_plugin.widget import INSPECTED, SpectraFitWidget, _set_combo_data
+    from spectrafit.synthetic import make_cube, write_mat
+
+    sim = make_cube(shape=(24, 24), mode="no_scattering", seed=3, realistic=True, pattern="tissue")
+    mat = write_mat(tmp_path / "t.mat", sim["cube"], sim["wavelengths"])
+    r, c = (int(v) for v in sim["reference_pixel"])
+    viewer = napari.Viewer(show=False)
+    try:
+        w = SpectraFitWidget(viewer)
+        w.file_edit.setText(str(mat))
+        w.binning.setValue(1)
+        w.autosave.setChecked(False)
+        w._loaded(w._do_load(w.gather_config().data))
+        w.ref_row.setValue(r)
+        w.ref_col.setValue(c)
+        _set_combo_data(w.mode_combo, "no_scattering")
+        _set_combo_data(w.pl_mode, "delta_p1_pixelwise")
+
+        w._plot_pathlength()  # before the fit: example curve, not the flat 1 cm of the first pass
+        lines = w.inspector.plot.ax.get_lines()
+        assert len(lines) == 1 and np.ptp(lines[0].get_ydata()) > 0
+        assert "baseline" in w.inspector.info.text()
+
+        w._fitted(w._do_fit(w.gather_config()))
+        keys = [w.map_list.item(i).data(Qt.ItemDataRole.UserRole) for i in range(w.map_list.count())]
+        assert "residual_rms" in keys and not any(k.startswith("se_") for k in keys)
+        assert any(k.startswith("se_") for k in w.results.maps)  # still saved
+        assert any(n.startswith("Typical standard error") for n in w.results.notes)
+
+        w._mark_inspected(5, 7)
+        w._plot_pathlength()  # after the fit: reference pixel and inspected pixel
+        labels = [l.get_label() for l in w.inspector.plot.ax.get_lines()]
+        assert labels == ["reference pixel", "pixel row 5, col 7"]
+        y = w.inspector.plot.ax.get_lines()[1].get_ydata()
+        assert np.allclose(y, w.results.pathlength[0, 5, 7])
+    finally:
+        viewer.close()

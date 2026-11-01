@@ -1059,14 +1059,42 @@ class SpectraFitWidget(QWidget):
             wl = self.data.wavelengths if self.data is not None else np.arange(lo, hi + 1, 5.0)
             wl = wl[(wl >= max(lo, common_range(chroms)[0])) & (wl <= min(hi, common_range(chroms)[1]))]
             M = absorption_matrix(chroms, wl)
-            pl = global_pathlength(cfg.pathlength, wl, M, np.array([c.baseline for c in chroms]))
+            baselines = np.array([c.baseline for c in chroms])
+            mode = cfg.pathlength.mode
+            curves = []  # (wavelengths, pathlength, label)
+            info = PATHLENGTH_LABELS[mode] + "."
+            r = self.results
+            if mode.endswith("_pixelwise") and r is not None and r.pathlength.ndim == 4 \
+                    and r.config.pathlength.mode == mode and self.data is not None:
+                # after a fit: the curves the fit actually used
+                steps = self.viewer.dims.current_step
+                frame = int(steps[-3]) if self.data.n_frames > 1 and len(steps) >= 3 else 0
+                frame = min(max(frame, 0), r.pathlength.shape[0] - 1)
+                H, W = r.pathlength.shape[1:3]
+                rr, rc = (int(np.floor(v)) for v in self.data.to_working(self.ref_row.value(), self.ref_col.value()))
+                if 0 <= rr < H and 0 <= rc < W:
+                    curves.append((r.wavelengths, r.pathlength[frame, rr, rc], "reference pixel"))
+                if INSPECTED in self.viewer.layers and len(self.viewer.layers[INSPECTED].data):
+                    ir, ic = (int(v) for v in self.viewer.layers[INSPECTED].data[0][-2:])
+                    if 0 <= ir < H and 0 <= ic < W:
+                        curves.append((r.wavelengths, r.pathlength[frame, ir, ic], f"pixel row {ir}, col {ic}"))
+                info += " Curves used by the last fit; click a pixel and press 'Plot pathlength' again to add it."
+            elif mode.endswith("_pixelwise"):
+                # before a fit: the same model for tissue at the baseline concentrations
+                pc = copy.copy(cfg.pathlength)
+                pc.mode = mode.replace("_pixelwise", "")
+                curves.append((wl, global_pathlength(pc, wl, M, baselines), "tissue at baseline concentrations"))
+                info += (" Example curve for tissue at the baseline concentrations. The fit first uses 1 cm, "
+                         "then computes each pixel's own curve; run the fit to see them.")
+            else:
+                curves.append((wl, global_pathlength(cfg.pathlength, wl, M, baselines), "used for every pixel"))
         except Exception as e:
             return self._error("Pathlength", e)
-        title = PATHLENGTH_LABELS[cfg.pathlength.mode]
-        if cfg.pathlength.mode.endswith("_pixelwise"):
-            title += ": first pass uses 1 cm; per-pixel curves are computed during the fit"
-        self.inspector.plot.clear(title)
-        self.inspector.plot.ax.plot(wl, pl, "b-")
+        self.inspector.info.setText(info)
+        self.inspector._last = None
+        self.inspector.plot.clear("Pathlength")
+        for x, y, label in curves:
+            self.inspector.plot.ax.plot(x, y, "-", label=label)
         self.inspector.plot.ax.set_xlabel("Wavelength (nm)", fontsize=8)
         self.inspector.plot.ax.set_ylabel("Pathlength (cm)", fontsize=8)
         self.inspector.plot.draw()
@@ -1189,7 +1217,9 @@ class SpectraFitWidget(QWidget):
         self._remove_layers(prefix="SpectraFit map: ")
         self.map_list.blockSignals(True)
         self.map_list.clear()
-        order = results.chromophores + [k for k in results.maps if k not in results.chromophores]
+        # standard-error maps are saved but not listed: they all show the fit residual's pattern, scaled
+        order = results.chromophores + [k for k in results.maps
+                                        if k not in results.chromophores and not k.startswith("se_")]
         default = set(MAIN_MAPS) | ({"HbO2", "HHb"} if "HbT" not in results.maps else set())
         if len(results.chromophores) <= 3:
             default |= set(results.chromophores)

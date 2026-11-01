@@ -105,7 +105,7 @@ In the *a and b free* model the reference's own scattering (a₀, b₀) is neede
 | Jacques model, tissue baseline | same tissue optics, Jacques model (gray matter / tumour / blood vessel / general parameters) | `gray_matter_jacques` |
 | δ-P1 / Jacques, per pixel | two passes: first fit with 1 cm, then each pixel's fitted μa and μs′ give its own pathlength curve, and it is fitted again | `pixelwise_…_from_unitary` |
 
-All options work with any chromophore set, including new chromophores. For the model-based ones every chromophore contributes its baseline to μa; unknown baselines can stay 0. *Plot pathlength* shows the curve that will be used.
+All options work with any chromophore set, including new chromophores. For the model-based ones every chromophore contributes its baseline to μa; unknown baselines can stay 0. *Plot pathlength* shows the curve that will be used. For the per-pixel models it shows an example curve for tissue at the baseline concentrations before a fit, and afterwards the curves the fit actually used at the reference pixel and at the inspected pixel.
 
 **Pixels to fit:** skip pixels that are too dark (background) or too bright (specular highlights), or fit only inside polygons you draw.
 
@@ -166,7 +166,7 @@ Each results folder contains:
 | `fit_info.json` | wavelengths used, reference, a₀/b₀, warnings, run time |
 | `pathlength_used.csv` | the pathlength curve (mean over pixels for per-pixel models) |
 
-Maps: one per chromophore (Δc, or c without reference); scattering (`a`, `b`, `delta_a`, `delta_b`), or `offset` without reference; derived `HbT`, `diffCCO` and `StO2`; `residual_rms` (fit quality); `se_*` (standard error of every fitted quantity); and `flag` (0 ok, 1 a parameter at its limit, 2 not converged). In differential mode StO₂ is computed from the baseline plus the fitted changes, and its label says so. Pixels that were not fitted are NaN.
+Maps: one per chromophore (Δc, or c without reference); scattering (`a`, `b`, `delta_a`, `delta_b`), or `offset` without reference; derived `HbT`, `diffCCO` and `StO2`; `residual_rms` (fit quality); `se_*` (standard error of every fitted quantity, in the saved results only); and `flag` (0 ok, 1 a parameter at its limit, 2 not converged). In differential mode StO₂ is computed from the baseline plus the fitted changes, and its label says so. Pixels that were not fitted are NaN.
 
 ---
 
@@ -188,7 +188,7 @@ Paths in a settings file are relative to the file. Pixel coordinates are [row, c
 ## 6. Things to know about accuracy
 
 * **Water and fat are barely constrained below ~750 nm.** Their absorption there is tiny, and it can be traded against the scattering term. In the example (530–750 nm, noise 0.1 %) their standard errors are 13 % and 320 % of the typical tissue content, and the program warns about exactly this. Use a range extending into the near infrared (e.g. 500–900 nm) if water and fat matter, or leave them out.
-* **Check the `se_*` maps** before interpreting a chromophore map: a map whose standard error is as large as its values is noise.
+* **Check the standard errors** before interpreting a chromophore map: the run notes list the typical standard error of each chromophore, and a map whose values are not much larger than it is noise. The per-pixel `se_*` maps are in the saved results but not in the map list: they all show the pattern of the fit-residual map, each scaled by its own factor (the error at a pixel is its residual times a factor set by the model), so the residual map shows *where* the fit is less certain and the number shows *how much* for each chromophore.
 * **Haemoglobins and CCO** are well determined in 530–750 nm. On the example, ΔHbO2 is recovered to within 1 % of its range.
 * **Binning** reduces noise as well as run time; 4×4 is a good start for 2048×2048 images.
 * **Speed** for 512×512 pixels (2048² binned 4×): linear models take under 1 s. *a and b free* takes about 70 s on one core plus about 90 s for the a₀/b₀ grid search (skip it by entering a₀, b₀); both run on several cores, which on two cores halves the time and on an 8-core laptop should cut it 4–6 times. Reading a 2 GB 2048×2048×127 file with binning takes a few seconds and about 0.4 GB of memory.
