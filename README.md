@@ -34,5 +34,4 @@ Each branch has its own README with installation and usage instructions.
 
 ## Licences
 
-- SpectraFit application (`main` and the Releases): MIT, see [LICENSE](LICENSE).
-- Each research branch states its licence in its own `LICENSE` file. `d4.2` is under the PolyForm Noncommercial License 1.0.0, except for its CUDAMCML folder (GNU GPL v3).
+- SpectraFit application (`main` and the Releases) and each research branch are under the PolyForm Noncommercial License 1.0.0, except for its CUDAMCML folder (GNU GPL v3).
