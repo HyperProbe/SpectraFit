@@ -13,6 +13,7 @@ columns, bands. A single image has T = 1.
 from __future__ import annotations
 
 import glob
+import copy
 import logging
 import re
 from dataclasses import dataclass, field
@@ -264,6 +265,8 @@ class HyperspectralData:
     axes: str
     frame_indices: List[int] = field(default_factory=list)
     notes: List[str] = field(default_factory=list)
+    settings: Optional[DataSettings] = None
+    valid_pixels: Optional[np.ndarray] = None
 
     @property
     def n_frames(self) -> int:
@@ -525,6 +528,8 @@ def load_data(settings: DataSettings, progress: Progress = None) -> Hyperspectra
 
     Hb, Wb = (r1 - r0) // binning, (c1 - c0) // binning
     out = np.empty((len(frame_idx), Hb, Wb, nB), dtype=np.float32)
+    valid_pixels = np.ones(out.shape[:3], dtype=bool)
+    n_invalid = n_nonpositive = 0
     rows_per_block = binning * max(1, 64 // binning)  # about 64 rows (≈70 MB for 2048 columns × 127 bands)
 
     total_steps = len(frame_idx) * int(np.ceil((r1 - r0) / rows_per_block))
@@ -550,6 +555,12 @@ def load_data(settings: DataSettings, progress: Progress = None) -> Hyperspectra
                     denom = np.where(np.abs(denom) < 1e-12, np.nan, denom)
                     block = (block - dsl) / denom
                 block = block + offset
+                finite = np.isfinite(block)
+                n_invalid += int((~finite).sum())
+                n_nonpositive += int((finite & (block <= 0)).sum())
+                good = finite.all(axis=-1)
+                valid_pixels[ti, (rb - r0) // binning:(re_ - r0) // binning] = (
+                    good.reshape(good.shape[0] // binning, binning, Wb, binning).all(axis=(1, 3)))
                 block = np.where(np.isfinite(block) & (block > 0), block, min_refl)
                 out[ti, (rb - r0) // binning:(re_ - r0) // binning] = _bin2d(block, binning)
                 step += 1
@@ -558,6 +569,11 @@ def load_data(settings: DataSettings, progress: Progress = None) -> Hyperspectra
 
     if binning > 1:
         notes.append(f"Binned {binning}×{binning}: working image is {Hb}×{Wb} pixels.")
+    if n_invalid:
+        notes.append(f"Warning: {n_invalid} non-finite reflectance values were replaced for display; "
+                     f"{int((~valid_pixels).sum())} affected working pixels are excluded from fitting and references.")
+    if n_nonpositive:
+        notes.append(f"{n_nonpositive} non-positive reflectance values replaced with {min_refl:g}.")
     if settings.is_reflectance:
         typical = float(np.nanmedian(out[0, ::max(1, Hb // 64), ::max(1, Wb // 64)]))
         if typical > 2.0:
@@ -566,7 +582,7 @@ def load_data(settings: DataSettings, progress: Progress = None) -> Hyperspectra
     return HyperspectralData(
         cube=out, wavelengths=np.asarray(wavelengths, float), original_shape=(H, W),
         crop=(r0, r1, c0, c1), binning=binning, files=files, variable=var, axes=axes,
-        frame_indices=frame_idx, notes=notes,
+        frame_indices=frame_idx, notes=notes, settings=copy.deepcopy(settings), valid_pixels=valid_pixels,
     )
 
 
@@ -596,3 +612,66 @@ def read_spectrum_file(path: str | Path) -> Tuple[np.ndarray, np.ndarray]:
     a = np.array(rows)
     order = np.argsort(a[:, 0])
     return a[order, 0], a[order, 1]
+
+
+def read_reference_spectrum(path: str | Path, wavelengths: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Read a reflectance reference from text, NumPy or MATLAB.
+
+    Binary files may contain wavelength/value pairs or a spectrum vector. Bare
+    HyperProbe vectors use 385–1015 nm (127 bands) or 510–900 nm (79 bands);
+    other vectors must match the loaded cube's wavelength grid.
+    """
+    path = Path(path)
+    suffix = path.suffix.lower()
+    if suffix not in (".npy", ".mat"):
+        return read_spectrum_file(path)
+
+    wl = None
+    if suffix == ".npy":
+        values = np.load(path, allow_pickle=False)
+    else:
+        with MatFile(path) as mat:
+            variables = mat.variables()
+            candidates = []
+            for name, shape in variables.items():
+                dims = [d for d in shape if d > 1]
+                if name.rsplit("/", 1)[-1] in WAVELENGTH_NAMES:
+                    continue
+                if len(dims) == 1 or (len(dims) == 2 and 2 in dims):
+                    candidates.append(name)
+            preferred = ("reference_spectrum", "reference", "spectrum", "R_ref", "Rref", "ref", "Ref_hyper", "R")
+            name = next((n for n in preferred if n in candidates), None)
+            if name is None:
+                if len(candidates) != 1:
+                    raise ValueError(f"{path.name}: expected one reference spectrum; found "
+                                     f"{', '.join(candidates) or 'no spectrum vectors or wavelength/value tables'}.")
+                name = candidates[0]
+            values = np.asarray(mat.read(name)).squeeze()
+            if values.ndim == 1:
+                _, wl = find_wavelength_variable(mat, variables, [values.size])
+
+    values = np.asarray(values, dtype=float).squeeze()
+    if values.ndim == 2 and 2 in values.shape:
+        pairs = values if values.shape[1] == 2 else values.T
+        wl, values = pairs[:, 0], pairs[:, 1]
+    elif values.ndim != 1:
+        raise ValueError(f"{path.name}: expected a spectrum vector or a two-column wavelength/value array.")
+    if wl is None:
+        if values.size == HYPERPROBE_DEFAULT_WAVELENGTHS.size:
+            wl = HYPERPROBE_DEFAULT_WAVELENGTHS.copy()
+        elif values.size == 79:
+            wl = np.arange(510.0, 900.0 + 0.1, 5.0)
+        elif values.size == len(wavelengths):
+            wl = np.asarray(wavelengths, dtype=float)
+        else:
+            raise ValueError(f"{path.name}: reference has {values.size} values, but the cube has "
+                             f"{len(wavelengths)} bands. Include wavelengths in the reference file, "
+                             "or use a 127- or 79-band HyperProbe spectrum.")
+    wl = np.asarray(wl, dtype=float).ravel()
+    if wl.size != values.size or wl.size < 2 or not np.all(np.isfinite(wl)) or not np.all(np.isfinite(values)):
+        raise ValueError(f"{path.name}: reference wavelengths and values must be finite, equal-length vectors.")
+    order = np.argsort(wl)
+    wl, values = wl[order], values[order]
+    if np.any(np.diff(wl) <= 0):
+        raise ValueError(f"{path.name}: reference wavelengths must be distinct.")
+    return wl, values
