@@ -191,6 +191,8 @@ def run(cfg: Config, data: Optional[HyperspectralData] = None, progress: Progres
     cfg.validate()
     if data is None:
         data = load_data(cfg.data, progress=lambda f, m: report(0.15 * f, m))
+    elif data.settings is not None and cfg.data != data.settings:
+        raise ValueError("Data settings have changed. Press 'Load data' before running the fit.")
 
     # Several cores only pay off for the non-linear fits: starting the workers takes a second or two,
     # while the linear models finish in about a second on one core.
@@ -246,6 +248,11 @@ def _run(cfg: Config, data: HyperspectralData, report, pool) -> Results:
     absolute = reference.type == "none"
     y_img = attenuation(data, reference, band_idx)  # (T,H,W,Wf)
     mask = build_mask(data, cfg.mask, band_idx)
+    if reference.type == "frame" and data.valid_pixels is not None:
+        f0, f1 = reference.frames
+        mask &= data.valid_pixels[f0:f1].all(axis=0)[None]
+    if not mask.any():
+        raise ValueError("No valid pixels remain inside the fit region and reflectance limits.")
     if reference.type == "frame":
         notes.append("Time series: frames used as the reference are fitted too (they give ΔA ≈ 0).")
     T, H, W, Wf = y_img.shape
@@ -259,6 +266,17 @@ def _run(cfg: Config, data: HyperspectralData, report, pool) -> Results:
     problem = Problem(wavelengths=wl, M=M, names=names, mode=m.mode, absolute=absolute,
                       offset=m.absolute_offset, scattering_scale=m.scattering_scale, lambda0=m.lambda0,
                       a_max=m.a_max, b_max=m.b_max, fixed_b=m.fixed_b)
+    n_params = len(problem.linear_names()) + (m.mode == "free_scattering")
+    if wl.size <= n_params:
+        raise ValueError(f"Only {wl.size} wavelengths for {n_params} fitted parameters. "
+                         "Use more wavelengths or fewer fitted parameters.")
+    beta = np.ones((1, len(problem.linear_names())))
+    J = problem.jacobian(beta, np.ones_like(wl), 1.0 if m.mode == "free_scattering" else None)
+    J = J[0] if J.ndim == 3 else J
+    J = J / np.maximum(np.linalg.norm(J, axis=0), 1e-30)
+    if np.linalg.matrix_rank(J) < n_params:
+        raise ValueError("The selected spectra and model are rank deficient in this wavelength range. "
+                         "Use a wider range or fewer fitted parameters.")
     PL = global_pathlength(cfg.pathlength, wl, M, baselines)
     pixelwise = cfg.pathlength.mode.endswith("_pixelwise")
     grid_info = None

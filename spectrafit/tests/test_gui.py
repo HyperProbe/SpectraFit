@@ -45,6 +45,159 @@ def test_widget_full_workflow(tmp_path, qtbot):
         viewer.close()
 
 
+@pytest.fixture
+def fitted_maps(tmp_path, qtbot):
+    from spectrafit.napari_plugin.widget import SpectraFitWidget, _set_combo_data
+    from spectrafit.synthetic import make_cube, write_mat
+
+    sim = make_cube(shape=(12, 12), mode="no_scattering", seed=3, realistic=True)
+    mat = write_mat(tmp_path / "cube.mat", sim["cube"], sim["wavelengths"])
+    viewer = napari.Viewer(show=False)
+    try:
+        widget = SpectraFitWidget(viewer)
+        widget.file_edit.setText(str(mat))
+        widget.binning.setValue(1)
+        widget.autosave.setChecked(False)
+        _set_combo_data(widget.mode_combo, "no_scattering")
+        widget._loaded(widget._do_load(widget.gather_config().data))
+        widget.ref_row.setValue(0)
+        widget.ref_col.setValue(0)
+        widget._fitted(widget._do_fit(widget.gather_config()))
+        yield viewer, widget
+    finally:
+        viewer.close()
+
+
+def test_selected_map_is_the_visible_edited_layer(fitted_maps):
+    from qtpy.QtWidgets import QComboBox
+
+    viewer, widget = fitted_maps
+    widget._focus_map("HbO2")
+    widget._focus_map("HbT")
+    selected = viewer.layers["SpectraFit map: HbO2"]
+    previous = viewer.layers["SpectraFit map: HbT"]
+    old_colormap = previous.colormap.name
+    viewer.layers.selection.active = selected  # select a lower map in napari's left-hand list
+    assert selected.visible and previous.visible  # preserve layers used for blending
+    assert next(layer for layer in reversed(viewer.layers)
+                if layer.name.startswith("SpectraFit map: ")) is selected
+    controls = viewer.window._qt_viewer.controls.currentWidget()
+    assert controls.layer is selected
+    combo = controls.findChild(QComboBox, "colormapComboBox")
+    combo.setCurrentIndex(combo.findData("viridis"))
+    assert selected.metadata["base_colormap"].name == "viridis" and previous.colormap.name == old_colormap
+    assert viewer.text_overlay.text == widget.results.labels["HbO2"]
+
+
+def test_grid_labels_follow_maps_and_selection(fitted_maps):
+    viewer, widget = fitted_maps
+    widget._focus_map("HbO2")
+    widget.side_by_side.setChecked(True)
+    first = viewer.layers["SpectraFit map: HbO2"]
+    second = viewer.layers["SpectraFit map: HbT"]
+    maps = [layer for layer in viewer.layers if layer.name.startswith("SpectraFit map: ")]
+    assert all(layer.name_overlay.visible for layer in maps)
+    assert not viewer.text_overlay.visible
+    order = list(viewer.layers)
+    viewer.layers.selection.active = first
+    assert list(viewer.layers) == order and first.visible and second.visible
+    viewer.layers.move(viewer.layers.index(first), 0)
+    assert first.name_overlay.visible
+    second.visible = False
+    assert first.name_overlay.visible and not second.visible
+    widget.side_by_side.setChecked(False)
+    assert not any(layer.name_overlay.visible for layer in maps)
+    assert viewer.text_overlay.visible
+    viewer.grid.enabled = True  # the native grid button also gets labels
+    assert all(layer.name_overlay.visible for layer in maps)
+    viewer.grid.enabled = False
+    assert not any(layer.name_overlay.visible for layer in maps)
+
+
+def test_numeric_two_slope_scale_preserves_values(fitted_maps):
+    viewer, widget = fitted_maps
+    widget._focus_map("HbO2")
+    layer = widget._map_layer("HbO2")
+    original = layer.data.copy()
+    for name, value in (("Min", "-2e-6"), ("Centre", "0"), ("Max", "8e-6")):
+        widget.scale_fields[name].setText(value)
+    widget._apply_scale()
+    np.testing.assert_allclose(layer.contrast_limits, [-2e-6, 8e-6])
+    np.testing.assert_allclose(layer.colormap.map([0.2]), layer.metadata["base_colormap"].map([0.5]), atol=1e-6)
+    layer.reset_contrast_limits()  # native auto contrast must keep the chosen centre
+    lo, hi = layer.contrast_limits
+    assert lo < 0 < hi
+    np.testing.assert_allclose(layer.colormap.map([(0 - lo) / (hi - lo)]),
+                               layer.metadata["base_colormap"].map([0.5]), atol=1e-6)
+    widget._auto_scale()
+    np.testing.assert_array_equal(layer.data, original)
+    limits = layer.contrast_limits
+    widget.scale_fields["Min"].setText("1")
+    widget._apply_scale()
+    assert layer.contrast_limits == limits and "Min" in widget.status.text()
+
+
+def test_hidden_settings_survive_widget_roundtrip(fitted_maps):
+    _, widget = fitted_maps
+    cfg = widget.gather_config()
+    cfg.data.wavelengths = widget.data.wavelengths.tolist()
+    cfg.data.min_reflectance = 0.04
+    cfg.solver.chunk_size = 73
+    widget.apply_config(cfg)
+    restored = widget.gather_config()
+    assert restored.data.wavelengths == cfg.data.wavelengths
+    assert restored.data.min_reflectance == 0.04 and restored.solver.chunk_size == 73
+
+
+def test_changed_data_requires_reload(fitted_maps, monkeypatch):
+    _, widget = fitted_maps
+    started = []
+    monkeypatch.setattr(widget, "_run_in_thread", lambda *a, **k: started.append(True))
+    widget.binning.setValue(2)
+    widget._run_fit()
+    assert not started and widget.tabs.currentIndex() == 0
+    assert "Load data" in widget.status.text()
+    widget._loaded(widget._do_load(widget.gather_config().data))
+    result = widget._do_fit(widget.gather_config())
+    assert result.maps["HbO2"].shape == (1, 6, 6) and result.config.data.binning == 2
+
+
+def test_regions_keep_original_coordinates_after_reload(fitted_maps):
+    viewer, widget = fitted_maps
+    polygon = np.array([[2., 2.], [2., 6.], [6., 6.], [6., 2.]])
+    for name in ("Reference region", "Fit region"):
+        viewer.add_shapes([polygon], name=name, shape_type="polygon")
+    widget.mask_poly_on.setChecked(True)
+    original = widget.gather_config()
+    widget.binning.setValue(2)
+    widget._loaded(widget._do_load(widget.gather_config().data))
+    widget._crop = [2, 10, 2, 10]
+    widget._loaded(widget._do_load(widget.gather_config().data))
+    restored = widget.gather_config()
+    assert restored.reference.roi == original.reference.roi
+    assert restored.mask.polygons == original.mask.polygons
+    viewer.layers.remove("Fit region")
+    with pytest.raises(ValueError, match="no fit region"):
+        widget.gather_config()
+
+
+def test_renamed_map_and_reference_survive_grid(fitted_maps):
+    viewer, widget = fitted_maps
+    layer = widget._map_layer("HbT")
+    count = len(viewer.layers)
+    layer.name = "My haemoglobin map"
+    widget._focus_map("HbT")
+    assert widget._map_layer("HbT") is layer and len(viewer.layers) == count
+    widget.ref_row.setValue(1)
+    marker = viewer.layers["Reference pixel"]
+    assert marker.visible
+    widget.side_by_side.setChecked(True)
+    widget.side_by_side.setChecked(False)
+    assert marker.visible
+    widget._clear_results()
+    assert layer not in viewer.layers
+
+
 def test_reference_marker_pick_and_drag(tmp_path, qtbot):
     """The cross snaps to the pixel it is drawn on, can be dragged, stays above the image after reloading."""
     from spectrafit.napari_plugin.widget import SpectraFitWidget
@@ -206,6 +359,7 @@ def test_new_image_starts_clean(tmp_path, qtbot, monkeypatch):
         w.ref_row.setValue(3)
         w.ref_col.setValue(4)
         w._crop = [0, 18, 0, 18]
+        w._loaded(w._do_load(w.gather_config().data))
         w._fitted(w._do_fit(w.gather_config()))
         lw = w.map_list
         assert lw.count() > 0 and any(l.name.startswith("SpectraFit map: ") for l in viewer.layers)
@@ -220,6 +374,7 @@ def test_new_image_starts_clean(tmp_path, qtbot, monkeypatch):
         w._fitted(w._do_fit(w.gather_config()))
         w.file_edit.setText(str(mat_b))
         cfg = w.gather_config()
+        cfg.data.crop = None  # the Load data button clears a previous image's crop
         w._loaded(w._do_load(cfg.data))
         assert w.results is None and lw.count() == 0 and w.notes.toPlainText() == ""
         assert not any(l.name.startswith("SpectraFit map: ") for l in viewer.layers) and INSPECTED not in viewer.layers

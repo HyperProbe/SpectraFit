@@ -248,7 +248,7 @@ def test_reference_types(tmp_path):
     mat = write_mat(tmp_path / "r.mat", sim["cube"], sim["wavelengths"])
     # ROI around the reference pixel only
     cfg = _cfg(tmp_path, mat, mode="no_scattering", ref="roi")
-    cfg.reference.roi = [[0, 0], [0, 1], [1, 1], [1, 0]]
+    cfg.reference.roi = [[-0.49, -0.49], [-0.49, 0.49], [0.49, 0.49], [0.49, -0.49]]
     r1 = run(cfg)
     assert _rel_err(r1.maps["HbO2"][0], sim["HbO2"][0]) < 1e-4
     # reference from a file
@@ -259,6 +259,143 @@ def test_reference_types(tmp_path):
     cfg.reference.file = str(spec)
     r2 = run(cfg)
     assert _rel_err(r2.maps["HbO2"][0], sim["HbO2"][0]) < 1e-4
+
+
+@pytest.mark.parametrize("file_format", ["npy", "mat", "mat73"])
+def test_binary_reference_fit(tmp_path, file_format):
+    """HyperProbe reference vectors work in the same pipeline as a picked pixel."""
+    sim = make_cube(shape=(12, 12), mode="no_scattering", seed=3)
+    cube = write_mat(tmp_path / "cube.mat", sim["cube"], sim["wavelengths"])
+    spectrum = sim["cube"][0, 0, 0]
+    path = tmp_path / ("reference.npy" if file_format == "npy" else "reference.mat")
+    if file_format == "npy":
+        np.save(path, spectrum)
+    elif file_format == "mat":
+        from scipy.io import savemat
+
+        savemat(path, {"reference_spectrum": spectrum[None]})
+    else:
+        import h5py
+
+        with h5py.File(path, "w") as f:
+            f.create_dataset("reference_spectrum", data=spectrum[:, None])
+    cfg = _cfg(tmp_path, cube, mode="no_scattering", ref="file")
+    cfg.reference.file = str(path)
+    result = run(cfg)
+    assert _rel_err(result.maps["HbO2"][0], sim["HbO2"][0]) < 1e-4
+
+
+def test_legacy_hyperprobe_reference_grid(tmp_path):
+    """79-band references retain 510–900 nm even with a 127-band cube."""
+    from spectrafit.io import read_reference_spectrum
+    from spectrafit.preprocess import attenuation, build_reference
+
+    sim = make_cube(shape=(8, 8), mode="no_scattering", seed=3)
+    cube = write_mat(tmp_path / "cube.mat", sim["cube"], sim["wavelengths"])
+    wl = np.arange(510.0, 901.0, 5.0)
+    spectrum = np.interp(wl, sim["wavelengths"], sim["cube"][0, 0, 0])
+    path = tmp_path / "reference.npy"
+    np.save(path, spectrum)
+    cfg = _cfg(tmp_path, cube, mode="no_scattering", ref="file")
+    cfg.reference.file = str(path)
+    data = load_data(cfg.data)
+    actual_wl, actual_spectrum = read_reference_spectrum(path, data.wavelengths)
+    np.testing.assert_array_equal(actual_wl, wl)
+    np.testing.assert_array_equal(actual_spectrum, spectrum)
+    ref = build_reference(data, cfg.reference)
+    idx = np.flatnonzero((data.wavelengths >= 530) & (data.wavelengths <= 750))
+    np.testing.assert_allclose(attenuation(data, ref, idx)[0, 0, 0], 0, atol=1e-7)
+    with pytest.raises(ValueError, match="covers 510–900"):
+        attenuation(data, ref, np.arange(data.wavelengths.size))
+
+
+@pytest.mark.parametrize("file_format", ["npy_columns", "npy_rows", "mat_wavelengths", "mat_table"])
+def test_binary_reference_explicit_wavelengths(tmp_path, file_format):
+    from spectrafit.io import read_reference_spectrum
+
+    wl = np.array([550.0, 600.0, 700.0, 800.0])
+    values = np.array([0.2, 0.3, 0.4, 0.5])
+    path = tmp_path / ("reference.npy" if file_format.startswith("npy") else "reference.mat")
+    if file_format.startswith("npy"):
+        table = np.column_stack([wl, values])
+        np.save(path, table if file_format == "npy_columns" else table.T)
+    else:
+        from scipy.io import savemat
+
+        contents = ({"wavelengths": wl, "spectrum": values}
+                    if file_format == "mat_wavelengths" else {"spectrum": np.column_stack([wl, values])})
+        savemat(path, contents)
+    actual_wl, actual_values = read_reference_spectrum(path, np.arange(385, 1016, 5.0))
+    np.testing.assert_array_equal(actual_wl, wl)
+    np.testing.assert_array_equal(actual_values, values)
+
+
+def test_binary_reference_rejects_ambiguous_data(tmp_path):
+    from scipy.io import savemat
+    from spectrafit.io import read_reference_spectrum
+
+    wl = np.arange(385, 1016, 5.0)
+    np.save(tmp_path / "short.npy", np.ones(10))
+    with pytest.raises(ValueError, match="reference has 10 values"):
+        read_reference_spectrum(tmp_path / "short.npy", wl)
+    savemat(tmp_path / "ambiguous.mat", {"first": np.ones(127), "second": np.ones(127)})
+    with pytest.raises(ValueError, match="expected one reference spectrum"):
+        read_reference_spectrum(tmp_path / "ambiguous.mat", wl)
+
+
+def test_polygon_uses_napari_pixel_centres():
+    from spectrafit.preprocess import polygon_mask
+
+    polygon = np.array([[1.6, 1.6], [1.6, 2.4], [2.4, 2.4], [2.4, 1.6]])
+    for vertices in (polygon, polygon[::-1]):
+        mask = polygon_mask((5, 5), [vertices])
+        assert np.argwhere(mask).tolist() == [[2, 2]]
+
+
+def test_invalid_reflectance_is_excluded_after_binning(tmp_path):
+    from scipy.io import savemat
+    from spectrafit.preprocess import build_reference
+
+    sim = make_cube(shape=(8, 8), mode="no_scattering", realistic=True)
+    cube = sim["cube"][0].copy()
+    cube[5, 5, 30] = np.nan
+    path = tmp_path / "invalid.mat"
+    savemat(path, {"Ref_hyper": cube, "wavelengths": sim["wavelengths"]})
+    cfg = _cfg(tmp_path, path, mode="no_scattering")
+    cfg.data.binning = 2
+    data = load_data(cfg.data)
+    assert not data.valid_pixels[0, 2, 2] and data.valid_pixels.sum() == 15
+    assert any("excluded from fitting" in note for note in data.notes)
+    result = run(cfg, data=data)
+    assert np.isnan(result.maps["HbO2"][0, 2, 2]) and np.isnan(result.maps["flag"][0, 2, 2])
+    cfg.reference.pixel = [5, 5]
+    with pytest.raises(ValueError, match="invalid reflectance"):
+        build_reference(data, cfg.reference)
+
+
+def test_fit_rejects_insufficient_or_dependent_bands(tmp_path):
+    sim = make_cube(shape=(8, 8), mode="no_scattering", realistic=True)
+    path = write_mat(tmp_path / "cube.mat", sim["cube"], sim["wavelengths"])
+    cfg = _cfg(tmp_path, path)
+    cfg.spectral.range = [530, 540]
+    with pytest.raises(ValueError, match="3 wavelengths for 8 fitted parameters"):
+        run(cfg)
+    cfg.spectral.range = [530, 750]
+    cfg.reference.type = "none"
+    cfg.model.mode = "fixed_b"
+    cfg.model.fixed_b = 0  # the scattering column duplicates the absolute offset
+    with pytest.raises(ValueError, match="rank deficient"):
+        run(cfg)
+
+
+def test_cached_cube_rejects_changed_data_settings(tmp_path):
+    sim = make_cube(shape=(8, 8), mode="no_scattering", realistic=True)
+    path = write_mat(tmp_path / "cube.mat", sim["cube"], sim["wavelengths"])
+    cfg = _cfg(tmp_path, path, mode="no_scattering")
+    data = load_data(cfg.data)
+    cfg.data.binning = 2
+    with pytest.raises(ValueError, match="Load data"):
+        run(cfg, data=data)
 
 
 def test_time_series_frame_reference(tmp_path):

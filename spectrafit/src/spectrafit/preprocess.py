@@ -9,7 +9,7 @@ from typing import List, Optional, Sequence, Tuple
 import numpy as np
 
 from .config import MaskSettings, ReferenceSettings, SpectralSettings
-from .io import HyperspectralData, read_spectrum_file
+from .io import HyperspectralData, read_reference_spectrum
 
 
 def select_wavelengths(wavelengths: np.ndarray, spectral: SpectralSettings,
@@ -39,13 +39,16 @@ def polygon_mask(shape: Tuple[int, int], polygons_working: Sequence[np.ndarray])
 
     H, W = shape
     rr, cc = np.mgrid[0:H, 0:W]
-    pts = np.column_stack([rr.ravel() + 0.5, cc.ravel() + 0.5])
+    pts = np.column_stack([rr.ravel(), cc.ravel()])
     mask = np.zeros(H * W, bool)
     for poly in polygons_working:
         poly = np.asarray(poly, float)
         if len(poly) < 3:
             continue
-        mask |= MplPath(poly).contains_points(pts)
+        area = np.sum(poly[:, 0] * np.roll(poly[:, 1], -1) - poly[:, 1] * np.roll(poly[:, 0], -1))
+        if area < 0:
+            poly = poly[::-1]
+        mask |= MplPath(poly).contains_points(pts, radius=1e-9)
     return mask.reshape(H, W)
 
 
@@ -57,6 +60,8 @@ def build_mask(data: HyperspectralData, mask: MaskSettings, band_idx: np.ndarray
     """Pixels to fit: (T, H, W) bool."""
     T, H, W, _ = data.cube.shape
     m = np.ones((T, H, W), bool)
+    if data.valid_pixels is not None:
+        m &= data.valid_pixels
     if mask.polygons:
         pm = polygon_mask((H, W), [_to_working_poly(data, p) for p in mask.polygons])
         m &= pm[None]
@@ -98,6 +103,8 @@ def build_reference(data: HyperspectralData, ref: ReferenceSettings) -> Referenc
         r, c = int(np.floor(r)), int(np.floor(c))
         if not (0 <= r < H and 0 <= c < W):
             raise ValueError(f"Reference pixel {ref.pixel} lies outside the (cropped) image.")
+        if data.valid_pixels is not None and not data.valid_pixels[frame, r, c]:
+            raise ValueError("The reference pixel contains invalid reflectance; choose another pixel.")
         return Reference("pixel", data.cube[frame, r, c, :].astype(float), pixel_working=(r, c),
                          description=f"Reference pixel (row {ref.pixel[0]}, col {ref.pixel[1]}), frame {frame}.")
     if t == "roi":
@@ -105,6 +112,8 @@ def build_reference(data: HyperspectralData, ref: ReferenceSettings) -> Referenc
             raise ValueError("Draw a reference region (at least 3 corners) or choose another reference type.")
         poly = _to_working_poly(data, ref.roi)
         m = polygon_mask((H, W), [poly])
+        if data.valid_pixels is not None:
+            m &= data.valid_pixels[frame]
         if not m.any():
             raise ValueError("The reference region contains no pixels of the (cropped) image.")
         spec = data.cube[frame][m].astype(float).mean(axis=0)
@@ -113,7 +122,7 @@ def build_reference(data: HyperspectralData, ref: ReferenceSettings) -> Referenc
     if t == "file":
         if not ref.file:
             raise ValueError("Select the reference spectrum file.")
-        wl, val = read_spectrum_file(ref.file)
+        wl, val = read_reference_spectrum(ref.file, data.wavelengths)
         if np.any(val <= 0):
             raise ValueError(f"The reference spectrum in {ref.file} must be positive (it is a reflectance).")
         return Reference("file", np.interp(data.wavelengths, wl, val), file_range=(float(wl[0]), float(wl[-1])),

@@ -100,7 +100,7 @@ class ReferenceSettings:
     roi: Optional[List[List[float]]] = None
     """Polygon vertices [[row, col], ...] in original pixels."""
     file: Optional[str] = None
-    """Two-column file: wavelength_nm, reflectance."""
+    """Text wavelength/reflectance pairs, or a .npy/.mat reference spectrum."""
     frame: Optional[List[int]] = None
     """Reference frame(s) [k] or [start, stop] (mean) for type 'frame', or the frame
     the pixel/region is taken from for a time series."""

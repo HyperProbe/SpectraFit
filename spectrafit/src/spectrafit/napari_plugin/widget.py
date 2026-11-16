@@ -285,6 +285,8 @@ class SpectraFitWidget(QWidget):
         self._image_key = None  # which image the crop, reference and regions belong to
         self._ref_confirmed = False  # reference pixel chosen for the current image
         self._auto_refs = False  # white/dark references were filled in automatically for the current file
+        self._config = Config()
+        self._updating_scale = False
 
         outer = QVBoxLayout(self)
         top = QHBoxLayout()
@@ -332,6 +334,8 @@ class SpectraFitWidget(QWidget):
         for ev in (self.viewer.layers.events.inserted, self.viewer.layers.events.removed,
                    self.viewer.layers.events.moved):
             ev.connect(self._update_map_label)
+        self.viewer.layers.selection.events.active.connect(self._on_layer_selected)
+        self.viewer.grid.events.enabled.connect(self._grid_changed)
         self.setMinimumWidth(460)
         self._update_visibility()
         self._refresh_chromophore_table(Config().chromophores.names)
@@ -556,6 +560,11 @@ class SpectraFitWidget(QWidget):
     def _loaded(self, data):
         key = _source_key(data.files)
         new_image = key != self._image_key
+        if not new_image and self.data is not None:
+            cfg = self.gather_config()
+            self._roi_original = cfg.reference.roi
+            self._mask_polys_original = cfg.mask.polygons
+            self._remove_layers(names=["Reference region", "Fit region"])
         self.data = data
         self._clear_results()
         if new_image:
@@ -580,6 +589,7 @@ class SpectraFitWidget(QWidget):
         self.status.setText("Data loaded. Next: choose the reference in tab 2.")
         self.viewer.reset_view()
         self._update_chromophore_plot()
+        self._update_visibility()
 
     # ------------------------------------------------------------------ crop
     def _apply_crop(self):
@@ -645,8 +655,9 @@ class SpectraFitWidget(QWidget):
         self.ref_file_box = QGroupBox("Reference spectrum file")
         fl = QFormLayout(self.ref_file_box)
         self.ref_file = QLineEdit()
-        fl.addRow(_browse_row(self.ref_file, lambda: self._browse_into(self.ref_file, "*.csv *.txt")))
-        fl.addRow(_hint("Two columns: wavelength in nm, reflectance."))
+        fl.addRow(_browse_row(self.ref_file, lambda: self._browse_into(self.ref_file, "*.csv *.txt *.npy *.mat")))
+        fl.addRow(_hint("CSV/TXT: wavelength in nm and reflectance. NPY/MAT: a spectrum or wavelength/value pairs. "
+                        "Bare HyperProbe spectra: 127 bands (385–1015 nm) or 79 bands (510–900 nm)."))
         lay.addWidget(self.ref_file_box)
 
         self.ref_frame_box = QGroupBox("Reference frame(s)")
@@ -1145,7 +1156,7 @@ class SpectraFitWidget(QWidget):
         mh = QHBoxLayout()
         mh.addWidget(QLabel("Maps (click a name to view it):"), 1)
         self.side_by_side = QCheckBox("side by side")
-        self.side_by_side.toggled.connect(self._toggle_grid)
+        self.side_by_side.toggled.connect(lambda on: setattr(self.viewer.grid, "enabled", on))
         mh.addWidget(self.side_by_side)
         lay.addLayout(mh)
         self.map_list = QListWidget()
@@ -1154,6 +1165,28 @@ class SpectraFitWidget(QWidget):
         self.map_list.pressed.connect(lambda *_: setattr(self, "_toggled_item", None))
         self.map_list.itemClicked.connect(self._map_clicked)
         lay.addWidget(self.map_list, 1)
+        scale_box = QGroupBox("Colour scale of selected map")
+        sf = QVBoxLayout(scale_box)
+        fields = QHBoxLayout()
+        self.scale_fields = {}
+        for name in ("Min", "Centre", "Max"):
+            fields.addWidget(QLabel(name))
+            edit = QLineEdit()
+            edit.setMaximumWidth(105)
+            edit.setToolTip("Enter a number, including scientific notation such as 1e-6.")
+            fields.addWidget(edit)
+            self.scale_fields[name] = edit
+        sf.addLayout(fields)
+        actions = QHBoxLayout()
+        self.scale_apply = QPushButton("Apply limits")
+        self.scale_apply.clicked.connect(self._apply_scale)
+        self.scale_auto = QPushButton("Auto (1–99%)")
+        self.scale_auto.clicked.connect(self._auto_scale)
+        actions.addWidget(self.scale_apply)
+        actions.addWidget(self.scale_auto)
+        sf.addLayout(actions)
+        lay.addWidget(scale_box)
+        self._sync_scale_controls()
         mrow = QHBoxLayout()
         b_all = QPushButton("Show all chromophores")
         b_all.clicked.connect(self._show_all_chromophores)
@@ -1179,6 +1212,9 @@ class SpectraFitWidget(QWidget):
         try:
             cfg = self.gather_config()
             cfg.validate()
+            if self.data.settings is not None and cfg.data != self.data.settings:
+                self.tabs.setCurrentIndex(0)
+                return self._info("Data settings have changed. Press 'Load data' before running the fit.")
         except Exception as e:
             return self._error("Settings", e)
         if cfg.reference.type == "pixel" and not self._ref_confirmed:
@@ -1277,22 +1313,39 @@ class SpectraFitWidget(QWidget):
         if self.results.chromophores:
             self._focus_map(self.results.chromophores[0])
 
+    @staticmethod
+    def _map_key(layer):
+        if layer is None:
+            return None
+        return layer.metadata.get("spectrafit_key") or (
+            layer.name.removeprefix("SpectraFit map: ") if layer.name.startswith("SpectraFit map: ") else None)
+
+    def _map_layer(self, key):
+        return next((layer for layer in self.viewer.layers if self._map_key(layer) == key), None)
+
     def _update_map_label(self, *_):
         """Write the name of the map on screen onto the image (top left) and into the status line."""
         overlay = self.viewer.text_overlay
-        if self.side_by_side.isChecked() and self.viewer.grid.enabled:
+        grid = self.viewer.grid.enabled
+        for layer in self.viewer.layers:
+            if self._map_key(layer) is not None and hasattr(layer, "name_overlay"):
+                layer.name_overlay.visible = grid
+                layer.name_overlay.position = "top_left"
+                layer.name_overlay.color = "white"
+                layer.name_overlay.font_size = 12
+        if grid:
             overlay.visible = False
             if self.results is not None:
-                self.status.setText("Side by side: one map per panel, in the order of the layer list (left).")
+                self.status.setText("Side by side: each panel is labelled with its map name.")
             return
         shown = next((layer for layer in reversed(self.viewer.layers)
-                      if layer.visible and layer.name.startswith("SpectraFit map: ")), None)
+                      if layer.visible and self._map_key(layer) is not None), None)
         if shown is None:
             overlay.visible = False
             if self.results is not None:
                 self.status.setText("No map shown: click a name in the list to view it.")
             return
-        key = shown.name.replace("SpectraFit map: ", "")
+        key = self._map_key(shown)
         label = self.results.labels.get(key, key) if self.results is not None else key
         overlay.text = label
         overlay.position = "top_left"
@@ -1309,11 +1362,11 @@ class SpectraFitWidget(QWidget):
     def _map_toggled(self, item: QListWidgetItem):
         self._toggled_item = item
         key = item.data(Qt.ItemDataRole.UserRole)
-        name = f"SpectraFit map: {key}"
+        layer = self._map_layer(key)
         if item.checkState() == Qt.CheckState.Checked:
             self._show_map(key)
-        elif name in self.viewer.layers:
-            self.viewer.layers.remove(name)
+        elif layer is not None:
+            self.viewer.layers.remove(layer)
             self._update_map_label()
 
     def _map_clicked(self, item: QListWidgetItem):
@@ -1323,33 +1376,57 @@ class SpectraFitWidget(QWidget):
             return  # just unticked: leave it removed
         self._focus_map(item.data(Qt.ItemDataRole.UserRole))
 
+    def _grid_changed(self, event):
+        on = bool(event.value)
+        self.side_by_side.blockSignals(True)
+        self.side_by_side.setChecked(on)
+        self.side_by_side.blockSignals(False)
+        self._toggle_grid(on)
+
     def _toggle_grid(self, on: bool):
-        self.viewer.grid.enabled = on
         if on:
+            self._grid_visibility = {layer: layer.visible for layer in self.viewer.layers
+                                     if self._map_key(layer) is None}
             for layer in self.viewer.layers:
-                layer.visible = layer.name.startswith("SpectraFit map: ")
-        elif self.viewer.layers.selection.active is not None and \
-                self.viewer.layers.selection.active.name.startswith("SpectraFit map: "):
-            self._focus_map(self.viewer.layers.selection.active.name.replace("SpectraFit map: ", ""))
+                layer.visible = self._map_key(layer) is not None
+        else:
+            for layer, visible in getattr(self, "_grid_visibility", {}).items():
+                if layer in self.viewer.layers:
+                    layer.visible = visible
+            key = self._map_key(self.viewer.layers.selection.active)
+            if key is not None:
+                self._focus_map(key)
         self._update_map_label()
+
+    def _on_layer_selected(self, event):
+        """Keep the edited result map visible when selected from napari's layer list."""
+        layer = event.value
+        self._sync_scale_controls()
+        if self.results is None or layer is None or self.viewer.grid.enabled:
+            return
+        if self._map_key(layer) is not None:
+            layer.visible = True
+            self.viewer.layers.move(self.viewer.layers.index(layer), len(self.viewer.layers))
+            self._raise_overlays()
+            self._update_map_label()
 
     def _focus_map(self, key: str):
         """Show this map on top; hide the other maps unless side-by-side view is on."""
-        name = f"SpectraFit map: {key}"
-        if name not in self.viewer.layers:
+        layer = self._map_layer(key)
+        if layer is None:
             item = next((self.map_list.item(i) for i in range(self.map_list.count())
                          if self.map_list.item(i).data(Qt.ItemDataRole.UserRole) == key), None)
             if item is None:
                 return
             item.setCheckState(Qt.CheckState.Checked)  # adds the layer
-            if name not in self.viewer.layers:  # it was ticked already: add it directly
+            if self._map_layer(key) is None:  # it was ticked already: add it directly
                 if self.results is None:
                     return
                 self._show_map(key)
-        layer = self.viewer.layers[name]
-        if not self.side_by_side.isChecked():
+        layer = self._map_layer(key)
+        if not self.viewer.grid.enabled:
             for other in self.viewer.layers:
-                if other.name.startswith("SpectraFit map: "):
+                if self._map_key(other) is not None:
                     other.visible = other is layer
             self.viewer.layers.move(self.viewer.layers.index(layer), len(self.viewer.layers))
             self._raise_overlays()
@@ -1358,6 +1435,8 @@ class SpectraFitWidget(QWidget):
         self._update_map_label()
 
     def _show_map(self, key: str):
+        if self._map_layer(key) is not None:
+            return
         r = self.results
         arr = r.maps[key]
         data = arr if arr.shape[0] > 1 else arr[0]
@@ -1368,8 +1447,8 @@ class SpectraFitWidget(QWidget):
         diverging = (not r.absolute and (key in r.chromophores or key in ("HbT", "diffCCO", "delta_a", "delta_b"))) \
             or key == "offset"
         if diverging:
-            m = max(abs(lo), abs(hi), 1e-12)
-            lo, hi, cmap = -m, m, "PiYG"
+            eps = max(abs(lo), abs(hi), 1.0) * 1e-12
+            lo, hi, cmap = min(lo, -eps), max(hi, eps), "PiYG"
         elif key == "flag":
             lo, hi, cmap = 0, 2, "inferno"
         else:
@@ -1377,9 +1456,88 @@ class SpectraFitWidget(QWidget):
         if hi <= lo:
             hi = lo + 1e-12
         layer = self._add_or_replace_image(f"SpectraFit map: {key}", data, colormap=cmap, contrast_limits=(lo, hi),
-                                           visible=self.side_by_side.isChecked())
-        layer.metadata["label"] = r.labels.get(key, key)
+                                           visible=self.side_by_side.isChecked(),
+                                           metadata={"spectrafit_key": key, "label": r.labels.get(key, key),
+                                                     "diverging": diverging, "centre": 0.0})
+        layer.metadata["base_colormap"] = layer.colormap
         layer.events.visible.connect(self._update_map_label)  # e.g. the eye icon in the layer list
+        layer.events.name.connect(self._update_map_label)
+        layer.events.contrast_limits.connect(lambda event, layer=layer: self._update_scale(layer))
+        layer.events.colormap.connect(lambda event, layer=layer: self._colormap_changed(layer))
+        self._update_scale(layer)
+
+    def _sync_scale_controls(self):
+        if not hasattr(self, "scale_fields"):
+            return
+        layer = self.viewer.layers.selection.active
+        enabled = self._map_key(layer) is not None
+        for edit in self.scale_fields.values():
+            edit.setEnabled(enabled)
+        self.scale_apply.setEnabled(enabled)
+        self.scale_auto.setEnabled(enabled)
+        if enabled:
+            lo, hi = layer.contrast_limits
+            for name, value in (("Min", lo), ("Centre", layer.metadata.get("centre", 0)), ("Max", hi)):
+                self.scale_fields[name].setText(f"{value:.12g}")
+            self.scale_fields["Centre"].setEnabled(layer.metadata.get("diverging", False))
+
+    def _update_scale(self, layer):
+        if self._updating_scale:
+            return
+        self._updating_scale = True
+        try:
+            if layer.metadata.get("diverging"):
+                from napari.utils.colormaps import Colormap
+
+                lo, hi = layer.contrast_limits
+                centre = layer.metadata["centre"]
+                eps = max(abs(lo), abs(hi), abs(centre), 1.0) * 1e-12
+                lo, hi = min(lo, centre - eps), max(hi, centre + eps)
+                layer.contrast_limits = (lo, hi)
+                t = np.linspace(0, 1, 257)
+                controls = np.interp(t, [0, 0.5, 1], [0, (centre - lo) / (hi - lo), 1])
+                base = layer.metadata["base_colormap"]
+                layer.colormap = Colormap(colors=base.map(t), controls=controls,
+                                          name="two_slope_" + self._map_key(layer),
+                                          display_name=base.name + " (two-slope)")
+        finally:
+            self._updating_scale = False
+        if self.viewer.layers.selection.active is layer:
+            self._sync_scale_controls()
+
+    def _colormap_changed(self, layer):
+        if not self._updating_scale:
+            layer.metadata["base_colormap"] = layer.colormap
+            self._update_scale(layer)
+
+    def _apply_scale(self):
+        layer = self.viewer.layers.selection.active
+        if self._map_key(layer) is None:
+            return
+        try:
+            lo, centre, hi = (float(self.scale_fields[n].text()) for n in ("Min", "Centre", "Max"))
+            if not np.all(np.isfinite([lo, centre, hi])) or not lo < hi:
+                raise ValueError("Enter finite colour limits with Min < Max.")
+            if layer.metadata.get("diverging") and not lo < centre < hi:
+                raise ValueError("For two-slope scaling, use Min < Centre < Max.")
+        except ValueError as e:
+            return self._info(str(e))
+        layer.gamma = 1
+        layer.metadata["centre"] = centre
+        layer.contrast_limits = (lo, hi)
+        self._update_scale(layer)
+
+    def _auto_scale(self):
+        layer = self.viewer.layers.selection.active
+        if self._map_key(layer) is None:
+            return
+        values = np.asarray(layer.data)
+        values = values[np.isfinite(values)]
+        if values.size:
+            layer.gamma = 1
+            lo, hi = np.percentile(values, [1, 99])
+            layer.contrast_limits = (lo, max(hi, lo + 1e-12))
+            self._update_scale(layer)
 
     # ======================================================================== pixel inspector
     def _on_click(self, viewer, event):
@@ -1491,7 +1649,7 @@ class SpectraFitWidget(QWidget):
 
     # ======================================================================== settings <-> widgets
     def gather_config(self) -> Config:
-        cfg = Config()
+        cfg = copy.deepcopy(self._config)
         d = cfg.data
         d.file = self.file_edit.text().strip()
         if d.file and not any(ch in d.file for ch in "*?["):
@@ -1502,6 +1660,8 @@ class SpectraFitWidget(QWidget):
         d.axes = None if ax.startswith("(") or not ax else ax.upper()
         if self.wl_mode.currentData() == "startstep":
             d.wavelengths = {"start": self.wl_start.value(), "step": self.wl_step.value()}
+        elif isinstance(d.wavelengths, dict):
+            d.wavelengths = None
         d.is_reflectance = self.kind_combo.currentData() == "refl"
         d.white_reference = self.white_edit.text().strip() or None
         d.dark_reference = self.dark_edit.text().strip() or None
@@ -1518,13 +1678,13 @@ class SpectraFitWidget(QWidget):
         if poly is not None and self.data is not None:
             r.roi = [list(map(float, self.data.to_original(p[-2], p[-1]))) for p in poly]
         else:
-            r.roi = getattr(self, "_roi_original", None)
+            r.roi = getattr(self, "_roi_original", None) if self.data is None else None
         r.file = self.ref_file.text().strip() or None
         if r.type == "frame":
             r.frame = [self.ref_f0.value(), self.ref_f1.value() + 1]
         elif self.data is not None and self.data.n_frames > 1:
             r.frame = [self.ref_f0.value()]
-        else:
+        elif self.data is not None:
             r.frame = None
 
         names, baselines = self._selected_chromophores()
@@ -1573,13 +1733,17 @@ class SpectraFitWidget(QWidget):
             if "Fit region" in self.viewer.layers and self.data is not None:
                 for shape in self.viewer.layers["Fit region"].data:
                     mk.polygons.append([list(map(float, self.data.to_original(q[-2], q[-1]))) for q in shape])
-            else:
+            elif self.data is None:
                 mk.polygons = getattr(self, "_mask_polys_original", []) or []
+            if not mk.polygons:
+                raise ValueError("'Fit only inside' is checked, but no fit region exists. "
+                                 "Draw a region or untick it to fit the whole image.")
         cfg.output.folder = self.out_edit.text().strip()
         cfg.output.formats = self._formats()
         return cfg
 
     def apply_config(self, cfg: Config):
+        self._config = copy.deepcopy(cfg)
         d = cfg.data
         self.file_edit.setText(d.file or "")
         if d.file and Path(d.file).is_file():
@@ -1608,6 +1772,7 @@ class SpectraFitWidget(QWidget):
         self.frames_edit.setText(", ".join(map(str, d.frames)) if d.frames else "")
 
         r = cfg.reference
+        self._remove_layers(names=["Reference region", "Fit region"])
         _set_combo_data(self.ref_type, r.type)
         if r.pixel:
             self.ref_row.setValue(int(r.pixel[0]))
@@ -1765,7 +1930,8 @@ class SpectraFitWidget(QWidget):
 
     def _remove_layers(self, prefix=None, names=None):
         for layer in list(self.viewer.layers):
-            if (prefix and layer.name.startswith(prefix)) or (names and layer.name in names):
+            if (prefix and (layer.name.startswith(prefix) or
+                            (prefix == "SpectraFit map: " and self._map_key(layer) is not None))) or (names and layer.name in names):
                 self.viewer.layers.remove(layer)
 
     def _emit(self, frac, msg):
