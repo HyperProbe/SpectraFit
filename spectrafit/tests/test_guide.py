@@ -15,6 +15,7 @@ def test_readme_html_is_up_to_date():
     spec.loader.exec_module(mod)
     current = (ROOT / "README.html").read_text(encoding="utf-8")
     assert current == mod.build(), "README.html is out of date: run  python tools/build_guide.py"
+    assert (ROOT / "src" / "spectrafit" / "data" / "README.html").read_text(encoding="utf-8") == current
 
 
 def test_guide_is_found_from_the_source_folder():

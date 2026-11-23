@@ -176,7 +176,9 @@ def builtin_dir() -> Path:
 
 def user_dir() -> Path:
     """Folder where chromophores added through the GUI are stored."""
-    return Path.home() / ".spectrafit" / "chromophores"
+    from .paths import app_home
+
+    return app_home() / "chromophores"
 
 
 class ChromophoreLibrary:
@@ -186,9 +188,12 @@ class ChromophoreLibrary:
         self.items: Dict[str, Chromophore] = {}
         for f in sorted(builtin_dir().glob("*.csv")):
             self.add(read_chromophore_file(f))
-        if include_user_dir and user_dir().exists():
-            for f in sorted(user_dir().glob("*.csv")) + sorted(user_dir().glob("*.txt")):
-                self.add(read_chromophore_file(f))
+        if include_user_dir:
+            from .paths import chromophore_dirs
+
+            for folder in chromophore_dirs():
+                for f in sorted(folder.glob("*.csv")) + sorted(folder.glob("*.txt")):
+                    self.add(read_chromophore_file(f))
         for f in extra_files:
             self.add(read_chromophore_file(f))
 

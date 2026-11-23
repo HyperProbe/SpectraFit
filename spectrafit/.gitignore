@@ -3,5 +3,18 @@ __pycache__/
 .pytest_cache/
 spectrafit_results/
 spectrafit_example/
+artifacts/
+build/
 # the repository root ignores every "data" folder; the package data must be versioned
 !src/spectrafit/data/
+
+# Local Windows build environments and generated validation evidence
+/.windows-baseline/
+/.venv-build/
+/validation/**
+!/validation/windows-step3/
+!/validation/windows-step3/verify_frozen.py
+!/validation/windows-step3/verify_desktop_startup.py
+!/validation/windows-step4/
+!/validation/windows-step4/prepare_fixtures.py
+!/validation/windows-step4/audit_exports.py

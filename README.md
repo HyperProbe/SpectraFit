@@ -13,6 +13,12 @@ This repository holds two kinds of things:
 
 ![The SpectraFit application after fitting a simulated example](spectrafit/docs/screenshot.png)
 
+Windows x64 build instructions and verification evidence are available in
+[the Windows packaging guide](spectrafit/packaging/windows/README.md). Local
+artifacts include a per-user installer, a portable ZIP and a synthetic validation
+kit; they have not been published to GitHub Releases. Clean Windows desktop
+testing remains a next step.
+
 ## What is where
 
 | Where | What it contains | Paper |

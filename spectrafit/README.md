@@ -33,6 +33,39 @@ spectrafit                            # opens the program
 SpectraFit also appears in napari under *Plugins → SpectraFit*.
 </details>
 
+**Windows standalone application.** Use `SpectraFit-<version>-windows-x64-setup.exe`
+for a per-user installation, then open **SpectraFit** from the Start menu. Python
+is included; no separate Python installation is needed. The optional desktop
+shortcut is off by default. Uninstall through Windows **Installed apps**; analysis
+results and the custom chromophore library are retained. Close SpectraFit before
+installing an update or uninstalling it.
+
+Alternatively, extract `SpectraFit-<version>-windows-x64.zip` to a short folder
+path and double-click `SpectraFit.exe`. Keep the `_internal` folder beside the
+executables. For command-line use, run `SpectraFit-cli.exe` with the same commands
+shown below in place of `spectrafit`. These Windows builds are unsigned. Testing
+on a clean Windows desktop and additional graphics configurations remains a
+release-validation next step; the supplied validation kit supports that work.
+
+**Windows source installation.**
+Use a Python 3.12 environment and run `pip install "./spectrafit[gui]"` from the
+repository root. `spectrafit-gui` opens the desktop interface without a console;
+`spectrafit gui` opens it from a console, and `spectrafit run settings.yaml`
+performs a command-line analysis. Both interfaces use the same fitting code.
+An optional settings file can be passed as `spectrafit-gui settings.yaml`.
+
+On Windows, added chromophores are saved in
+`%LOCALAPPDATA%\SpectraFit\chromophores` and desktop startup/run diagnostics in
+`%LOCALAPPDATA%\SpectraFit\logs\spectrafit.log`. Existing chromophores in
+`~/.spectrafit/chromophores` are still read; a file in the new library with the
+same chromophore name takes precedence. `SPECTRAFIT_HOME` overrides the application
+folder on all platforms and selects a separate chromophore library. Results are
+saved to the folder chosen in the interface or settings file.
+
+The desktop launcher reports startup failures in a dialog and records details in
+the log. If the configured log location is not writable, it uses a temporary log
+and reports that path. The offline user guide is included in the Python package.
+
 ---
 
 ## 2. Try it with the example first
@@ -128,7 +161,7 @@ Tick the absorbers to fit. The checks on this tab use the fit range and model ch
 | Specific absorption coefficient, natural log, cm⁻¹ mM⁻¹ | `mua_per_mM_cm` | mM |
 | Absorption coefficient of the pure substance, cm⁻¹ | `mua_per_cm` | volume fraction |
 
-It is saved in `~/.spectrafit/chromophores` and is available from then on. You can also put files there directly, in this format:
+It is saved in `~/.spectrafit/chromophores` on macOS/Linux, or `%LOCALAPPDATA%\SpectraFit\chromophores` on Windows (under `SPECTRAFIT_HOME` when set), and is available from then on. You can also put files there directly, in this format:
 
 ```text
 # name: ICG
@@ -161,7 +194,7 @@ Each results folder contains:
 | `settings.yaml` | all settings of this run: reload in the program or run from the command line |
 | `results.mat` | all maps as MATLAB variables (time series: H×W×T) |
 | `results.npz` | the same for Python (`numpy.load`) |
-| `tiff/*.tif` | one 32-bit TIFF per map, for ImageJ/Fiji |
+| `tiff/*.tif` | one 32-bit grayscale TIFF per map, for ImageJ/Fiji; time series use separate pages with a time axis |
 | `summary.csv` | mean, standard deviation, median, 5th/95th percentile of every map (per frame) |
 | `fit_info.json` | wavelengths used, reference, a₀/b₀, warnings, run time |
 | `pathlength_used.csv` | the pathlength curve (mean over pixels for per-pixel models) |
@@ -197,7 +230,7 @@ Paths in a settings file are relative to the file. Pixel coordinates are [row, c
 
 ## 7. For developers: relation to the research code
 
-The fitting model is the one in `src/scattering_model/scatter.py` and `scatter_optim.py`. A test checks that the forward model gives identical ΔA (`tests/test_core.py::test_matches_research_code_model`). The δ-P1 and Jacques formulas were converted from the sympy pickles into plain NumPy (`_pathlength_formulas.py`) and checked to give identical values, so sympy and pickle files are no longer needed. Differences:
+The application implements its forward model in `spectrafit.model.Problem.predict()`. The original `src/scattering_model/scatter.py` / `compute_delta_A()` is only an optional validation reference: when that research file is present, a test compares the two implementations (`tests/test_core.py::test_matches_research_code_model`). The application does not import or require it. The δ-P1 and Jacques formulas were converted from the sympy pickles into plain NumPy (`_pathlength_formulas.py`) and checked to give identical values, so sympy and pickle files are no longer needed. Differences:
 
 * **Solver.** The free-scattering fit scans b on a grid, refines it per pixel (golden section, then Gauss–Newton), and solves the linear part exactly with bounds for every b. This gives the global optimum in b on the grid instead of scipy's local optimum from (a₀, b₀). On noisy test data its residual is never larger than scipy's. The scipy pixel-by-pixel solver is still available as *Exact*.
 * **Linear modes** ("no scattering" and "fixed b") are new. They are solved for the whole image in one step.
@@ -212,4 +245,4 @@ Calling SpectraFit from your own Python script: the multi-core fit starts worker
 
 Run the tests with `pip install -e ".[gui,test]" pytest-qt` and `python -m pytest` (on a Linux server without a screen: `xvfb-run -a python -m pytest`).
 
-**User guide and screenshot.** Edit only this `README.md`. Then run `python tools/build_guide.py`, which writes `README.html` (the guide in the release zip, which opens with a double-click). A test fails if you forget. `python tools/make_screenshot.py` remakes `docs/screenshot.png` from the simulated example; with `--data FILE --ref ROW COL --credit "…"` it uses a real image instead. `README.md`, `docs/`, `tools/` and `tests/` are left out of the release zip (`.gitattributes`).
+**User guide and screenshot.** Edit only this `README.md`. Then run `python tools/build_guide.py`, which writes `README.html` (the guide in the release zip, which opens with a double-click) and the identical `src/spectrafit/data/README.html` shipped inside installed packages. A test fails if either copy is out of date. `python tools/make_screenshot.py` remakes `docs/screenshot.png` from the simulated example; with `--data FILE --ref ROW COL --credit "…"` it uses a real image instead. `README.md`, `docs/`, `tools/` and `tests/` are left out of the release zip (`.gitattributes`).

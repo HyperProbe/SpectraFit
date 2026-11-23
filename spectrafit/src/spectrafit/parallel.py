@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import multiprocessing
 import os
+import sys
 from concurrent.futures import ProcessPoolExecutor
 from typing import Optional
 
@@ -27,21 +28,23 @@ def available_cores() -> int:
 def resolve_cores(setting: Optional[int]) -> int:
     """Number of cores to use: the setting, or all but one when it is empty or 0."""
     total = available_cores()
-    if not setting or setting <= 0:
-        return max(1, total - 1)
-    return max(1, min(int(setting), total))
+    requested = max(1, total - 1) if not setting or setting <= 0 else max(1, min(int(setting), total))
+    return min(requested, 61) if sys.platform == "win32" else requested
 
 
-def _watch_parent(parent_pid: int) -> None:
+def _watch_parent() -> None:
     """Worker start-up: exit as soon as the main program is gone (crash, force-quit), instead of idling forever."""
     import threading
-    import time
+
+    parent = multiprocessing.parent_process()
+    if parent is None:
+        return
 
     def watch():
-        while True:
-            if os.getppid() != parent_pid:
-                os._exit(0)
-            time.sleep(2.0)
+        # The sentinel tracks the actual process/handle on Windows, including
+        # abrupt termination. getppid() there retains the dead parent's PID.
+        parent.join()
+        os._exit(0)
 
     threading.Thread(target=watch, daemon=True).start()
 
@@ -57,12 +60,15 @@ def start_pool(n_workers: int) -> Optional[ProcessPoolExecutor]:
     """Start `n_workers` worker processes (None for a single core)."""
     if n_workers <= 1:
         return None
+    n_workers = resolve_cores(n_workers)
+    if n_workers <= 1:
+        return None
     saved = {k: os.environ.get(k) for k in _THREAD_VARS}
     try:
         for k in _THREAD_VARS:  # inherited by the workers when they start
             os.environ[k] = "1"
         pool = ProcessPoolExecutor(max_workers=n_workers, mp_context=multiprocessing.get_context("spawn"),
-                                   initializer=_watch_parent, initargs=(os.getpid(),))
+                                   initializer=_watch_parent)
         # start all workers now, while the variables are set (processes otherwise start lazily)
         try:
             list(pool.map(_noop, range(n_workers)))

@@ -24,6 +24,7 @@ from ..chromophores import (UNIT_DESCRIPTIONS, Chromophore, ChromophoreLibrary, 
                             write_chromophore_file)
 from ..config import (MODE_LABELS, PATHLENGTH_LABELS, PATHLENGTH_MODES, REFERENCE_LABELS, REFERENCE_TYPES, Config)
 from ..io import inspect_file, read_spectrum_file, resolve_files
+from ..paths import find_guide
 from ..pathlength import JACQUES_TISSUES, global_pathlength
 
 AXES_CHOICES = ["(automatic)", "HWB", "WHB", "BHW", "BWH", "HBW", "WBH", "HWBT", "WHBT", "BHWT", "THWB", "HWTB"]
@@ -109,17 +110,6 @@ def _scrollable(content: QWidget) -> QScrollArea:
 
 
 GUIDE_URL = "https://github.com/HyperProbe/SpectraFit/blob/main/spectrafit/README.md"
-
-
-def find_guide() -> Optional[Path]:
-    """README.html: copied next to the installation by install.sh, or in the source folder."""
-    import os
-
-    home = Path(os.environ.get("SPECTRAFIT_HOME", Path.home() / ".spectrafit"))
-    for p in (home / "README.html", Path(__file__).resolve().parents[3] / "README.html"):
-        if p.is_file():
-            return p
-    return None
 
 
 def _source_key(files) -> tuple:
@@ -1130,10 +1120,10 @@ class SpectraFitWidget(QWidget):
         self.autosave = QCheckBox("save after each run (with the settings file)")
         self.autosave.setChecked(True)
         f.addRow(self.autosave)
-        from ..parallel import available_cores
+        from ..parallel import available_cores, resolve_cores
 
         n_avail = available_cores()
-        self.n_cores_max = max(1, n_avail - 1)  # one core stays free so the computer remains usable
+        self.n_cores_max = resolve_cores(None)  # leaves one core free, capped for Windows process pools
         self.cores = _ispin(1, self.n_cores_max, self.n_cores_max)
         self.cores.setSuffix(f"  of {n_avail}")
         self.cores.setToolTip(f"Processor cores used by the scattering fit and the a0/b0 grid search (1 to {self.n_cores_max}; "
@@ -2030,6 +2020,9 @@ class SpectraFitWidget(QWidget):
         if e.__class__.__name__ == "Cancelled":
             self.status.setText("Stopped.")
             return
+        import logging
+
+        logging.getLogger(__name__).error("%s failed", where, exc_info=(type(e), e, e.__traceback__))
         self.status.setText(f"{where}: {text}")
         box = QMessageBox(self)
         box.setIcon(QMessageBox.Icon.Warning)

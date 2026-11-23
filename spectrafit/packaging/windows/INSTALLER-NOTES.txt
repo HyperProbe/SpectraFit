@@ -1,0 +1,17 @@
+SpectraFit for Windows x64
+
+This installs SpectraFit for your Windows user account. Python is included.
+Close SpectraFit before installing, updating or uninstalling it.
+
+The default application location is %LOCALAPPDATA%\Programs\SpectraFit.
+Logs and custom chromophores are stored in %LOCALAPPDATA%\SpectraFit.
+Uninstalling removes installed application files and its shortcuts. It keeps
+your analysis results, saved settings and custom chromophore library.
+
+This research build is unsigned. It has been verified on the development PC.
+Testing on a fresh Windows desktop and additional graphics configurations is
+a documented next step. The separate validation kit supports those tests.
+
+After installation, open SpectraFit from the Start menu. The User guide button
+opens the bundled offline guide. For command-line use, open a terminal in the
+application folder and run SpectraFit-cli.exe.
