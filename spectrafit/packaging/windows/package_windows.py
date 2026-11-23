@@ -12,6 +12,7 @@ import zipfile
 from datetime import datetime, timezone
 from importlib import metadata
 from pathlib import Path
+from urllib.parse import quote
 
 from PyInstaller.archive.readers import CArchiveReader
 
@@ -24,6 +25,29 @@ PROBE = ROOT / "artifacts/windows/SpectraFit-verify"
 def sha(path):
     with path.open("rb") as file:
         return hashlib.file_digest(file, "sha256").hexdigest()
+
+
+def personal_paths(app, home=None):
+    """Files written for this build that mention the builder's home folder (and so their user name).
+
+    Checks package metadata, the application's own files and the top-level files; third-party
+    libraries are copied unchanged from their published packages.
+    """
+    home = str(home or Path.home()).replace("\\", "/").rstrip("/")
+    needles = set()
+    for text in {home, home.replace("/", "\\"), home.replace("/", "\\\\"), quote(home, safe="/:")}:
+        for encoding in ("utf-8", "utf-16-le"):
+            needles.update({text.encode(encoding), text.lower().encode(encoding)})
+    internal = app / "_internal"
+    candidates = [path for path in app.iterdir() if path.is_file()]
+    candidates += [path for folder in internal.glob("*.dist-info") for path in folder.rglob("*") if path.is_file()]
+    candidates += [path for path in (internal / "spectrafit").rglob("*") if path.is_file()]
+
+    def mentions_home(path):
+        data = path.read_bytes()
+        return any(needle in data or needle in data.lower() for needle in needles)
+
+    return sorted(path.relative_to(app).as_posix() for path in candidates if mentions_home(path))
 
 
 if __name__ == "__main__":
@@ -74,6 +98,8 @@ if __name__ == "__main__":
                 "source_sha256": source_hashes, "files": payload,
                 "signed": False, "clean_machine_validation": "Deferred by user; next step"}
     (APP / "BUILD-MANIFEST.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    leaks = personal_paths(APP)
+    assert not leaks, f"Files mention this computer's home folder; rebuild with the current spec: {leaks}"
 
     archive_path = ROOT / "artifacts" / f"SpectraFit-{manifest['version']}-windows-x64.zip"
     print(f"Creating {archive_path}", flush=True)

@@ -1,6 +1,7 @@
 """One-folder Windows distribution with shared GUI/CLI payload and a separate probe."""
 
 import os
+import sys
 from pathlib import Path
 
 from PyInstaller.utils.hooks import collect_data_files, collect_entry_point, collect_submodules, copy_metadata
@@ -37,6 +38,23 @@ a = Analysis([str(path) for path in entries.values()], pathex=[str(ROOT / "src")
              hooksconfig={"matplotlib": {"backends": ["QtAgg"]}},
              excludes=["PyQt5", "PySide2", "PySide6", "tkinter", "pytest", "_pytest"],
              noarchive=False)
+
+# Every library must come from this Python installation, its environment or Windows itself.
+# Anything else was found through PATH (for example a Java runtime's freetype.dll and
+# ucrtbase.dll) and depends on whatever happens to be installed on the build computer.
+allowed_roots = [Path(root).resolve() for root in {sys.base_prefix, sys.prefix}]
+allowed_roots.append(Path(os.environ.get("SystemRoot", r"C:\Windows")).resolve())
+foreign = sorted(f"{dest} <- {src}" for dest, src, _ in a.binaries
+                 if not any(Path(src).resolve().is_relative_to(root) for root in allowed_roots))
+if foreign:
+    raise SystemExit("Libraries from outside the build environment were collected:\n  " + "\n  ".join(foreign)
+                     + "\nRemove their folders from PATH, or build with build_windows.py, which uses a clean PATH.")
+
+# Installer records such as direct_url.json contain the build computer's folder (and user name).
+# They are not needed at run time.
+BUILD_RECORDS = {"direct_url.json", "uv_cache.json", "uv_build.json"}
+a.datas = [entry for entry in a.datas
+           if not (Path(entry[0]).parent.name.endswith(".dist-info") and Path(entry[0]).name in BUILD_RECORDS)]
 pyz = PYZ(a.pure)
 
 # Each executable runs the shared runtime hooks and exactly its own entry script.

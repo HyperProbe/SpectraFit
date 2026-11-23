@@ -25,6 +25,15 @@ napari's dynamic modules, plugin manifests, distribution metadata and applicatio
 data explicitly. Frozen Python uses UTF-8 mode; the runtime hook selects the
 shipped Qt binding.
 
+`build_windows.py` runs PyInstaller with a clean PATH (the build Python and the
+Windows folders only), so libraries from other programs on the build computer,
+such as a Java runtime's `freetype.dll` and `ucrtbase.dll`, are not collected.
+The spec stops the build if any library still comes from outside the build
+Python or Windows. It also leaves out installer records such as
+`direct_url.json`, which contain the build folder and user name, and
+`package_windows.py` refuses to package if the application's own files or package
+metadata mention the builder's home folder.
+
 Set `SPECTRAFIT_VALIDATION_DIR` to an absolute directory to keep a release's
 evidence separate, for example `validation/windows-final`. Use the same value for
 the build, frozen checks, portable packaging, installer and kit commands.
