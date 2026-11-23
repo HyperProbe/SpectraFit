@@ -222,3 +222,25 @@ def test_workers_exit_after_parent_is_force_terminated(tmp_path):
                     kernel.TerminateProcess(handle, 1)
                     kernel.WaitForSingleObject(handle, 5000)
                 kernel.CloseHandle(handle)
+
+
+def test_packaging_detects_build_computer_home_folder(tmp_path):
+    pytest.importorskip("PyInstaller")
+    import importlib.util
+
+    script = Path(__file__).resolve().parents[1] / "packaging" / "windows" / "package_windows.py"
+    spec = importlib.util.spec_from_file_location("package_windows", script)
+    package_windows = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(package_windows)
+    app = tmp_path / "SpectraFit"
+    metadata = app / "_internal" / "spectrafit-0.1.8.dist-info"
+    metadata.mkdir(parents=True)
+    (app / "README.txt").write_text("Extract into a short folder.", encoding="utf-8")
+    (metadata / "METADATA").write_text("Name: spectrafit", encoding="utf-8")
+    assert package_windows.personal_paths(app, "C:/Users/Ana Müller") == []
+    (metadata / "direct_url.json").write_text(
+        '{"url": "file:///C:/Users/Ana%20M%C3%BCller/OneDrive/SpectraFit"}', encoding="utf-8")
+    (app / "notes.txt").write_text("Built in C:\\Users\\ana müller\\src", encoding="utf-16-le")
+    expected = ["_internal/spectrafit-0.1.8.dist-info/direct_url.json", "notes.txt"]
+    assert package_windows.personal_paths(app, "C:/Users/Ana Müller") == expected
+    assert package_windows.personal_paths(app, "C:\\Users\\Ana Müller\\") == expected

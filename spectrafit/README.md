@@ -36,47 +36,39 @@ SpectraFit also appears in napari under *Plugins → SpectraFit*.
 </details>
 
 
-**Windows**
+**Windows** (Windows 10 or 11, 64-bit)
 
-**Windows standalone application.** Use `SpectraFit-<version>-windows-x64-setup.exe`
-for a per-user installation, then open **SpectraFit** from the Start menu. Python
-is included; no separate Python installation is needed. The optional desktop
-shortcut is off by default. Uninstall through Windows **Installed apps**; analysis
-results and the custom chromophore library are retained. Close SpectraFit before
-installing an update or uninstalling it.
+1. Download `SpectraFit-<version>-windows-x64-setup.exe` from the [latest release](https://github.com/HyperProbe/SpectraFit/releases/latest). If your browser asks whether to keep the file, choose *Keep*.
+2. Double-click the downloaded file. Windows may show a blue box saying *Windows protected your PC*, because the installer does not carry a digital signature yet. Click *More info*, then *Run anyway*.
+3. Click through the installer. It installs SpectraFit for your user account only and needs no administrator rights. Everything it needs, including Python, is included.
+4. Open **SpectraFit** from the Start menu.
 
-Alternatively, extract `SpectraFit-<version>-windows-x64.zip` to a short folder
-path and double-click `SpectraFit.exe`. Keep the `_internal` folder beside the
-executables. For command-line use, run `SpectraFit-cli.exe` with the same commands
-shown below in place of `spectrafit`. These Windows builds are unsigned. Testing
-on a clean Windows desktop and additional graphics configurations remains a
-release-validation next step; the supplied validation kit supports that work.
+To remove it: *Settings → Apps → Installed apps → SpectraFit → Uninstall*. Your results and any chromophores you added are kept. Close SpectraFit before updating or removing it.
 
-**Windows source installation.**
-Use a Python 3.12 environment and run `pip install "./spectrafit[gui]"` from the
-repository root. `spectrafit-gui` opens the desktop interface without a console;
-`spectrafit gui` opens it from a console, and `spectrafit run settings.yaml`
-performs a command-line analysis. Both interfaces use the same fitting code.
-An optional settings file can be passed as `spectrafit-gui settings.yaml`.
+If SpectraFit does not start, a message tells you where its log file is. Please [report the problem](https://github.com/HyperProbe/SpectraFit/issues) and attach that file.
 
-On Windows, added chromophores are saved in
-`%LOCALAPPDATA%\SpectraFit\chromophores` and desktop startup/run diagnostics in
-`%LOCALAPPDATA%\SpectraFit\logs\spectrafit.log`. Existing chromophores in
-`~/.spectrafit/chromophores` are still read; a file in the new library with the
-same chromophore name takes precedence. `SPECTRAFIT_HOME` overrides the application
-folder on all platforms and selects a separate chromophore library. Results are
-saved to the folder chosen in the interface or settings file.
+**Without installing (portable version).** Download `SpectraFit-<version>-windows-x64.zip` instead. Right-click it → *Extract All…* and choose a short folder such as `C:\SpectraFit` (very long folder paths can make the extraction fail). Then double-click `SpectraFit.exe` in that folder. Keep the `_internal` folder next to it.
 
-The desktop launcher reports startup failures in a dialog and records details in
-the log. If the configured log location is not writable, it uses a temporary log
-and reports that path. The offline user guide is included in the Python package.
+**For people who program.**
+
+* The command-line program is `SpectraFit-cli.exe`, in `%LOCALAPPDATA%\Programs\SpectraFit` (or in the portable folder). Use it wherever this guide says `spectrafit`.
+* From source, in a Python 3.12 environment: `pip install "./spectrafit[gui]"` from the repository root. `spectrafit-gui` opens the program without a console window; `spectrafit gui` opens it from a console.
+* Added chromophores are saved in `%LOCALAPPDATA%\SpectraFit\chromophores`; chromophores in the older location `~/.spectrafit/chromophores` are still read, and a file with the same name in the new folder takes precedence. The log is `%LOCALAPPDATA%\SpectraFit\logs\spectrafit.log`. The environment variable `SPECTRAFIT_HOME` moves this folder, on all platforms.
 
 ---
 
 ## 2. Try it with the example first
 
+On macOS and Linux, type this in a Terminal:
+
 ```bash
 spectrafit example ~/spectrafit_example
+```
+
+On Windows, open *Windows PowerShell* from the Start menu, paste this line and press Enter. It creates the folder `spectrafit_example` in your user folder (`C:\Users\<your name>`):
+
+```powershell
+& "$env:LOCALAPPDATA\Programs\SpectraFit\SpectraFit-cli.exe" example "$HOME\spectrafit_example"
 ```
 
 This writes a simulated 160×160 image of tissue with blood vessels (`example_cube.mat`, 385–1015 nm in 5 nm steps), the true maps used to make it, and matching settings with the reference pixel in vessel-free tissue. In the program, click **Load settings…**, choose `example_settings.yaml`, then **Load data** (tab 1) and **Run fit** (tab 5). The haemoglobin maps should match `example_truth.npz` closely. You will also see warnings that water and fat cannot be determined between 530 and 750 nm (see section 6).
@@ -251,3 +243,5 @@ Calling SpectraFit from your own Python script: the multi-core fit starts worker
 Run the tests with `pip install -e ".[gui,test]" pytest-qt` and `python -m pytest` (on a Linux server without a screen: `xvfb-run -a python -m pytest`).
 
 **User guide and screenshot.** Edit only this `README.md`. Then run `python tools/build_guide.py`, which writes `README.html` (the guide in the release zip, which opens with a double-click) and the identical `src/spectrafit/data/README.html` shipped inside installed packages. A test fails if either copy is out of date. `python tools/make_screenshot.py` remakes `docs/screenshot.png` from the simulated example; with `--data FILE --ref ROW COL --credit "…"` it uses a real image instead. `README.md`, `docs/`, `tools/` and `tests/` are left out of the release zip (`.gitattributes`).
+
+**Windows application.** How the Windows installer and portable ZIP are built and checked is described in the [Windows packaging guide](https://github.com/HyperProbe/SpectraFit/blob/main/spectrafit/packaging/windows/README.md).

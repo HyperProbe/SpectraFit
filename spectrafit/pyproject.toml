@@ -7,7 +7,7 @@ name = "spectrafit"
 version = "0.1.8"
 description = "Spectral unmixing of hyperspectral images (modified Beer–Lambert law) with a napari interface"
 readme = { text = "Spectral unmixing of hyperspectral images with a napari interface. User guide: README.html, or https://github.com/HyperProbe/SpectraFit/blob/main/spectrafit/README.md", content-type = "text/plain" }
-license = { text = "MIT" }
+license = { text = "PolyForm-Noncommercial-1.0.0" }
 requires-python = ">=3.10"
 authors = [{ name = "HyperProbe / SpectraFit contributors" }]
 dependencies = [

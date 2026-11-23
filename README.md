@@ -7,17 +7,15 @@ This repository holds two kinds of things:
 - **The SpectraFit application** (this branch and the [Releases](https://github.com/HyperProbe/SpectraFit/releases)): a program with a graphical interface for everyone. No programming is needed.
 - **The research code** behind the HyperProbe deliverables D4.1, D4.2 and D4.3 (one branch each), as used for the papers listed below.
 
-> **⬇ Download the SpectraFit application** for analysing your own hyperspectral measurements:
-> [latest release](https://github.com/HyperProbe/SpectraFit/releases/latest) (the `SpectraFit-app` zip file).
-> Unzip it and open `README.html`, the user guide (also readable here: [spectrafit/README.md](spectrafit/README.md)).
+> **⬇ Download the SpectraFit application** for analysing your own hyperspectral measurements from the
+> [latest release](https://github.com/HyperProbe/SpectraFit/releases/latest):
+>
+> * **Windows:** `SpectraFit-<version>-windows-x64-setup.exe`. Double-click it to install; nothing else is needed.
+> * **macOS and Linux:** the `SpectraFit-app` zip file. Unzip it and open `README.html`, the user guide.
+>
+> The user guide explains installation step by step: [spectrafit/README.md](spectrafit/README.md#1-installing).
 
 ![The SpectraFit application after fitting a simulated example](spectrafit/docs/screenshot.png)
-
-Windows x64 build instructions and verification evidence are available in
-[the Windows packaging guide](spectrafit/packaging/windows/README.md). Local
-artifacts include a per-user installer, a portable ZIP and a synthetic validation
-kit; they have not been published to GitHub Releases. Clean Windows desktop
-testing remains a next step.
 
 ## What is where
 
