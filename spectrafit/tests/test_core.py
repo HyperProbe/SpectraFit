@@ -433,6 +433,23 @@ def test_mask_exclude_and_export(tmp_path):
     assert m["HbO2"].shape == (10, 10)
 
 
+@pytest.mark.parametrize("frames", [2, 3, 4])
+def test_time_series_tiff_preserves_scalar_frames(tmp_path, frames):
+    import tifffile
+
+    sim = make_cube(shape=(6, 8), mode="no_scattering", n_frames=frames, seed=2, realistic=True)
+    mat = write_mat(tmp_path / "time.mat", sim["cube"], sim["wavelengths"])
+    result = run(_cfg(tmp_path, mat, mode="no_scattering"))
+    result.save(tmp_path / "export", formats=["tiff"])
+    for name in ("HbO2", "flag"):
+        path = tmp_path / "export" / "tiff" / f"{name}.tif"
+        with tifffile.TiffFile(path) as file:
+            assert len(file.pages) == frames
+            assert all(page.photometric == tifffile.PHOTOMETRIC.MINISBLACK for page in file.pages)
+            assert file.series[0].axes == "TYX"
+            np.testing.assert_array_equal(file.asarray(), result.maps[name])
+
+
 def test_config_aliases_and_validation():
     cfg = Config.from_dict({"pathlength": {"mode": "gray_matter_jacques"}})
     assert cfg.pathlength.mode == "jacques"

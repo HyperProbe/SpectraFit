@@ -389,7 +389,7 @@ def _resolve_wavelengths(settings: DataSettings, mat: MatFile, variables, shape)
         return np.asarray(wl_spec, dtype=float), notes
     if isinstance(wl_spec, str) and wl_spec:
         if wl_spec.lower().endswith((".csv", ".txt")):
-            return np.loadtxt(wl_spec, delimiter=None if wl_spec.endswith(".txt") else ",", ndmin=1).ravel(), notes
+            return np.loadtxt(wl_spec, delimiter=None if wl_spec.lower().endswith(".txt") else ",", ndmin=1).ravel(), notes
         return np.asarray(mat.read(wl_spec), dtype=float).ravel(), notes
     name, wl = find_wavelength_variable(mat, variables, shape)
     if wl is not None:

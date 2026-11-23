@@ -241,14 +241,18 @@ class Config:
         def fix(p):
             if not p:
                 return p
-            q = Path(p).expanduser()
-            return str(q if q.is_absolute() or "*" in p else (base / q))
+            q = Path(p.replace("\\", "/")).expanduser()
+            return str(q if q.is_absolute() else (base / q))
 
         self.data.file = fix(self.data.file)
         for attr in ("white_reference", "dark_reference"):
             v = getattr(self.data, attr)
-            if v and (v.endswith(".mat") or "/" in v):
+            candidate = Path(fix(v)) if v else None
+            if v and (v.lower().endswith((".mat", ".hdr")) or "/" in v or "\\" in v
+                      or candidate.is_file() or candidate.with_name(candidate.name + ".hdr").is_file()):
                 setattr(self.data, attr, fix(v))
+        if isinstance(self.data.wavelengths, str) and self.data.wavelengths.lower().endswith((".csv", ".txt")):
+            self.data.wavelengths = fix(self.data.wavelengths)
         self.reference.file = fix(self.reference.file)
         self.pathlength.file = fix(self.pathlength.file)
         self.chromophores.extra_files = [fix(f) for f in self.chromophores.extra_files]

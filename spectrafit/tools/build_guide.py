@@ -16,6 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "README.md"
 TARGET = ROOT / "README.html"
+PACKAGE_TARGET = ROOT / "src" / "spectrafit" / "data" / "README.html"
 
 CSS = """
 :root { --bg: #ffffff; --fg: #1f2328; --muted: #59636e; --line: #d1d9e0; --code: #f6f8fa; --link: #0969da; }
@@ -76,5 +77,7 @@ def build() -> str:
 
 
 if __name__ == "__main__":
-    TARGET.write_text(build(), encoding="utf-8")
-    print(f"Wrote {TARGET} ({TARGET.stat().st_size // 1024} KB)")
+    html = build()
+    for target in (TARGET, PACKAGE_TARGET):
+        target.write_text(html, encoding="utf-8")
+        print(f"Wrote {target} ({target.stat().st_size // 1024} KB)")

@@ -137,7 +137,10 @@ class Results:
             tdir.mkdir(exist_ok=True)
             for k, v in self.maps.items():
                 p = tdir / f"{safe[k]}.tif"
-                tifffile.imwrite(p, (v[0] if v.shape[0] == 1 else v).astype(np.float32))
+                # Three/four time frames must not trigger TIFF's RGB/RGBA
+                # heuristic. Every map is scalar, with an optional time axis.
+                tifffile.imwrite(p, (v[0] if v.shape[0] == 1 else v).astype(np.float32),
+                                 photometric="minisblack", metadata={"axes": "TYX" if v.shape[0] > 1 else "YX"})
                 written.append(p)
         return written
 

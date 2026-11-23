@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "spectrafit"
-version = "0.1.6"
+version = "0.1.8"
 description = "Spectral unmixing of hyperspectral images (modified Beer–Lambert law) with a napari interface"
 readme = { text = "Spectral unmixing of hyperspectral images with a napari interface. User guide: README.html, or https://github.com/HyperProbe/SpectraFit/blob/main/spectrafit/README.md", content-type = "text/plain" }
 license = { text = "MIT" }
@@ -20,11 +20,14 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-gui = ["napari[qt]>=0.5", "qtpy"]
+gui = ["napari[pyqt6]>=0.5", "qtpy"]
 test = ["pytest>=7", "markdown>=3.4"]
 
 [project.scripts]
-spectrafit = "spectrafit.cli:main"
+spectrafit = "spectrafit.launcher:console_main"
+
+[project.gui-scripts]
+spectrafit-gui = "spectrafit.launcher:gui_main"
 
 [project.entry-points."napari.manifest"]
 spectrafit = "spectrafit.napari_plugin:napari.yaml"
@@ -33,7 +36,7 @@ spectrafit = "spectrafit.napari_plugin:napari.yaml"
 where = ["src"]
 
 [tool.setuptools.package-data]
-spectrafit = ["data/*.yaml", "data/chromophores/*.csv", "data/pathlengths/*.csv", "napari_plugin/napari.yaml"]
+spectrafit = ["data/*.yaml", "data/*.html", "data/chromophores/*.csv", "data/pathlengths/*.csv", "napari_plugin/napari.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -10,6 +10,8 @@ from pathlib import Path
 
 
 def _progress(frac: float, msg: str) -> None:
+    if sys.stdout is None:
+        return
     bar = "#" * int(30 * frac)
     sys.stdout.write(f"\r[{bar:<30}] {100 * frac:5.1f}%  {msg[:60]:<60}")
     sys.stdout.flush()
@@ -112,6 +114,9 @@ def cmd_gui(args) -> int:
 
 
 def main(argv=None) -> int:
+    import multiprocessing
+
+    multiprocessing.freeze_support()
     p = argparse.ArgumentParser(prog="spectrafit", description="Spectral unmixing of hyperspectral images.")
     sub = p.add_subparsers(dest="cmd")
     g = sub.add_parser("gui", help="open the graphical interface (napari)")
