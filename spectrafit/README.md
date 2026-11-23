@@ -37,6 +37,7 @@ SpectraFit also appears in napari under *Plugins → SpectraFit*.
 
 
 **Windows**
+
 **Windows standalone application.** Use `SpectraFit-<version>-windows-x64-setup.exe`
 for a per-user installation, then open **SpectraFit** from the Start menu. Python
 is included; no separate Python installation is needed. The optional desktop
