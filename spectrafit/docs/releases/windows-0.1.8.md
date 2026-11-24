@@ -1,6 +1,6 @@
-# Proposed Windows 0.1.8 preview release
+# Windows 0.1.8 release record
 
-Status: **awaiting maintainer review; not published**. Merging this document does not publish a release.
+Status: **published** as [v0.1.8](https://github.com/HyperProbe/SpectraFit/releases/tag/v0.1.8) on 24 November 2026, from build commit `ba7d0ed`. The release page has user-facing notes; this file keeps the technical build and test record.
 
 The four rebuilt assets are staged in an [unpublished upstream draft](https://github.com/HyperProbe/SpectraFit/releases/tag/untagged-0aea43f8ec1f4675d99b), visible to repository maintainers. Their uploaded sizes and GitHub SHA-256 digests were checked against the local verified packages. The draft targets the build commit below. Maintain that target when publishing so the source archive corresponds to the binaries.
 
